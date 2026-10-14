@@ -327,126 +327,192 @@ body {
 }
 
 /* ========================================================================= */
-/* PHASE 1: Minimalist Centered Code-Entry Screen                            */
+/* CANONICAL LOAD PROGRAM MODAL DIALOG                                       */
 /* ========================================================================= */
-.entry-screen {
+.load-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--paper-0);
+  z-index: 9500;
+  background: rgba(18, 18, 18, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  z-index: 1000;
-  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
 }
-.entry-screen.hidden {
-  display: none !important;
+.load-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
 }
-.entry-card {
-  width: 680px;
-  max-width: 95vw;
+.load-program-dialog {
   background: var(--surface-white);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  box-shadow: 0 12px 32px rgba(18, 18, 18, 0.06);
-  padding: 28px 32px;
+  box-shadow: 0 20px 48px rgba(18, 18, 18, 0.22);
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  overflow: hidden;
+  transform: translateY(12px) scale(0.99);
+  transition: transform 0.25s ease-out;
 }
-.entry-badge-row {
+.load-modal-backdrop.open .load-program-dialog {
+  transform: translateY(0) scale(1);
+}
+.load-modal-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-1);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 }
-.entry-badge-row .brand-logo {
+.load-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.load-wordmark {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.08em;
   color: var(--ink);
 }
-.entry-badge-row .brand-subtitle {
-  font-size: 11px;
-  color: var(--ink-4);
-  font-weight: 500;
+.load-badge-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--orange-text);
+  background: var(--orange-tint);
+  border: 1px solid var(--orange-line);
+  padding: 2px 7px;
+  border-radius: var(--r-xs);
+  text-transform: uppercase;
 }
-.entry-title {
-  font-size: 24px;
+.load-close-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-xs);
+  color: var(--ink-3);
+  font-size: 15px;
+  line-height: 1;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.load-close-btn:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.load-modal-body {
+  padding: 24px 24px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--surface-white);
+}
+.load-dialog-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.load-program-title {
+  font-family: var(--font-sans);
+  font-size: 18px;
   font-weight: 700;
   color: var(--ink);
-  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.01em;
 }
-.entry-desc {
-  font-size: 13px;
+.load-program-subtitle {
+  font-size: 12.5px;
   color: var(--ink-3);
+  margin: 0;
   line-height: 1.5;
 }
-.entry-input-box {
+.load-code-box {
   background: var(--paper-0);
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.entry-box-header {
+.load-code-box:focus-within {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 1px var(--orange);
+}
+.load-code-topbar {
   padding: 8px 12px;
   background: var(--paper-1);
   border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
-  color: var(--ink-3);
 }
-.entry-box-title {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 10px;
-}
-.entry-box-meta {
+.load-buffer-title {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--ink-4);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
 }
-.entry-textarea {
+.load-buffer-stats {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+.load-code-textarea {
   width: 100%;
   height: 220px;
-  padding: 12px;
+  padding: 12px 14px;
   background: var(--surface-white);
   border: none;
   outline: none;
   font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 12.5px;
+  line-height: 1.6;
   color: var(--ink);
   resize: vertical;
+  tab-size: 2;
   box-sizing: border-box;
 }
-.entry-box-footer {
+.load-code-footer {
   padding: 6px 12px;
   background: var(--paper-1);
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: flex-end;
-  font-size: 10px;
-  color: var(--ink-4);
-  font-family: var(--font-mono);
 }
-.entry-actions-row {
+.load-hint {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+.load-hint kbd {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 10px;
+  color: var(--ink-2);
+}
+.load-actions-row {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.entry-footer-note {
-  font-size: 11px;
-  color: var(--ink-4);
-  font-family: var(--font-mono);
-  text-align: center;
-  margin-top: 4px;
 }
 .validation-msg {
   padding: 10px 14px;
@@ -1805,63 +1871,10 @@ svg.graph-svg {
 }
 "###;
 
-/// Complete HTML body shell for the entry screen, 30/70 workspace, toolbars, and contextual drawer.
+/// Complete HTML body shell for the 30/70 workspace, toolbars, modal dialogs, and contextual drawer.
 pub const HTML_BODY_MARKUP: &str = r###"
-  <!-- Phase 1: Minimalist Centered Code-Entry Experience -->
-  <div class="entry-screen" id="entry-screen">
-    <div class="entry-card">
-      <div class="entry-badge-row">
-        <span class="brand-logo">R-PARSE</span>
-        <span class="brand-subtitle">Scientific Analysis Studio</span>
-      </div>
-      <h1 class="entry-title">Understand your R code.</h1>
-      <p class="entry-desc">
-        Explore syntax structure, dataframe column provenance ($C_{in} \to C_{out}$), unified program dependencies &amp; backward slices, and schema evolution.
-      </p>
-
-      <div class="entry-input-box">
-        <div class="entry-box-header">
-          <span class="entry-box-title">Source Buffer</span>
-          <span class="entry-box-meta" id="entry-char-count">0 lines · 0 chars</span>
-        </div>
-        <textarea class="entry-textarea" id="entry-source-textarea" spellcheck="false" placeholder="# Paste your R pipeline script here..."></textarea>
-        <div class="entry-box-footer">
-          <span class="entry-hint">Shift+Enter newline · Ctrl+Enter to analyze</span>
-        </div>
-      </div>
-
-      <div class="entry-actions-row">
-        <button class="btn btn-primary btn-lg" id="btn-analyze-entry">
-          <span class="play-icon">▶</span>
-          <span>Analyze Program</span>
-        </button>
-
-        <label class="btn btn-secondary btn-lg" id="btn-entry-load-file" style="cursor:pointer;" title="Load local R file">
-          <span>Load File...</span>
-          <input type="file" id="entry-file-input" accept=".R,.r,.Rmd" style="display:none;" />
-        </label>
-
-        <div style="flex:1;">
-          <select class="select-dropdown" id="entry-example-select" style="width:100%;">
-            <option value="">Load Example...</option>
-            <option value="showcase">Showcase Pipeline (showcase_pipeline.R)</option>
-            <option value="simple">Simple Provenance (price * quantity)</option>
-            <option value="filter_provenance">Filter Provenance (RowSelectionDependency)</option>
-            <option value="adversarial">Adversarial Alias Renaming</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="entry-validation-error" style="display:none; color:var(--accent-rose); font-size:12px; margin-top:8px;"></div>
-
-      <div class="entry-footer-note">
-        Tier 1 Static Analysis · 100% Autonomous & Deterministic · Zero R Execution in Static Mode
-      </div>
-    </div>
-  </div>
-
   <!-- Phase 3: Desktop 3-Column + Bottom Dock Master Scientific Workspace -->
-  <div class="workspace-screen hidden" id="workspace-screen">
+  <div class="workspace-screen" id="workspace-screen">
     <!-- 3.1 Top Bar (56px) -->
     <header class="app-header">
       <div class="header-top-row">
@@ -2164,16 +2177,76 @@ pub const HTML_BODY_MARKUP: &str = r###"
     </div>
 
 
+    <!-- Canonical Load Program Modal Dialog -->
+    <div class="load-modal-backdrop" id="load-program-modal" role="dialog" aria-modal="true" aria-labelledby="load-program-title" style="display:none;">
+      <div class="load-program-dialog">
+        <!-- Modal Header -->
+        <header class="load-modal-header">
+          <div class="load-header-brand">
+            <span class="load-wordmark">R—PARSE</span>
+            <span class="load-badge-label">LOAD PROGRAM</span>
+          </div>
+          <button class="load-close-btn" id="btn-close-load-program" type="button" aria-label="Close dialog" title="Close (Esc)">✕</button>
+        </header>
+
+        <!-- Modal Body Content -->
+        <div class="load-modal-body">
+          <div class="load-dialog-intro">
+            <h2 class="load-program-title" id="load-program-title">Load or Enter R Program</h2>
+            <p class="load-program-subtitle">Paste R pipeline source code, open a local script, or load a canonical example for deterministic Tier 1 static analysis.</p>
+          </div>
+
+          <div class="load-code-box">
+            <div class="load-code-topbar">
+              <span class="load-buffer-title">Source Buffer</span>
+              <span class="load-buffer-stats" id="load-program-stats">0 lines · 0 chars</span>
+            </div>
+            <textarea class="load-code-textarea" id="load-program-textarea" spellcheck="false" placeholder="# Paste your R pipeline script here...&#10;df &lt;- data.frame(price = 100, quantity = 2, age = 30)&#10;filtered &lt;- filter(df, price &gt; 0)&#10;df2 &lt;- mutate(filtered, total = price * quantity, discount = age * 0.05)&#10;df3 &lt;- mutate(df2, tax = total * 0.18)"></textarea>
+            <div class="load-code-footer">
+              <span class="load-hint"><kbd>Shift+Enter</kbd> newline · <kbd>Ctrl+Enter</kbd> / <kbd>⌘+Enter</kbd> to analyze</span>
+            </div>
+          </div>
+
+          <div class="load-actions-row">
+            <button class="btn btn-primary btn-lg" id="btn-load-program-analyze">
+              <span class="play-icon">▶</span>
+              <span id="btn-load-analyze-text">Analyze Program</span>
+            </button>
+
+            <label class="btn btn-secondary btn-lg" id="btn-load-program-file" style="cursor:pointer;" title="Load local R file (.R, .r, .Rmd)">
+              <span>Load File...</span>
+              <input type="file" id="load-program-file-input" accept=".R,.r,.Rmd" style="display:none;" />
+            </label>
+
+            <div style="flex:1;">
+              <select class="select-dropdown" id="load-program-example-select" style="width:100%;">
+                <option value="">Load Example...</option>
+                <option value="showcase">Showcase Pipeline (showcase_pipeline.R)</option>
+                <option value="simple">Simple Provenance (price * quantity)</option>
+                <option value="filter_provenance">Filter Provenance (RowSelectionDependency)</option>
+                <option value="adversarial">Adversarial Alias Renaming</option>
+              </select>
+            </div>
+
+            <button class="btn btn-ghost" id="btn-cancel-load-program" type="button">Cancel</button>
+          </div>
+
+          <div class="validation-msg" id="load-program-validation-error" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- 7.3 Command Palette Modal Dialog -->
     <div class="palette-modal-overlay" id="command-palette-modal" role="dialog" aria-modal="true" aria-label="Command Palette">
       <div class="palette-card">
         <div class="palette-input-row">
           <span style="font-size:14px; color:var(--ink-4);">🔍</span>
-          <input type="text" class="palette-input" id="palette-search-input" placeholder="Type a view or action (e.g. Provenance, Slice, Reanalyze)..." autocomplete="off" />
+          <input type="text" class="palette-input" id="palette-search-input" placeholder="Type a view or action (e.g. Load, Provenance, Slice)..." autocomplete="off" />
           <kbd class="kbd-shortcut" id="btn-palette-close" style="cursor:pointer;" title="Close (Esc)">ESC</kbd>
         </div>
         <div class="palette-list" id="palette-list">
-          <div class="palette-item active" data-action="view-prov"><span>📊 Switch to Column Provenance</span><kbd class="kbd-shortcut">1</kbd></div>
+          <div class="palette-item active" data-action="new-analysis"><span>📝 Load Program / New Analysis</span><kbd class="kbd-shortcut">⌘N</kbd></div>
+          <div class="palette-item" data-action="view-prov"><span>📊 Switch to Column Provenance</span><kbd class="kbd-shortcut">1</kbd></div>
           <div class="palette-item" data-action="view-pdg"><span>🕸️ Switch to Unified PDG Graph</span><kbd class="kbd-shortcut">2</kbd></div>
           <div class="palette-item" data-action="view-slice"><span>🎯 Switch to Backward Slice</span><kbd class="kbd-shortcut">3</kbd></div>
           <div class="palette-item" data-action="view-schema"><span>🧬 Switch to Schema Evolution</span><kbd class="kbd-shortcut">4</kbd></div>
@@ -2212,15 +2285,17 @@ pub const JS_SCRIPTS: &str = r###"
       let isAnalyzing = false;
       let isSourceEditMode = false;
 
-      // Elements — Entry Screen
-      const entryScreen = document.getElementById('entry-screen');
-      const entryInput = document.getElementById('entry-source-textarea') || document.getElementById('entry-code-input');
-      const entryStats = document.getElementById('entry-char-count') || document.getElementById('entry-code-stats');
-      const entryError = document.getElementById('entry-validation-error');
-      const btnEntryAnalyze = document.getElementById('btn-analyze-entry') || document.getElementById('btn-entry-analyze');
-      const btnEntryLoadFile = document.getElementById('btn-entry-load-file');
-      const entryFileInput = document.getElementById('entry-file-input');
-      const entryExampleSelect = document.getElementById('entry-example-select');
+      // Elements — Canonical Load Program Modal Dialog
+      const loadProgramModal = document.getElementById('load-program-modal');
+      const loadProgramInput = document.getElementById('load-program-textarea') || document.getElementById('entry-source-textarea');
+      const loadProgramStats = document.getElementById('load-program-stats') || document.getElementById('entry-char-count');
+      const loadProgramError = document.getElementById('load-program-validation-error') || document.getElementById('entry-validation-error');
+      const btnLoadProgramAnalyze = document.getElementById('btn-load-program-analyze') || document.getElementById('btn-analyze-entry');
+      const btnLoadProgramFile = document.getElementById('btn-load-program-file') || document.getElementById('btn-entry-load-file');
+      const loadProgramFileInput = document.getElementById('load-program-file-input') || document.getElementById('entry-file-input');
+      const loadProgramExampleSelect = document.getElementById('load-program-example-select') || document.getElementById('entry-example-select');
+      const btnCloseLoadProgram = document.getElementById('btn-close-load-program');
+      const btnCancelLoadProgram = document.getElementById('btn-cancel-load-program');
 
       // Elements — Workspace Screen
       const workspaceScreen = document.getElementById('workspace-screen');
@@ -2330,53 +2405,128 @@ pub const JS_SCRIPTS: &str = r###"
 
 
       // ======================================================================
-      // PHASE 1: Entry Screen Logic & Code Input
+      // CANONICAL LOAD PROGRAM MODAL CONTROLLER
       // ======================================================================
-      if (entryInput) {
-        entryInput.value = initialSource;
-      }
-
-      function updateEntryStats() {
-        if (!entryInput || !entryStats) return;
-        const text = entryInput.value;
+      function updateLoadProgramStats() {
+        if (!loadProgramInput || !loadProgramStats) return;
+        const text = loadProgramInput.value;
         const lines = text ? text.split(/\r?\n/).length : 0;
         const chars = text.length;
-        entryStats.textContent = `${lines} lines · ${chars} chars`;
+        loadProgramStats.textContent = `${lines} lines · ${chars} chars`;
       }
-      updateEntryStats();
 
-      entryInput?.addEventListener('input', () => {
-        updateEntryStats();
-        if (entryError) entryError.style.display = 'none';
+      function openLoadProgramModal() {
+        if (!loadProgramModal) return;
+        if (loadProgramInput) {
+          loadProgramInput.value = data.source_code || initialSource || '';
+          updateLoadProgramStats();
+        }
+        if (loadProgramError) loadProgramError.style.display = 'none';
+        loadProgramModal.classList.add('open');
+        loadProgramModal.style.display = 'flex';
+        setTimeout(() => {
+          loadProgramInput?.focus();
+        }, 50);
+      }
+
+      function closeLoadProgramModal() {
+        if (!loadProgramModal) return;
+        loadProgramModal.classList.remove('open');
+        loadProgramModal.style.display = 'none';
+        if (loadProgramError) loadProgramError.style.display = 'none';
+      }
+
+      if (loadProgramInput) {
+        loadProgramInput.value = initialSource;
+        updateLoadProgramStats();
+      }
+
+      loadProgramInput?.addEventListener('input', () => {
+        updateLoadProgramStats();
+        if (loadProgramError) loadProgramError.style.display = 'none';
       });
 
-      btnEntryLoadFile?.addEventListener('click', () => entryFileInput?.click());
-      entryFileInput?.addEventListener('change', (e) => {
+      btnCloseLoadProgram?.addEventListener('click', closeLoadProgramModal);
+      btnCancelLoadProgram?.addEventListener('click', closeLoadProgramModal);
+
+      loadProgramModal?.addEventListener('click', (e) => {
+        if (e.target === loadProgramModal) {
+          closeLoadProgramModal();
+        }
+      });
+
+      btnLoadProgramFile?.addEventListener('click', () => loadProgramFileInput?.click());
+      loadProgramFileInput?.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (evt) => {
-          if (entryInput) entryInput.value = evt.target.result;
-          updateEntryStats();
-          if (entryError) entryError.style.display = 'none';
+          if (loadProgramInput) {
+            loadProgramInput.value = evt.target.result;
+            updateLoadProgramStats();
+            if (loadProgramError) loadProgramError.style.display = 'none';
+          }
         };
         reader.readAsText(file);
       });
 
-      entryExampleSelect?.addEventListener('change', (e) => {
+      loadProgramExampleSelect?.addEventListener('change', (e) => {
         const val = e.target.value;
         if (!val) return;
         if (data.examples && data.examples[val]) {
-          if (entryInput) entryInput.value = data.examples[val];
-          updateEntryStats();
-          if (entryError) entryError.style.display = 'none';
+          if (loadProgramInput) {
+            loadProgramInput.value = data.examples[val];
+            updateLoadProgramStats();
+            if (loadProgramError) loadProgramError.style.display = 'none';
+          }
         }
       });
 
-      entryInput?.addEventListener('keydown', (e) => {
+      loadProgramInput?.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
           e.preventDefault();
-          launchAnalysis();
+          launchLoadProgramAnalysis();
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          closeLoadProgramModal();
+        }
+      });
+
+      function launchLoadProgramAnalysis() {
+        if (!loadProgramInput) return;
+        const code = loadProgramInput.value.trim();
+        if (!code) {
+          if (loadProgramError) {
+            loadProgramError.textContent = 'Please enter or load R code to analyze.';
+            loadProgramError.style.display = 'flex';
+          }
+          return;
+        }
+        if (loadProgramError) loadProgramError.style.display = 'none';
+
+        if (btnLoadProgramAnalyze) {
+          btnLoadProgramAnalyze.disabled = true;
+          const txt = document.getElementById('btn-load-analyze-text');
+          if (txt) txt.textContent = 'Analyzing...';
+        }
+
+        executeRealAnalysis(loadProgramInput.value, () => {
+          closeLoadProgramModal();
+          recomputeActiveGraphFit();
+        });
+      }
+
+      btnLoadProgramAnalyze?.addEventListener('click', launchLoadProgramAnalysis);
+
+      // Primary "New Analysis" Action in Header
+      document.getElementById('btn-new-analysis')?.addEventListener('click', openLoadProgramModal);
+
+      // Global shortcut ⌘N / Ctrl+N to open Load Program modal
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
+          e.preventDefault();
+          openLoadProgramModal();
         }
       });
 
@@ -2389,9 +2539,9 @@ pub const JS_SCRIPTS: &str = r###"
         if (sourceEditorTextarea) {
           sourceEditorTextarea.value = data.source_code || '';
         }
-        if (entryInput) {
-          entryInput.value = data.source_code || '';
-          updateEntryStats();
+        if (loadProgramInput) {
+          loadProgramInput.value = data.source_code || '';
+          updateLoadProgramStats();
         }
 
         refreshHeaderAndMetrics();
@@ -2436,9 +2586,9 @@ pub const JS_SCRIPTS: &str = r###"
         if (isAnalyzing) return;
         const trimmedCode = sourceCode.trim();
         if (!trimmedCode) {
-          if (entryError) {
-            entryError.textContent = 'Please enter or load R code to analyze.';
-            entryError.style.display = 'inline-flex';
+          if (loadProgramError) {
+            loadProgramError.textContent = 'Please enter or load R code to analyze.';
+            loadProgramError.style.display = 'flex';
           }
           showStatusNotification('Source code cannot be empty.');
           return;
@@ -2448,9 +2598,10 @@ pub const JS_SCRIPTS: &str = r###"
         currentRevisionId += 1;
         const requestRev = currentRevisionId;
 
-        if (btnEntryAnalyze) {
-          btnEntryAnalyze.disabled = true;
-          btnEntryAnalyze.innerHTML = '<span>⏳</span> Analyzing...';
+        if (btnLoadProgramAnalyze) {
+          btnLoadProgramAnalyze.disabled = true;
+          const txt = document.getElementById('btn-load-analyze-text');
+          if (txt) txt.textContent = 'Analyzing...';
         }
         if (btnReanalyze) {
           btnReanalyze.disabled = true;
@@ -2511,9 +2662,9 @@ pub const JS_SCRIPTS: &str = r###"
             `R-PARSE engine offline at ${endpoint}. Run 'rparse studio' to connect live analysis.`,
             true
           );
-          if (entryError) {
-            entryError.textContent = `Engine offline at ${endpoint}. Run 'rparse studio' to analyze.`;
-            entryError.style.display = 'inline-flex';
+          if (loadProgramError) {
+            loadProgramError.textContent = `Engine offline at ${endpoint}. Run 'rparse studio' to analyze.`;
+            loadProgramError.style.display = 'flex';
           }
           data.source_code = sourceCode;
           data.source_lines = sourceCode.split(/\r?\n/);
@@ -2527,9 +2678,10 @@ pub const JS_SCRIPTS: &str = r###"
         })
         .finally(() => {
           isAnalyzing = false;
-          if (btnEntryAnalyze) {
-            btnEntryAnalyze.disabled = false;
-            btnEntryAnalyze.innerHTML = '<span>▶</span> Analyze Program';
+          if (btnLoadProgramAnalyze) {
+            btnLoadProgramAnalyze.disabled = false;
+            const txt = document.getElementById('btn-load-analyze-text');
+            if (txt) txt.textContent = 'Analyze Program';
           }
           if (btnReanalyze) {
             btnReanalyze.disabled = false;
@@ -2537,51 +2689,6 @@ pub const JS_SCRIPTS: &str = r###"
           }
         });
       }
-
-      function launchAnalysis() {
-        if (!entryInput) return;
-        const code = entryInput.value.trim();
-        if (!code) {
-          if (entryError) {
-            entryError.textContent = 'Please enter or load R code to analyze.';
-            entryError.style.display = 'inline-flex';
-          }
-          return;
-        }
-        if (entryError) entryError.style.display = 'none';
-
-        const doTransition = () => {
-          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          if (entryScreen) entryScreen.classList.add('transition-out');
-          if (workspaceScreen) workspaceScreen.classList.remove('hidden');
-
-          setTimeout(() => {
-            if (entryScreen) entryScreen.style.display = 'none';
-            recomputeActiveGraphFit();
-          }, reducedMotion ? 10 : 460);
-        };
-
-        if (entryInput.value === initialSource && (data.provenance?.nodes?.length > 0 || data.pdg?.nodes?.length > 0)) {
-          doTransition();
-        } else {
-          executeRealAnalysis(entryInput.value, doTransition);
-        }
-      }
-
-      btnEntryAnalyze?.addEventListener('click', launchAnalysis);
-
-      // Return to Entry Screen Action
-      document.getElementById('btn-new-analysis')?.addEventListener('click', () => {
-        if (entryScreen) {
-          entryScreen.style.display = 'flex';
-          void entryScreen.offsetWidth;
-          entryScreen.classList.remove('transition-out');
-        }
-        if (workspaceScreen) {
-          workspaceScreen.classList.add('hidden');
-        }
-        if (entryInput) entryInput.focus();
-      });
 
       // ======================================================================
       // PHASE 3: 30/70 Workspace Layout & Splitter Resizing
@@ -4902,7 +5009,8 @@ pub const JS_SCRIPTS: &str = r###"
 
       function executePaletteAction(action) {
         closeCommandPalette();
-        if (action === 'view-prov') document.getElementById('tab-provenance')?.click();
+        if (action === 'new-analysis') openLoadProgramModal();
+        else if (action === 'view-prov') document.getElementById('tab-provenance')?.click();
         else if (action === 'view-pdg') document.getElementById('tab-pdg')?.click();
         else if (action === 'view-slice') document.getElementById('tab-slice')?.click();
         else if (action === 'view-schema') document.getElementById('tab-schema')?.click();
@@ -4976,11 +5084,11 @@ pub const JS_SCRIPTS: &str = r###"
       initScenarioCard(data.source_code || initialSource);
       updateReproduceCommand();
 
-      // Auto-transition directly into Master Workspace when pre-analyzed file/data exists
-      if (initialSource && (data.provenance?.nodes?.length > 0 || data.pdg?.nodes?.length > 0 || data.summary?.statement_count > 0)) {
-        if (entryScreen) entryScreen.style.display = 'none';
-        if (workspaceScreen) workspaceScreen.classList.remove('hidden');
-        recomputeActiveGraphFit();
+      // Check query parameter or empty source to auto-open Load Program modal
+      const studioParams = new URLSearchParams(window.location.search);
+      if (studioParams.get('new') === '1' || studioParams.get('new') === 'true' || (!initialSource && (!data.summary || data.summary.statement_count === 0))) {
+        openLoadProgramModal();
       }
+      recomputeActiveGraphFit();
 
     })();"###;

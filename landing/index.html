@@ -11,8 +11,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="landing/styles.css">
 
   <!-- Core Libraries with graceful offline fallbacks -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -63,12 +66,16 @@
       </div>
     </div>
 
+    <div class="header-center" id="header-ticker">
+      <span class="ticker-dot"></span>
+      <span id="ticker-chapter-text">CASE 000 · ORIGIN OF RESULT</span>
+    </div>
 
     <div class="header-right">
-      <button class="btn-studio-cta trigger-studio-modal" id="header-cta-btn">
+      <a href="/studio" class="btn-studio-cta" id="header-cta-btn" style="text-decoration:none;">
         <span>Enter the Studio</span>
         <span aria-hidden="true">↗</span>
-      </button>
+      </a>
       <button class="btn-menu-toggle" id="btn-menu-toggle" aria-label="Open Navigation Menu">
         <span></span>
         <span></span>
@@ -91,7 +98,7 @@
         <a href="#section-case-opens" class="drawer-link"><span>02</span> The Case Opens</a>
         <a href="#pinned-evidence-stage" class="drawer-link"><span>03</span> Follow the Evidence</a>
         <a href="#section-central-reveal" class="drawer-link"><span>04</span> The Central Reveal</a>
-        <a href="#section-evidence-room" class="drawer-link"><span>05</span> Five Analytical Views</a>
+        <a href="#section-evidence-room" class="drawer-link"><span>05</span> The Evidence Room</a>
         <a href="#section-limits" class="drawer-link"><span>06</span> Analysis Limits</a>
         <a href="#pinned-assembly-stage" class="drawer-link"><span>07</span> Final Assembly</a>
         <a href="/studio" class="drawer-link"><span>08</span> Open Studio Workspace ↗</a>
@@ -101,9 +108,9 @@
       <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
         R-PARSE ENGINE v0.1.0 · TIER 1 DETERMINISTIC RUST CORE
       </p>
-      <button class="btn-primary trigger-studio-modal" style="width: 100%; justify-content: center;">
+      <a href="/studio" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">
         Launch Studio Session ↗
-      </button>
+      </a>
     </div>
   </div>
 
@@ -122,10 +129,10 @@
             A number sits in your output. The code that made it is right there, but the path behind it isn't. R-PARSE reads R programs as evidence, so you can start at a result and work backward to the statements that shaped it.
           </p>
           <div class="hero-actions">
-            <button class="btn-primary trigger-studio-modal" id="hero-primary-cta">
+            <a href="/studio" class="btn-primary" id="hero-primary-cta" style="text-decoration:none;">
               <span>Enter the Studio</span>
               <span aria-hidden="true">↗</span>
-            </button>
+            </a>
             <a href="#section-question" class="btn-secondary" id="hero-secondary-cta">
               <span>Follow the evidence</span>
               <span aria-hidden="true">↓</span>
@@ -696,10 +703,10 @@
             Bring a result you don't fully trust. Start at the number and follow the trail back.
           </p>
           <div class="assembly-actions">
-            <button class="btn-primary trigger-studio-modal" id="assembly-cta-btn">
+            <a href="/studio" class="btn-primary" id="assembly-cta-btn" style="text-decoration:none;">
               <span>Enter the Studio</span>
               <span aria-hidden="true">↗</span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -745,12 +752,15 @@
         </div>
 
         <div class="footer-actions">
-          <button class="btn-footer-cta trigger-studio-modal" id="footer-cta-btn">
+          <a href="/studio" class="btn-footer-cta" id="footer-cta-btn" style="text-decoration:none;">
             <span>Enter R-PARSE Studio</span>
             <span aria-hidden="true">↗</span>
-          </button>
-          <a href="how-to-use.html" class="btn-footer-backtop" id="btn-footer-how-to-use" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          </a>
+          <a href="/how-to-use" class="btn-footer-backtop" id="btn-footer-how-to-use" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
             <span>📖 How to Use</span>
+          </a>
+          <a href="/studio" class="btn-footer-backtop" id="btn-footer-studio-direct" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <span>Studio Workspace ↗</span>
           </a>
           <div class="footer-cli-pill" title="CLI Launch Command">
             <span class="cli-prompt">$</span>
@@ -764,11 +774,12 @@
       </div>
 
       <div class="footer-nav-row">
-        <a href="how-to-use.html" class="footer-nav-link" id="footer-nav-how-to-use" style="color: var(--accent-orange); font-weight: 700;">How to Use (Guide)</a>
-        <a href="../implementation/showcase_report.html" target="_blank" class="footer-nav-link">Showcase Report (Offline)</a>
-        <a href="../docs/ARCHITECTURE.md" target="_blank" class="footer-nav-link">System Architecture (ADR-001)</a>
-        <a href="../README.md" target="_blank" class="footer-nav-link">CLI Documentation</a>
-        <a href="../research/scope-freeze.md" target="_blank" class="footer-nav-link">Scope Freeze Specification</a>
+        <a href="/how-to-use" class="footer-nav-link" id="footer-nav-how-to-use" style="color: var(--accent-orange); font-weight: 700;">How to Use (Guide)</a>
+        <a href="/studio" class="footer-nav-link" style="color: var(--accent-blue); font-weight: 700;">Studio Workspace ↗</a>
+        <a href="implementation/showcase_report.html" target="_blank" class="footer-nav-link">Showcase Report (Offline)</a>
+        <a href="docs/ARCHITECTURE.md" target="_blank" class="footer-nav-link">System Architecture (ADR-001)</a>
+        <a href="README.md" target="_blank" class="footer-nav-link">CLI Documentation</a>
+        <a href="research/scope-freeze.md" target="_blank" class="footer-nav-link">Scope Freeze Specification</a>
       </div>
 
       <div class="footer-bottom-meta">
@@ -778,111 +789,13 @@
     </div>
   </footer>
 
-  <!-- ========================================================================
-       STUDIO LAUNCH & CODE-ENTRY WORKBENCH MODAL (EDITORIAL REDESIGN)
-       ======================================================================== -->
-  <div class="modal-backdrop studio-modal-backdrop" id="studio-modal" role="dialog" aria-modal="true" aria-labelledby="studio-headline" style="display:none;">
-    <div class="studio-dialog" id="studio-dialog">
-      <!-- Modal Header -->
-      <header class="studio-modal-header">
-        <div class="studio-header-brand">
-          <span class="studio-wordmark">R—PARSE</span>
-          <span class="studio-badge-label">STUDIO</span>
-        </div>
-        <div class="studio-header-actions">
-          <button class="btn-studio-back" id="btn-studio-back" type="button" aria-label="Return to launch screen" style="display:none;">
-            <span aria-hidden="true">←</span>
-            <span>Launch</span>
-          </button>
-          <button class="studio-close-btn" id="modal-close-btn" type="button" aria-label="Close Studio Dialog">
-            <span aria-hidden="true">✕</span>
-          </button>
-        </div>
-      </header>
 
-      <!-- Main Modal Stage Container -->
-      <div class="studio-modal-stage" id="studio-modal-stage">
-        <!-- PHASE ONE: Split Launch Composition -->
-        <div class="studio-launch-view" id="studio-launch-view">
-          <!-- Left: Editorial Headline & Narrative -->
-          <div class="studio-launch-editorial" id="studio-launch-editorial">
-            <span class="studio-kicker">Program Analysis Engine</span>
-            <h2 class="studio-headline" id="studio-headline">Look beyond the code.</h2>
-            <p class="studio-supporting-copy">
-              Step inside your R program and explore how its structure and data connect.
-            </p>
-          </div>
-
-          <!-- Right: Compact Action Section -->
-          <div class="studio-launch-action" id="studio-launch-action">
-            <div class="studio-action-content">
-              <h3 class="studio-action-title">Enter R-PARSE Studio</h3>
-              <p class="studio-action-copy">
-                Interactive workbench for AST syntax, dataframe column provenance, and program slicing.
-              </p>
-              <button class="btn-studio-open" id="btn-open-studio-launch" type="button">
-                <span>Open Studio</span>
-                <span class="btn-arrow" aria-hidden="true">→</span>
-              </button>
-              <div class="studio-launch-hint" id="studio-launch-hint" aria-live="polite"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PHASE TWO: Code-Entry Interface -->
-        <div class="studio-entry-view" id="studio-entry-view" style="display:none;">
-          <div class="studio-entry-container">
-            <div class="studio-entry-topbar">
-              <span class="studio-buffer-title">Source Buffer</span>
-              <span class="studio-buffer-stats" id="entry-char-count">0 lines · 0 chars</span>
-            </div>
-
-            <div class="studio-code-input-wrapper">
-              <textarea class="studio-code-textarea" id="entry-source-textarea" spellcheck="false" placeholder="# Paste or write your R pipeline script here...&#10;df &lt;- data.frame(price = 100, quantity = 2, age = 30)&#10;filtered &lt;- filter(df, price &gt; 0)&#10;df2 &lt;- mutate(filtered, total = price * quantity, discount = age * 0.05)&#10;df3 &lt;- mutate(df2, tax = total * 0.18)"></textarea>
-            </div>
-
-            <div class="studio-entry-meta">
-              <span class="studio-meta-hint"><kbd>Shift+Enter</kbd> newline <span class="studio-meta-sep">·</span> <kbd>Ctrl+Enter</kbd> to analyze</span>
-            </div>
-
-            <div class="studio-entry-actions">
-              <button class="btn-studio-analyze" id="btn-analyze-entry" type="button">
-                <span class="play-glyph" aria-hidden="true">▶</span>
-                <span id="btn-analyze-text">Analyze Code</span>
-              </button>
-
-              <label class="btn-studio-secondary" id="btn-entry-load-file" title="Load local R file (.R, .r, .Rmd)">
-                <span>Load File...</span>
-                <input type="file" id="entry-file-input" accept=".R,.r,.Rmd" style="display:none;" />
-              </label>
-
-              <a href="/studio" class="btn-studio-secondary" id="btn-open-full-studio" title="Open full studio analysis workspace" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
-                <span>Workspace ↗</span>
-              </a>
-
-              <div class="studio-example-container">
-                <select class="studio-example-select" id="entry-example-select" aria-label="Load Example R Script">
-                  <option value="">Load Example...</option>
-                  <option value="showcase">Showcase Pipeline (showcase_pipeline.R)</option>
-                  <option value="filter">Filter Provenance (RowSelection)</option>
-                  <option value="canonical">Canonical Lineage (price * quantity)</option>
-                  <option value="adversarial">Adversarial Alias Renaming</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="studio-validation-banner" id="entry-validation-error" style="display:none;" role="alert"></div>
-            <div class="studio-feedback-banner" id="studio-analysis-feedback" style="display:none;" role="status"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Application Logic -->
-  <script src="ribbon.js"></script>
-  <script src="hero3d.js"></script>
-  <script src="assembly.js"></script>
-  <script src="investigation.js"></script>
+  <script src="landing/ribbon.js"></script>
+  <script src="landing/hero3d.js"></script>
+  <script src="landing/hero_diagram.js"></script>
+  <script src="landing/assembly.js"></script>
+  <script src="landing/investigation.js"></script>
 </body>
 </html>
