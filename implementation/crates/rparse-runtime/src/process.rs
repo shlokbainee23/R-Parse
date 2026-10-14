@@ -124,7 +124,7 @@ impl RProcess {
         };
 
         // Quick handshake check
-        let ping_res = process.send_request("ping", JsonValue::Object(BTreeMap::new()), 3000);
+        let ping_res = process.send_request("ping", JsonValue::Object(BTreeMap::new()), 10000);
         if let Err(err) = ping_res {
             process.shutdown();
             return Err(err);

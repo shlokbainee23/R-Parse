@@ -704,6 +704,11 @@
     const isHttp = window.location.protocol.startsWith('http');
     const healthUrl = isHttp ? '/api/health' : 'http://127.0.0.1:8080/api/health';
 
+    if (launchHint && (!launchHint.textContent || launchHint.textContent === 'Backend offline')) {
+      launchHint.textContent = 'Connecting to backend...';
+      launchHint.style.color = 'var(--text-muted, #77736B)';
+    }
+
     fetch(healthUrl, { method: 'GET', mode: 'cors' })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -712,13 +717,13 @@
       .then(data => {
         if (data.status === 'ok' && launchHint) {
           launchHint.textContent = `Backend online (v${data.version || '0.1.0'}) · Engine ready`;
-          launchHint.style.color = '#10B981';
+          launchHint.style.color = 'var(--status-ok, #2F7D4F)';
         }
       })
       .catch(() => {
         if (launchHint) {
           launchHint.textContent = 'Backend offline';
-          launchHint.style.color = '#EF4444';
+          launchHint.style.color = 'var(--status-err, #B3261E)';
         }
       });
   }

@@ -506,6 +506,7 @@ pub fn render_html_template(title_file: &str, safe_json_data: &str) -> String {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>R-PARSE Workbench — {title_file}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <style>
 {CSS_STYLES}
   </style>

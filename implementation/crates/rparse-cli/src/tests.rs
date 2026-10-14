@@ -3109,6 +3109,31 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
         assert!(r8.starts_with("HTTP/1.1 200 OK"));
         assert!(r8.contains("text/css"));
 
+        // 9. Favicon SVG route served properly
+        let mut s9 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
+        s9.write_all(b"GET /favicon.svg HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        let mut r9 = String::new();
+        s9.read_to_string(&mut r9).unwrap();
+        assert!(r9.starts_with("HTTP/1.1 200 OK"));
+        assert!(r9.contains("image/svg+xml"));
+        assert!(r9.contains("<svg"));
+
+        // 10. Hero diagram JS asset served properly
+        let mut s10 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
+        s10.write_all(b"GET /landing/hero_diagram.js HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        let mut r10 = String::new();
+        s10.read_to_string(&mut r10).unwrap();
+        assert!(r10.starts_with("HTTP/1.1 200 OK"));
+        assert!(r10.contains("application/javascript"));
+
+        // 11. Direct query string stripping on routes
+        let mut s11 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
+        s11.write_all(b"GET /studio?sample=1 HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        let mut r11 = String::new();
+        s11.read_to_string(&mut r11).unwrap();
+        assert!(r11.starts_with("HTTP/1.1 200 OK"));
+        assert!(r11.contains("R-PARSE Studio Workspace"));
+
         running.store(false, Ordering::Relaxed);
         let _ = handle.join();
     }

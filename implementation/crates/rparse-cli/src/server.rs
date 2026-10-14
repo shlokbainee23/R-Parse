@@ -197,8 +197,10 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
         return Ok(());
     }
 
+    let clean_path = path.split('?').next().unwrap_or(path);
+
     // Route matching
-    match (method, path) {
+    match (method, clean_path) {
         (
             "GET",
             "/"
@@ -276,6 +278,16 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
                 js.as_bytes(),
             )?;
         }
+        ("GET", "/landing/hero_diagram.js" | "/hero_diagram.js") => {
+            let js = include_str!("../../../../landing/hero_diagram.js");
+            send_response(
+                &mut stream,
+                200,
+                "OK",
+                "application/javascript; charset=utf-8",
+                js.as_bytes(),
+            )?;
+        }
         ("GET", "/landing/assembly.js" | "/assembly.js") => {
             let js = include_str!("../../../../landing/assembly.js");
             send_response(
@@ -296,13 +308,14 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
                 js.as_bytes(),
             )?;
         }
-        ("GET", "/favicon.ico") => {
+        ("GET", "/favicon.svg" | "/landing/favicon.svg" | "/favicon.ico") => {
+            let svg = include_str!("../../../../favicon.svg");
             send_response(
                 &mut stream,
-                204,
-                "No Content",
-                "image/x-icon",
-                b"",
+                200,
+                "OK",
+                "image/svg+xml; charset=utf-8",
+                svg.as_bytes(),
             )?;
         }
         ("GET", "/api/health") => {
@@ -355,7 +368,7 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
             )?;
         }
         _ => {
-            if path.starts_with("/api/") {
+            if clean_path.starts_with("/api/") {
                 send_response(
                     &mut stream,
                     404,
@@ -363,15 +376,15 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
                     "application/json; charset=utf-8",
                     br#"{"error":"API endpoint not found"}"#,
                 )?;
-            } else if path.ends_with(".js")
-                || path.ends_with(".css")
-                || path.ends_with(".png")
-                || path.ends_with(".jpg")
-                || path.ends_with(".svg")
-                || path.ends_with(".woff")
-                || path.ends_with(".woff2")
-                || path.ends_with(".ttf")
-                || path.ends_with(".ico")
+            } else if clean_path.ends_with(".js")
+                || clean_path.ends_with(".css")
+                || clean_path.ends_with(".png")
+                || clean_path.ends_with(".jpg")
+                || clean_path.ends_with(".svg")
+                || clean_path.ends_with(".woff")
+                || clean_path.ends_with(".woff2")
+                || clean_path.ends_with(".ttf")
+                || clean_path.ends_with(".ico")
             {
                 send_response(
                     &mut stream,

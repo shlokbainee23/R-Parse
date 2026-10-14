@@ -111,6 +111,7 @@ The application starts on **`http://localhost:8080`** under a single origin:
 | **`GET /how-to-use`** | Beginner-friendly tutorial and reference guide. |
 | **`GET /api/health`** | Service health status and version verification. |
 | **`POST /api/analyze`** | Authoritative static analysis engine running 100% deterministic Rust analysis. |
+| **`GET /favicon.svg`** | Canonical R-PARSE 4-quad brand SVG asset. |
 | **Static Assets** | Integrated CSS, JavaScript, and typography assets. |
 
 ### Docker Production Deployment

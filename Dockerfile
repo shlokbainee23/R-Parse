@@ -23,6 +23,7 @@ COPY landing.html ./landing.html
 COPY how-to-use.html ./how-to-use.html
 COPY index.html ./index.html
 COPY landing ./landing
+COPY favicon.svg ./favicon.svg
 
 # Compile the authoritative CLI binary in release mode
 WORKDIR /usr/src/rparse/implementation
