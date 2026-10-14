@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R-PARSE — The Investigation | Program Analysis Engine</title>
+  <meta name="description" content="Every result leaves a trail. R-PARSE is a research-grade R language program analysis engine enabling column provenance, unified PDG, and column-aware static slicing.">
+  
+  <!-- Typography (Google Fonts fallback for General Sans & JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Core Libraries with graceful offline fallbacks -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- ========================================================================
+       OPENING SEQUENCE — THE EVIDENCE LOADER
+       ======================================================================== -->
+  <div class="evidence-loader" id="evidence-loader" role="dialog" aria-label="Loading investigation">
+    <div class="loader-orange-curtain"></div>
+    <div class="loader-content">
+      <div class="loader-glyph" aria-hidden="true">
+        <div class="glyph-quad"></div>
+        <div class="glyph-quad q-orange"></div>
+        <div class="glyph-quad"></div>
+        <div class="glyph-quad"></div>
+      </div>
+      <div class="loader-counter" id="loader-counter" aria-live="polite">000</div>
+      <div class="loader-subtext">
+        <span class="loader-subtext-pulse"></span>
+        <span>R-PARSE / preparing the evidence</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CONTINUOUS VISUAL THREAD / RIBBON CANVAS
+       ======================================================================== -->
+  <div id="ribbon-container" aria-hidden="true">
+    <canvas id="ribbon-canvas"></canvas>
+  </div>
+
+  <!-- ========================================================================
+       FIXED EDITORIAL HEADER
+       ======================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="header-progress-bar" id="header-progress-bar"></div>
+    
+    <div class="header-left">
+      <div class="header-mark" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="header-brand">
+        <span class="header-title">R—PARSE</span>
+        <span class="header-desc">Program Analysis</span>
+      </div>
+    </div>
+
+
+    <div class="header-right">
+      <button class="btn-studio-cta trigger-studio-modal" id="header-cta-btn">
+        <span>Enter the Studio</span>
+        <span aria-hidden="true">↗</span>
+      </button>
+      <button class="btn-menu-toggle" id="btn-menu-toggle" aria-label="Open Navigation Menu">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       NAVIGATION DRAWER (MENU)
+       ======================================================================== -->
+  <div class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Table of Contents">
+    <div>
+      <div class="drawer-header">
+        <span class="case-file-badge"><span class="dot"></span> Case Dossier</span>
+        <button class="modal-close-btn" id="drawer-close-btn" aria-label="Close Menu">✕</button>
+      </div>
+      <nav class="drawer-links">
+        <a href="#hero" class="drawer-link"><span>00</span> Origin</a>
+        <a href="#section-question" class="drawer-link"><span>01</span> The Question</a>
+        <a href="#section-case-opens" class="drawer-link"><span>02</span> The Case Opens</a>
+        <a href="#pinned-evidence-stage" class="drawer-link"><span>03</span> Follow the Evidence</a>
+        <a href="#section-central-reveal" class="drawer-link"><span>04</span> The Central Reveal</a>
+        <a href="#section-evidence-room" class="drawer-link"><span>05</span> Five Analytical Views</a>
+        <a href="#section-limits" class="drawer-link"><span>06</span> Analysis Limits</a>
+        <a href="#pinned-assembly-stage" class="drawer-link"><span>07</span> Final Assembly</a>
+        <a href="/studio" class="drawer-link"><span>08</span> Open Studio Workspace ↗</a>
+      </nav>
+    </div>
+    <div>
+      <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
+        R-PARSE ENGINE v0.1.0 · TIER 1 DETERMINISTIC RUST CORE
+      </p>
+      <button class="btn-primary trigger-studio-modal" style="width: 100%; justify-content: center;">
+        Launch Studio Session ↗
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE CONTENT WRAPPER
+       ======================================================================== -->
+  <main class="page-wrapper" id="main-content">
+
+    <!-- HERO SECTION -->
+    <section class="section hero-section" id="hero">
+      <div class="hero-editorial-grid">
+        <div>
+          <div class="section-eyebrow">R PROGRAM ANALYSIS, UNDER THE SURFACE</div>
+          <h1 class="headline-hero">Every result leaves a trail.</h1>
+          <p class="copy-hero">
+            A number sits in your output. The code that made it is right there, but the path behind it isn't. R-PARSE reads R programs as evidence, so you can start at a result and work backward to the statements that shaped it.
+          </p>
+          <div class="hero-actions">
+            <button class="btn-primary trigger-studio-modal" id="hero-primary-cta">
+              <span>Enter the Studio</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <a href="#section-question" class="btn-secondary" id="hero-secondary-cta">
+              <span>Follow the evidence</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+
+        <div style="align-self: end;">
+          <div class="case-file-badge" style="margin-bottom: 16px;">
+            <span class="dot"></span> CASE FILE 001 · df$total
+          </div>
+          <p style="font-family: var(--font-mono); font-size: var(--fs-mono-sm); color: var(--text-muted); line-height: 1.6;">
+            Target Column: <strong style="color: var(--accent-orange);">df$total</strong><br>
+            Ground Truth: <span style="color: var(--text-ink);">price * quantity = 60</span><br>
+            Analysis State: <span style="color: var(--accent-orange);">KNOWN_STATIC</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Refined 2D Column Provenance Instrument -->
+      <div class="hero-instrument-wrapper">
+        <div class="hero-instrument" id="hero-analytical-instrument" role="region" aria-label="Column Provenance Dependency Instrument">
+          <!-- Instrument Header Bar -->
+          <div class="instrument-header-bar">
+            <div class="instrument-tag-group">
+              <span class="instrument-dot-pulse"></span>
+              <span class="instrument-title-tag">FIG. 00 / COLUMN PROVENANCE TOPOLOGY</span>
+            </div>
+            <div class="instrument-provenance-status">
+              <span class="provenance-criterion-label">CRITERION:</span>
+              <span class="provenance-criterion-target">df$total</span>
+              <span class="provenance-status-pill">KNOWN_STATIC</span>
+            </div>
+          </div>
+
+          <!-- Main 2D Dependency Stage -->
+          <div class="instrument-stage">
+            <!-- Left: Source Column Nodes -->
+            <div class="stage-sources-column">
+              <div class="provenance-node node-source" id="hero-node-price" data-node="price" tabindex="0" role="button" aria-label="Source Column price">
+                <div class="node-badge-row">
+                  <span class="node-role-badge">SOURCE INPUT</span>
+                  <span class="node-version-tag">v0</span>
+                </div>
+                <div class="node-main-identifier">price</div>
+                <div class="node-vector-display">
+                  <span class="vector-fence">[</span>
+                  <span class="vector-element">10</span>,
+                  <span class="vector-element">20</span>
+                  <span class="vector-fence">]</span>
+                </div>
+                <div class="node-type-caption">numeric vector (2 rows)</div>
+              </div>
+
+              <div class="provenance-node node-source" id="hero-node-quantity" data-node="quantity" tabindex="0" role="button" aria-label="Source Column quantity">
+                <div class="node-badge-row">
+                  <span class="node-role-badge">SOURCE INPUT</span>
+                  <span class="node-version-tag">v0</span>
+                </div>
+                <div class="node-main-identifier">quantity</div>
+                <div class="node-vector-display">
+                  <span class="vector-fence">[</span>
+                  <span class="vector-element">2</span>,
+                  <span class="vector-element">3</span>
+                  <span class="vector-fence">]</span>
+                </div>
+                <div class="node-type-caption">numeric vector (2 rows)</div>
+              </div>
+            </div>
+
+            <!-- Center: Multiplication Operator Node -->
+            <div class="stage-operator-column">
+              <div class="provenance-node node-operator" id="hero-node-op" data-node="op" tabindex="0" role="button" aria-label="Multiplication Operator">
+                <div class="operator-symbol">×</div>
+                <div class="operator-title">VECTOR MULTIPLY</div>
+                <div class="operator-equations">
+                  <div class="equation-row"><code>10 × 2 = 20</code></div>
+                  <div class="equation-row highlight"><code>20 × 3 = 60</code></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Target Column Node (df$total) with restrained signal orange highlight -->
+            <div class="stage-target-column">
+              <div class="provenance-node node-target" id="hero-node-total" data-node="total" tabindex="0" role="button" aria-label="Target Result df$total">
+                <div class="node-badge-row">
+                  <span class="node-role-badge target-badge">TARGET EVIDENCE</span>
+                  <span class="node-version-tag target-version">v1</span>
+                </div>
+                <div class="node-main-identifier target-identifier">df$total</div>
+                <div class="node-vector-display target-vector">
+                  <span class="vector-fence">[</span>
+                  <span class="vector-element">20</span>,
+                  <span class="vector-element highlight-val">60</span>
+                  <span class="vector-fence">]</span>
+                </div>
+                <div class="node-type-caption target-caption">
+                  <span class="provenance-evidence-line">ROW 2 GROUND TRUTH: <strong>60</strong></span>
+                  <span class="provenance-tier-tag">TIER 1 STATIC DERIVATION</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic SVG Vector Connectors -->
+            <svg class="stage-connectors-svg" id="hero-connectors-svg" aria-hidden="true">
+              <defs>
+                <marker id="arrow-ink" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#121212" />
+                </marker>
+                <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 9 5 L 0 9 z" fill="#FF5A1F" />
+                </marker>
+              </defs>
+              <path id="path-price-op" class="connector-spline" d="" marker-end="url(#arrow-ink)" />
+              <path id="path-qty-op" class="connector-spline" d="" marker-end="url(#arrow-ink)" />
+              <path id="path-op-total" class="connector-spline spline-target" d="" marker-end="url(#arrow-orange)" />
+            </svg>
+          </div>
+
+          <!-- Instrument Bottom Breadcrumb & Direction -->
+          <div class="instrument-footer-bar">
+            <div class="instrument-trail-breadcrumb" id="hero-trail-status">
+              <span class="trail-step">S1 (price, quantity)</span>
+              <span class="trail-arrow">──></span>
+              <span class="trail-step">S3 (df$total &lt;- price * quantity)</span>
+              <span class="trail-arrow">──></span>
+              <span class="trail-result">60 [KNOWN_STATIC]</span>
+            </div>
+            <div class="instrument-interaction-hint">
+              <span>● INTERACTIVE: HOVER NODES TO TRACE PATH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Hero Metadata Row -->
+      <div class="hero-metadata-row">
+        <span>FIG. 00 / THE RESULT</span>
+        <span>SOURCE → STRUCTURE → EVIDENCE</span>
+        <span>SCROLL TO INVESTIGATE ↓</span>
+      </div>
+    </section>
+
+    <!-- SECTION ONE — THE QUESTION -->
+    <section class="section section-question" id="section-question">
+      <div class="question-grid">
+        <div>
+          <div class="section-eyebrow">01 / UNASKED ACCURACY</div>
+          <h2 class="headline-section">A number you didn't ask about.</h2>
+          <div class="case-file-badge" style="margin-bottom: 24px;">
+            <span class="dot"></span> CASE FILE 001 · df$total
+          </div>
+          <p class="copy-editorial">
+            Row two says 60. Nobody questions it, until someone does.
+          </p>
+          <p class="copy-editorial">
+            Which inputs fed it? Which line produced it? Which of the other forty statements in this script had anything to do with it?
+          </p>
+          <p class="copy-editorial">
+            You could read the file top to bottom and hope. Or you could treat it like a case.
+          </p>
+          <div class="copy-transition">
+            Every case begins with the same move: stop reading forward. Start at the result.
+          </div>
+        </div>
+
+        <div>
+          <div class="evidence-artifact-card">
+            <div class="artifact-header">
+              <span class="artifact-id">OUTPUT DATASET · df</span>
+              <span class="artifact-status">TARGET IDENTIFIED</span>
+            </div>
+            <table class="dataframe-table-mockup">
+              <thead>
+                <tr>
+                  <th>Row</th>
+                  <th>price</th>
+                  <th>quantity</th>
+                  <th>total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>10</td>
+                  <td>2</td>
+                  <td>20</td>
+                </tr>
+                <tr class="row-target">
+                  <td>2</td>
+                  <td>20</td>
+                  <td>3</td>
+                  <td class="cell-highlight">
+                    60
+                    <span class="target-callout-bubble">Target under scrutiny</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="artifact-footer-meta">
+              <span>CRITERION: df$total[2]</span>
+              <span>ORIGIN: UNKNOWN UNTIL TRACED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION TWO — THE CASE OPENS -->
+    <section class="section section-case-opens" id="section-case-opens">
+      <div class="section-eyebrow">02 / THE FORENSIC SCENE</div>
+      <h2 class="headline-section">Code is a scene. Treat it like one.</h2>
+      <p class="copy-editorial" style="max-width: 780px;">
+        R-PARSE turns source code into structure you can inspect: how it's built, what depends on what, and how one dataframe column was derived from others.
+      </p>
+      <p class="copy-editorial" style="max-width: 780px;">
+        It doesn't summarize your script or guess at intent. It records relationships and shows you where they came from.
+      </p>
+      <div class="copy-transition">Let's open one.</div>
+
+      <div class="scene-composition-wrapper">
+        <!-- Statement 1 -->
+        <div class="source-statement-layer">
+          <span class="layer-lineno">L01</span>
+          <div class="layer-code"><span class="identifier">df</span> <span class="operator">&lt;-</span> <span class="keyword">data.frame</span>(
+  <span class="identifier">price</span> <span class="operator">=</span> <span class="keyword">c</span>(<span class="number">10</span>, <span class="number">20</span>),
+  <span class="identifier">quantity</span> <span class="operator">=</span> <span class="keyword">c</span>(<span class="number">2</span>, <span class="number">3</span>)
+)</div>
+          <span class="layer-annotation-pill">Dataframe Constructor · Columns: price, quantity</span>
+        </div>
+
+        <!-- Statement 2 -->
+        <div class="source-statement-layer">
+          <span class="layer-lineno">L06</span>
+          <div class="layer-code"><span class="identifier">title</span> <span class="operator">&lt;-</span> <span class="string">"Q3 report"</span></div>
+          <span class="layer-annotation-pill">Scalar Variable · Independent Scope</span>
+        </div>
+
+        <!-- Statement 3 -->
+        <div class="source-statement-layer layer-target">
+          <span class="layer-lineno">L08</span>
+          <div class="layer-code"><span class="target-token">df$total</span> <span class="operator">&lt;-</span> <span class="identifier">df$price</span> <span class="operator">*</span> <span class="identifier">df$quantity</span></div>
+          <span class="layer-annotation-pill">Direct Column Assignment · Target df$total</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION THREE — FOLLOW THE EVIDENCE (PINNED SCROLL STAGE) -->
+    <section class="pinned-evidence-stage" id="pinned-evidence-stage">
+      <div class="pinned-sticky-viewport">
+        <div class="evidence-board-canvas">
+          <!-- Code Pane Left -->
+          <div class="evidence-code-pane">
+            <div class="evidence-code-header">
+              <span>CASE FILE 001 / TARGET: df$total</span>
+              <span id="pinned-metric-val" style="color: var(--accent-orange); font-weight: 700;">2 of 3 statements relevant</span>
+            </div>
+
+            <!-- Statement 1 -->
+            <div class="code-stmt-row" id="stmt-row-1">
+              <code>df &lt;- data.frame(price = c(10, 20), quantity = c(2, 3))</code>
+              <span class="stmt-tag-right tag-relevant">Input Source</span>
+            </div>
+
+            <!-- Statement 2 (Unrelated) -->
+            <div class="code-stmt-row" id="stmt-row-2">
+              <code>title &lt;- "Q3 report"</code>
+              <span class="stmt-tag-right tag-dropped">Unrelated · Excluded</span>
+            </div>
+
+            <!-- Statement 3 (Target) -->
+            <div class="code-stmt-row" id="stmt-row-3">
+              <code>df$total &lt;- df$price * df$quantity</code>
+              <span class="stmt-tag-right tag-relevant">Target Expression</span>
+            </div>
+
+            <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule-fine); font-family: var(--font-mono); font-size: var(--fs-mono-xs); color: var(--text-muted); display: flex; justify-content: space-between;">
+              <span>SCROLL TO STEP THROUGH DERIVATION</span>
+              <span style="color: var(--accent-orange);">R-PARSE DETERMINISTIC CORE</span>
+            </div>
+          </div>
+
+          <!-- Derivation Graph Pane Right -->
+          <div class="evidence-graph-pane">
+            <div style="font-family: var(--font-mono); font-size: var(--fs-mono-xs); font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              Column Derivation Topology
+            </div>
+
+            <div class="graph-svg-container">
+              <svg class="derivation-svg" viewBox="0 0 400 240">
+                <!-- Spline Price -> Total -->
+                <path class="svg-edge-path" id="svg-edge-1" d="M 120 70 C 200 70, 200 120, 280 120" />
+                <!-- Spline Quantity -> Total -->
+                <path class="svg-edge-path" id="svg-edge-2" d="M 120 170 C 200 170, 200 120, 280 120" />
+
+                <!-- Price Node -->
+                <g transform="translate(40, 50)">
+                  <rect class="svg-node-rect" width="90" height="40" />
+                  <text x="45" y="25" fill="#121212" font-family="monospace" font-size="12" font-weight="600" text-anchor="middle">price (v0)</text>
+                </g>
+
+                <!-- Quantity Node -->
+                <g transform="translate(40, 150)">
+                  <rect class="svg-node-rect" width="90" height="40" />
+                  <text x="45" y="25" fill="#121212" font-family="monospace" font-size="12" font-weight="600" text-anchor="middle">quantity (v0)</text>
+                </g>
+
+                <!-- Target Total Node -->
+                <g transform="translate(270, 100)">
+                  <rect class="svg-node-rect is-target" width="110" height="44" />
+                  <text x="55" y="27" fill="#FF5A1F" font-family="monospace" font-size="13" font-weight="700" text-anchor="middle">df$total (v1)</text>
+                </g>
+              </svg>
+            </div>
+
+            <div class="pinned-metrics-counter">
+              <span style="font-size: var(--fs-mono-xs); color: var(--text-muted);">DERIVATION: price, quantity → total</span>
+              <span class="metrics-badge-main">● KNOWN_STATIC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION FOUR — THE CENTRAL REVEAL (BACKWARD SLICING) -->
+    <section class="section section-central-reveal" id="section-central-reveal">
+      <div class="section-eyebrow">04 / PROGRAM SLICING</div>
+      <h2 class="headline-section">The case file is long. The evidence is short.</h2>
+      <p class="copy-editorial" style="max-width: 800px;">
+        Most of what a script says is not about the thing you're asking about.
+      </p>
+      <p class="copy-editorial" style="max-width: 800px;">
+        Backward slicing doesn't rewrite your program or hand you a smaller one. It does something more honest. It leaves your code exactly as written and marks the regions that matter to your question.
+      </p>
+
+      <div class="slicing-split-composition">
+        <blockquote class="slicing-manifesto-quote">
+          The rest is not deleted. It's just not evidence.
+        </blockquote>
+
+        <div class="slicing-code-inspector">
+          <div class="inspector-header">
+            <span>R-PARSE BACKWARD SLICE REPORT · CRITERION: df$total</span>
+            <span style="color: var(--accent-orange); font-weight: 700;">2 STATEMENTS RETAINED / 1 PRUNED</span>
+          </div>
+          <div class="inspector-body">
+            <!-- Line 1: Retained -->
+            <div class="inspector-line retained-full">
+              <span style="color: var(--text-muted);">L01</span>
+              <code>df &lt;- data.frame(price = c(10, 20), quantity = c(2, 3))</code>
+              <span class="inspector-badge badge-full">[FULL] Retained</span>
+            </div>
+            <!-- Line 2: None -->
+            <div class="inspector-line retained-none">
+              <span style="color: var(--text-muted);">L06</span>
+              <code>title &lt;- "Q3 report"</code>
+              <span class="inspector-badge badge-none">[NONE] Not Retained</span>
+            </div>
+            <!-- Line 3: Retained -->
+            <div class="inspector-line retained-full">
+              <span style="color: var(--text-muted);">L08</span>
+              <code>df$total &lt;- df$price * df$quantity</code>
+              <span class="inspector-badge badge-full">[FULL] Criterion</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="copy-transition" style="margin-top: 32px;">
+          That's the principle. Here's the room where you work it.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION FIVE — THE EVIDENCE ROOM (FIVE EXHIBITS) -->
+    <section class="section section-evidence-room" id="section-evidence-room">
+      <div class="section-eyebrow">05 / THE STUDIO ARCHITECTURE</div>
+      <h2 class="headline-section">Five exhibits. One source.</h2>
+      <p class="copy-editorial" style="max-width: 760px;">
+        The R-PARSE Studio keeps your code at the center and lays out the evidence around it.
+      </p>
+
+      <!-- Exhibits Tab Strip -->
+      <div class="exhibits-tab-strip" role="tablist">
+        <button class="btn-exhibit-tab is-active" data-exhibit="provenance">01 Provenance</button>
+        <button class="btn-exhibit-tab" data-exhibit="pdg">02 PDG Graph</button>
+        <button class="btn-exhibit-tab" data-exhibit="slice">03 Backward Slice</button>
+        <button class="btn-exhibit-tab" data-exhibit="schema">04 Schema Evolution</button>
+        <button class="btn-exhibit-tab" data-exhibit="ast">05 AST Explorer</button>
+      </div>
+
+      <div class="exhibit-cards-stack">
+        <!-- Exhibit 01: Column Provenance -->
+        <article class="exhibit-card" id="exhibit-provenance">
+          <div>
+            <div class="exhibit-num">Exhibit 01 — Column Provenance</div>
+            <h3 class="exhibit-title">Where a column came from, edge by edge.</h3>
+            <p class="exhibit-copy">
+              Traces fine-grained derivation chains ($C_{in} \to C_{out}$) across base assignments, mutate verbs, and mathematical expressions, tracking precise column version lifecycles.
+            </p>
+          </div>
+          <div class="exhibit-visual-frame">
+            <svg viewBox="0 0 320 160" style="width: 100%; height: 100%;">
+              <circle cx="60" cy="50" r="20" fill="#EEEBE4" stroke="#3A3936" stroke-width="1.5" />
+              <text x="60" y="54" text-anchor="middle" font-family="monospace" font-size="10">price</text>
+              <circle cx="60" cy="110" r="20" fill="#EEEBE4" stroke="#3A3936" stroke-width="1.5" />
+              <text x="60" y="114" text-anchor="middle" font-family="monospace" font-size="10">quant</text>
+              <path d="M 80 50 L 220 80" stroke="#FF5A1F" stroke-width="2" />
+              <path d="M 80 110 L 220 80" stroke="#FF5A1F" stroke-width="2" />
+              <circle cx="240" cy="80" r="24" fill="#FFF3EB" stroke="#FF5A1F" stroke-width="2.5" />
+              <text x="240" y="84" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#FF5A1F">total</text>
+            </svg>
+          </div>
+        </article>
+
+        <!-- Exhibit 02: Program Dependency Graph -->
+        <article class="exhibit-card" id="exhibit-pdg">
+          <div>
+            <div class="exhibit-num">Exhibit 02 — Program Dependency Graph</div>
+            <h3 class="exhibit-title">Which statements depend on which.</h3>
+            <p class="exhibit-copy">
+              A unified program graph distinguishing variable data dependencies, CFG branch control dependencies, dataframe row-selection dependencies, and explicit uncertainty boundaries.
+            </p>
+          </div>
+          <div class="exhibit-visual-frame">
+            <svg viewBox="0 0 320 160" style="width: 100%; height: 100%;">
+              <rect x="30" y="25" width="80" height="32" rx="4" fill="#FFFFFF" stroke="#3A3936" />
+              <text x="70" y="45" text-anchor="middle" font-family="monospace" font-size="10">S1: df</text>
+              <rect x="30" y="105" width="80" height="32" rx="4" fill="#FFFFFF" stroke="#A39E93" stroke-dasharray="3" />
+              <text x="70" y="125" text-anchor="middle" font-family="monospace" font-size="10" fill="#77736B">S2: title</text>
+              <rect x="200" y="65" width="95" height="36" rx="4" fill="#FFF3EB" stroke="#FF5A1F" stroke-width="2" />
+              <text x="247" y="87" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#FF5A1F">S3: df$total</text>
+              <path d="M 110 41 L 200 83" stroke="#FF5A1F" stroke-width="2" />
+            </svg>
+          </div>
+        </article>
+
+        <!-- Exhibit 03: Backward Slice -->
+        <article class="exhibit-card" id="exhibit-slice">
+          <div>
+            <div class="exhibit-num">Exhibit 03 — Backward Slice</div>
+            <h3 class="exhibit-title">Pick a target; see the source regions that bear on it.</h3>
+            <p class="exhibit-copy">
+              Computes character-accurate backward slices with sub-statement attributions ([KEEP] vs [DROP]), illuminating the precise semantic elements that contribute to the target.
+            </p>
+          </div>
+          <div class="exhibit-visual-frame">
+            <div style="font-family: var(--font-mono); font-size: 11px; width: 100%; display: flex; flex-direction: column; gap: 8px;">
+              <div style="background: #FFFDF8; border-left: 3px solid var(--accent-orange); padding: 6px 8px;">
+                <span style="color: var(--accent-orange); font-weight: 700;">[KEEP]</span> df &lt;- data.frame(price, quantity)
+              </div>
+              <div style="opacity: 0.35; padding: 6px 8px;">
+                <span>[DROP]</span> title &lt;- "Q3 report"
+              </div>
+              <div style="background: #FFFDF8; border-left: 3px solid var(--accent-orange); padding: 6px 8px;">
+                <span style="color: var(--accent-orange); font-weight: 700;">[KEEP]</span> df$total &lt;- df$price * df$quantity
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Exhibit 04: Schema Evolution -->
+        <article class="exhibit-card" id="exhibit-schema">
+          <div>
+            <div class="exhibit-num">Exhibit 04 — Schema Evolution</div>
+            <h3 class="exhibit-title">How your dataframe's columns change as the program runs forward.</h3>
+            <p class="exhibit-copy">
+              Visualizes step-by-step schema modifications across the execution sequence: price, quantity... then total, showing exact diffs (+added, modified, retained).
+            </p>
+          </div>
+          <div class="exhibit-visual-frame">
+            <div style="font-family: var(--font-mono); font-size: 11px; width: 100%; display: flex; flex-direction: column; gap: 10px;">
+              <div style="background: #FFFFFF; border: 1px solid var(--rule-fine); border-radius: 4px; padding: 8px 12px;">
+                <div style="color: var(--text-muted); font-size: 10px;">STEP 1: INITIAL SCHEMA</div>
+                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                  <span style="background: var(--bg-paper); padding: 2px 6px; border-radius: 3px;">price</span>
+                  <span style="background: var(--bg-paper); padding: 2px 6px; border-radius: 3px;">quantity</span>
+                </div>
+              </div>
+              <div style="background: #FFFFFF; border: 1px solid var(--rule-fine); border-radius: 4px; padding: 8px 12px;">
+                <div style="color: var(--text-muted); font-size: 10px;">STEP 2: POST-ASSIGNMENT</div>
+                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                  <span style="background: var(--bg-paper); padding: 2px 6px; border-radius: 3px;">price</span>
+                  <span style="background: var(--bg-paper); padding: 2px 6px; border-radius: 3px;">quantity</span>
+                  <span style="background: var(--accent-orange-subtle); color: var(--accent-orange); font-weight: 700; padding: 2px 6px; border-radius: 3px;">+total</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Exhibit 05: AST Explorer -->
+        <article class="exhibit-card" id="exhibit-ast">
+          <div>
+            <div class="exhibit-num">Exhibit 05 — AST Explorer</div>
+            <h3 class="exhibit-title">The syntax and semantic structure underneath every line.</h3>
+            <p class="exhibit-copy">
+              Exposes nested expression syntax trees generated by Tree-sitter, revealing the distinction between the concrete syntax tree (CST) and normalized semantic IR representations.
+            </p>
+          </div>
+          <div class="exhibit-visual-frame">
+            <div style="font-family: var(--font-mono); font-size: 11px; width: 100%; line-height: 1.6;">
+              <div style="color: #1E3888; font-weight: 600;">▼ BinaryOperatorNode (*)</div>
+              <div style="padding-left: 18px; color: #475569;">├─ Left: ColumnAccessNode (df$price)</div>
+              <div style="padding-left: 18px; color: #475569;">└─ Right: ColumnAccessNode (df$quantity)</div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div style="margin-top: 48px; text-align: center; font-family: var(--font-mono); font-size: var(--fs-mono-sm); color: var(--text-muted);">
+        Each view reveals a different part of the same program.
+      </div>
+    </section>
+
+    <!-- SECTION SIX — EVIDENCE, WITH LIMITS -->
+    <section class="section section-limits" id="section-limits">
+      <div class="limits-grid">
+        <div>
+          <div class="section-eyebrow">06 / BOUNDARIES & CERTAINTY</div>
+          <h2 class="headline-section">What the analysis can't see, it says so.</h2>
+          <p class="copy-editorial">
+            R is dynamic. Code that builds column names at runtime, or modifies programs as they run, can exceed what static analysis can establish. Joins like <code>left_join</code> and <code>inner_join</code> are not modeled today.
+          </p>
+          <p class="copy-editorial">
+            When R-PARSE can't establish something, the result may come back as unknown. An investigator who marks a gap is more useful than one who invents an answer.
+          </p>
+          <div style="margin-top: 24px; font-family: var(--font-mono); font-size: var(--fs-mono-xs); color: var(--text-muted); line-height: 1.8;">
+            • No dynamic metaprogramming fabrication (eval, substitute)<br>
+            • Joins not modeled in frozen research scope<br>
+            • Explicit uncertainty (UNKNOWN_STATIC) preserved<br>
+            • Tier 1 static analysis never executes GNU R
+          </div>
+        </div>
+
+        <div>
+          <div class="limits-boundary-diagram">
+            <div class="diagram-header">
+              <span>PROVENANCE CERTAINTY HORIZON</span>
+              <span style="color: var(--accent-amber);">BOUNDARY ENFORCED</span>
+            </div>
+
+            <div class="boundary-nodes-flow">
+              <div class="b-node known">price (v0)</div>
+              <span style="color: var(--accent-orange); font-size: 1.2rem;">→</span>
+              <div class="b-node known">total (v1)</div>
+              <span style="color: var(--text-subtle); font-size: 1.2rem;">→</span>
+              <div class="boundary-line-separator"></div>
+              <div class="boundary-label">HORIZON</div>
+              <div class="b-node unknown">UNKNOWN_STATIC</div>
+            </div>
+
+            <p>
+              When a column is indexed dynamically, e.g. <code>df[[col_name]]</code>, R-PARSE marks dependencies as <code>UNKNOWN_STATIC</code> rather than guessing false relations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION SEVEN — THE FINAL CHOREOGRAPHY (PINNED ASSEMBLY) -->
+    <section class="pinned-assembly-stage" id="pinned-assembly-stage">
+      <div class="assembly-sticky-viewport">
+        <!-- Section Header Block -->
+        <div class="assembly-header-block" id="assembly-header-block">
+          <div class="section-eyebrow" style="color: var(--accent-orange);">07 / THE STRUCTURAL RESOLUTION</div>
+          <h2 class="headline-section assembly-title">The code is the scene. The analysis is the evidence.</h2>
+          <p class="copy-editorial assembly-subcopy">
+            Bring a result you don't fully trust. Start at the number and follow the trail back.
+          </p>
+          <div class="assembly-actions">
+            <button class="btn-primary trigger-studio-modal" id="assembly-cta-btn">
+              <span>Enter the Studio</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Assembly Visual Stage with Canvas & Fallback -->
+        <div class="assembly-stage-frame">
+          <canvas id="assembly-3d-canvas" aria-label="Structural Assembly Canvas"></canvas>
+
+          <!-- Immediate Stable Fallback Layout (never an empty dark box) -->
+          <div class="assembly-fallback" id="assembly-fallback">
+            <div class="fallback-grid">
+              <div class="fallback-node fb-stmt">S1: df &lt;- data.frame(...)</div>
+              <div class="fallback-node fb-src">price (v0) [10, 20]</div>
+              <div class="fallback-arrow">──></div>
+              <div class="fallback-node fb-op">× (mutate)</div>
+              <div class="fallback-arrow">──></div>
+              <div class="fallback-node fb-target">df$total (v1) [20, 60]</div>
+              <div class="fallback-node fb-stmt">S3: df$total &lt;- ...</div>
+            </div>
+            <div class="fallback-pruned-note">
+              <span>S2: title &lt;- "Q3 report"</span> · <em>[PRUNED FROM BACKWARD SLICE]</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       FOOTER — THE RESOLUTION (ORANGE FINALE)
+       ======================================================================== -->
+  <footer class="site-footer" id="site-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-left-col">
+          <div class="footer-eyebrow">08 / THE RESOLUTION · PROVABLE GROUND TRUTH</div>
+          <h2 class="footer-headline">
+            Start with the result.<br>Follow the evidence.
+          </h2>
+          <p class="footer-subcopy">
+            Bring a result you don't fully trust. R-PARSE gives the R language research-grade column provenance, unified PDG analysis, and deterministic static slicing — offline, verifiable, and built in Rust.
+          </p>
+        </div>
+
+        <div class="footer-actions">
+          <button class="btn-footer-cta trigger-studio-modal" id="footer-cta-btn">
+            <span>Enter R-PARSE Studio</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+          <a href="how-to-use.html" class="btn-footer-backtop" id="btn-footer-how-to-use" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <span>📖 How to Use</span>
+          </a>
+          <div class="footer-cli-pill" title="CLI Launch Command">
+            <span class="cli-prompt">$</span>
+            <span>rparse studio --open</span>
+          </div>
+          <a href="#hero" class="btn-footer-backtop" id="btn-back-top">
+            <span>Back to the investigation</span>
+            <span aria-hidden="true">↑</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-nav-row">
+        <a href="how-to-use.html" class="footer-nav-link" id="footer-nav-how-to-use" style="color: var(--accent-orange); font-weight: 700;">How to Use (Guide)</a>
+        <a href="../implementation/showcase_report.html" target="_blank" class="footer-nav-link">Showcase Report (Offline)</a>
+        <a href="../docs/ARCHITECTURE.md" target="_blank" class="footer-nav-link">System Architecture (ADR-001)</a>
+        <a href="../README.md" target="_blank" class="footer-nav-link">CLI Documentation</a>
+        <a href="../research/scope-freeze.md" target="_blank" class="footer-nav-link">Scope Freeze Specification</a>
+      </div>
+
+      <div class="footer-bottom-meta">
+        <span>R-PARSE · Robust R Language Parsing and Program Analysis Engine</span>
+        <span>Tier 1 Deterministic Rust Core · Broad-Compatibility Program Slicing</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       STUDIO LAUNCH & CODE-ENTRY WORKBENCH MODAL (EDITORIAL REDESIGN)
+       ======================================================================== -->
+  <div class="modal-backdrop studio-modal-backdrop" id="studio-modal" role="dialog" aria-modal="true" aria-labelledby="studio-headline" style="display:none;">
+    <div class="studio-dialog" id="studio-dialog">
+      <!-- Modal Header -->
+      <header class="studio-modal-header">
+        <div class="studio-header-brand">
+          <span class="studio-wordmark">R—PARSE</span>
+          <span class="studio-badge-label">STUDIO</span>
+        </div>
+        <div class="studio-header-actions">
+          <button class="btn-studio-back" id="btn-studio-back" type="button" aria-label="Return to launch screen" style="display:none;">
+            <span aria-hidden="true">←</span>
+            <span>Launch</span>
+          </button>
+          <button class="studio-close-btn" id="modal-close-btn" type="button" aria-label="Close Studio Dialog">
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Modal Stage Container -->
+      <div class="studio-modal-stage" id="studio-modal-stage">
+        <!-- PHASE ONE: Split Launch Composition -->
+        <div class="studio-launch-view" id="studio-launch-view">
+          <!-- Left: Editorial Headline & Narrative -->
+          <div class="studio-launch-editorial" id="studio-launch-editorial">
+            <span class="studio-kicker">Program Analysis Engine</span>
+            <h2 class="studio-headline" id="studio-headline">Look beyond the code.</h2>
+            <p class="studio-supporting-copy">
+              Step inside your R program and explore how its structure and data connect.
+            </p>
+          </div>
+
+          <!-- Right: Compact Action Section -->
+          <div class="studio-launch-action" id="studio-launch-action">
+            <div class="studio-action-content">
+              <h3 class="studio-action-title">Enter R-PARSE Studio</h3>
+              <p class="studio-action-copy">
+                Interactive workbench for AST syntax, dataframe column provenance, and program slicing.
+              </p>
+              <button class="btn-studio-open" id="btn-open-studio-launch" type="button">
+                <span>Open Studio</span>
+                <span class="btn-arrow" aria-hidden="true">→</span>
+              </button>
+              <div class="studio-launch-hint" id="studio-launch-hint" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE TWO: Code-Entry Interface -->
+        <div class="studio-entry-view" id="studio-entry-view" style="display:none;">
+          <div class="studio-entry-container">
+            <div class="studio-entry-topbar">
+              <span class="studio-buffer-title">Source Buffer</span>
+              <span class="studio-buffer-stats" id="entry-char-count">0 lines · 0 chars</span>
+            </div>
+
+            <div class="studio-code-input-wrapper">
+              <textarea class="studio-code-textarea" id="entry-source-textarea" spellcheck="false" placeholder="# Paste or write your R pipeline script here...&#10;df &lt;- data.frame(price = 100, quantity = 2, age = 30)&#10;filtered &lt;- filter(df, price &gt; 0)&#10;df2 &lt;- mutate(filtered, total = price * quantity, discount = age * 0.05)&#10;df3 &lt;- mutate(df2, tax = total * 0.18)"></textarea>
+            </div>
+
+            <div class="studio-entry-meta">
+              <span class="studio-meta-hint"><kbd>Shift+Enter</kbd> newline <span class="studio-meta-sep">·</span> <kbd>Ctrl+Enter</kbd> to analyze</span>
+            </div>
+
+            <div class="studio-entry-actions">
+              <button class="btn-studio-analyze" id="btn-analyze-entry" type="button">
+                <span class="play-glyph" aria-hidden="true">▶</span>
+                <span id="btn-analyze-text">Analyze Code</span>
+              </button>
+
+              <label class="btn-studio-secondary" id="btn-entry-load-file" title="Load local R file (.R, .r, .Rmd)">
+                <span>Load File...</span>
+                <input type="file" id="entry-file-input" accept=".R,.r,.Rmd" style="display:none;" />
+              </label>
+
+              <a href="/studio" class="btn-studio-secondary" id="btn-open-full-studio" title="Open full studio analysis workspace" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                <span>Workspace ↗</span>
+              </a>
+
+              <div class="studio-example-container">
+                <select class="studio-example-select" id="entry-example-select" aria-label="Load Example R Script">
+                  <option value="">Load Example...</option>
+                  <option value="showcase">Showcase Pipeline (showcase_pipeline.R)</option>
+                  <option value="filter">Filter Provenance (RowSelection)</option>
+                  <option value="canonical">Canonical Lineage (price * quantity)</option>
+                  <option value="adversarial">Adversarial Alias Renaming</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="studio-validation-banner" id="entry-validation-error" style="display:none;" role="alert"></div>
+            <div class="studio-feedback-banner" id="studio-analysis-feedback" style="display:none;" role="status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script src="ribbon.js"></script>
+  <script src="hero3d.js"></script>
+  <script src="assembly.js"></script>
+  <script src="investigation.js"></script>
+</body>
+</html>

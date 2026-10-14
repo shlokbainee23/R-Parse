@@ -1,0 +1,8 @@
+[package]
+name = "rparse-core"
+version = "0.1.0"
+edition = "2021"
+description = "Foundational types, spans, diagnostics, and errors for R-PARSE"
+
+[dependencies]
+thiserror = "1.0"

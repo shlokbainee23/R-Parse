@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Use R-PARSE — Beginner-Friendly Tutorial & Reference Guide</title>
+  <meta name="description" content="Complete beginner-friendly guide to R-PARSE: from inspecting your first R dataframe to understanding static column provenance, program dependence graphs, and backward slicing.">
+  
+  <!-- Typography & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Shared Design System & Fallback Paths -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="landing/styles.css">
+
+  <style>
+    /* ==========================================================================
+       HOW TO USE R-PARSE — DOCUMENTATION DESIGN SYSTEM
+       Theme: Warm Editorial Paper, Near-Black Ink, Signal Orange Accents,
+              High-Legibility Code Blocks, Structured Navigation
+       ========================================================================== */
+    :root {
+      --doc-bg: #F7F5F0;
+      --doc-surface: #FFFFFF;
+      --doc-surface-subtle: #EEEBE4;
+      --doc-border: rgba(18, 18, 18, 0.12);
+      --doc-border-strong: rgba(18, 18, 18, 0.24);
+      --doc-text-primary: #121212;
+      --doc-text-secondary: #3A3936;
+      --doc-text-muted: #6B675E;
+      --doc-accent-orange: #FF5A1F;
+      --doc-accent-orange-hover: #E04810;
+      --doc-accent-orange-subtle: rgba(255, 90, 31, 0.08);
+      --doc-accent-lilac: #7C3AED;
+      --doc-accent-lilac-subtle: rgba(124, 58, 237, 0.08);
+      --doc-success: #059669;
+      --doc-success-subtle: rgba(5, 150, 105, 0.08);
+      --doc-warning: #D97706;
+      --doc-warning-subtle: rgba(217, 119, 6, 0.08);
+      --doc-error: #DC2626;
+      --doc-error-subtle: rgba(220, 38, 38, 0.08);
+      --doc-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --doc-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --doc-sidebar-w: 280px;
+      --doc-header-h: 60px;
+    }
+
+    /* Baseline Document Styling */
+    html, body {
+      background-color: var(--doc-bg);
+      color: var(--doc-text-primary);
+      font-family: var(--doc-font-sans);
+      font-size: 16px;
+      line-height: 1.65;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    /* Top Documentation Header Bar */
+    .doc-nav-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: var(--doc-header-h);
+      background: rgba(247, 245, 240, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--doc-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .doc-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .doc-brand-logo {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: var(--doc-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-brand-logo span.badge-pill {
+      font-family: var(--doc-font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: var(--doc-accent-orange);
+      color: #FFFFFF;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .doc-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-header-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .btn-header-link.btn-subtle {
+      color: var(--doc-text-secondary);
+      background: transparent;
+      border: 1px solid var(--doc-border);
+    }
+
+    .btn-header-link.btn-subtle:hover {
+      background: var(--doc-surface-subtle);
+      border-color: var(--doc-border-strong);
+      color: var(--doc-text-primary);
+    }
+
+    .btn-header-link.btn-primary {
+      background: var(--doc-accent-orange);
+      color: #FFFFFF;
+      border: 1px solid var(--doc-accent-orange);
+    }
+
+    .btn-header-link.btn-primary:hover {
+      background: var(--doc-accent-orange-hover);
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--doc-border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--doc-text-primary);
+    }
+
+    /* Layout Container */
+    .doc-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      padding: 0 24px;
+      gap: 40px;
+      position: relative;
+    }
+
+    /* Left Sticky Table of Contents Sidebar */
+    .doc-sidebar {
+      width: var(--doc-sidebar-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: calc(var(--doc-header-h) + 24px);
+      height: calc(100vh - var(--doc-header-h) - 48px);
+      overflow-y: auto;
+      padding-right: 12px;
+      scrollbar-width: thin;
+    }
+
+    .doc-toc-title {
+      font-family: var(--doc-font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--doc-text-muted);
+      margin-bottom: 12px;
+      padding-left: 8px;
+    }
+
+    .doc-toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .doc-toc-item a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      color: var(--doc-text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s ease;
+      line-height: 1.35;
+    }
+
+    .doc-toc-item a:hover {
+      color: var(--doc-text-primary);
+      background: var(--doc-surface-subtle);
+    }
+
+    .doc-toc-item a.active {
+      color: var(--doc-accent-orange);
+      font-weight: 700;
+      background: var(--doc-accent-orange-subtle);
+      border-left-color: var(--doc-accent-orange);
+    }
+
+    .doc-toc-item span.toc-num {
+      font-family: var(--doc-font-mono);
+      font-size: 0.72rem;
+      color: var(--doc-text-muted);
+    }
+
+    .doc-toc-divider {
+      height: 1px;
+      background: var(--doc-border);
+      margin: 12px 8px;
+    }
+
+    /* Main Reading Content */
+    .doc-content {
+      flex: 1;
+      min-width: 0;
+      max-width: 860px;
+      padding: 32px 0 96px;
+    }
+
+    /* Hero Banner Area */
+    .doc-hero {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--doc-border);
+    }
+
+    .doc-eyebrow {
+      font-family: var(--doc-font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--doc-accent-orange);
+      margin-bottom: 8px;
+    }
+
+    .doc-title {
+      font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--doc-text-primary);
+      margin: 0 0 12px 0;
+    }
+
+    .doc-tagline {
+      font-size: 1.25rem;
+      line-height: 1.45;
+      color: var(--doc-text-secondary);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .doc-lead-intro {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--doc-text-secondary);
+    }
+
+    /* Documentation Sections */
+    .doc-section {
+      margin-bottom: 64px;
+      scroll-margin-top: calc(var(--doc-header-h) + 24px);
+    }
+
+    .doc-section h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: var(--doc-text-primary);
+      margin: 0 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--doc-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .doc-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--doc-text-primary);
+      margin: 32px 0 12px 0;
+    }
+
+    .doc-section h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--doc-text-primary);
+      margin: 20px 0 8px 0;
+    }
+
+    .doc-section p {
+      margin-bottom: 16px;
+      color: var(--doc-text-secondary);
+    }
+
+    .doc-section p strong {
+      color: var(--doc-text-primary);
+    }
+
+    .doc-section ul, .doc-section ol {
+      margin: 0 0 20px 24px;
+      color: var(--doc-text-secondary);
+    }
+
+    .doc-section li {
+      margin-bottom: 8px;
+      line-height: 1.55;
+    }
+
+    /* Visual Workflow Switcher Cards */
+    .workflow-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0 32px;
+    }
+
+    .workflow-card {
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .workflow-card:hover {
+      border-color: var(--doc-accent-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .workflow-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .workflow-icon {
+      font-size: 1.6rem;
+    }
+
+    .workflow-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--doc-text-primary);
+    }
+
+    .workflow-badge {
+      display: inline-block;
+      font-family: var(--doc-font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--doc-accent-orange-subtle);
+      color: var(--doc-accent-orange);
+      margin-bottom: 8px;
+    }
+
+    .workflow-desc {
+      font-size: 0.92rem;
+      color: var(--doc-text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .workflow-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .workflow-btn-orange {
+      background: var(--doc-accent-orange);
+      color: #FFFFFF;
+    }
+
+    .workflow-btn-orange:hover {
+      background: var(--doc-accent-orange-hover);
+    }
+
+    .workflow-btn-dark {
+      background: var(--doc-text-primary);
+      color: #FFFFFF;
+    }
+
+    .workflow-btn-dark:hover {
+      background: #252525;
+    }
+
+    /* Numbered Steps Architecture */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin: 24px 0 32px;
+    }
+
+    .step-card {
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--doc-accent-orange);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.85rem;
+      font-family: var(--doc-font-mono);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--doc-text-primary);
+      margin: 0;
+    }
+
+    /* Code Blocks & Terminal Boxes */
+    .code-container {
+      background: #121216;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      margin: 14px 0 18px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      background: #1A1A20;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-lang-label {
+      font-family: var(--doc-font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-copy-code {
+      font-family: var(--doc-font-mono);
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy-code:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF;
+    }
+
+    .btn-copy-code.copied {
+      background: var(--doc-accent-orange) !important;
+      color: #FFFFFF !important;
+      border-color: var(--doc-accent-orange) !important;
+    }
+
+    pre.code-body {
+      margin: 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: var(--doc-font-mono);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #F1F5F9;
+    }
+
+    pre.code-body code {
+      font-family: inherit;
+    }
+
+    code.inline-code {
+      font-family: var(--doc-font-mono);
+      font-size: 0.84em;
+      background: rgba(18, 18, 18, 0.06);
+      color: var(--doc-text-primary);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(18, 18, 18, 0.08);
+    }
+
+    /* Editorial Callouts / Admonitions */
+    .doc-callout {
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      border-left: 4px solid;
+      background: var(--doc-surface);
+    }
+
+    .doc-callout-note {
+      border-color: #3B82F6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .doc-callout-note .callout-title { color: #1D4ED8; }
+
+    .doc-callout-tip {
+      border-color: var(--doc-success);
+      background: var(--doc-success-subtle);
+    }
+    .doc-callout-tip .callout-title { color: #047857; }
+
+    .doc-callout-important {
+      border-color: var(--doc-accent-orange);
+      background: var(--doc-accent-orange-subtle);
+    }
+    .doc-callout-important .callout-title { color: #C2410C; }
+
+    .doc-callout-warning {
+      border-color: var(--doc-warning);
+      background: var(--doc-warning-subtle);
+    }
+    .doc-callout-warning .callout-title { color: #B45309; }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Comparison & Specification Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 20px 0 24px;
+      border: 1px solid var(--doc-border);
+      border-radius: 8px;
+      background: var(--doc-surface);
+    }
+
+    table.doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    table.doc-table th {
+      background: var(--doc-surface-subtle);
+      color: var(--doc-text-primary);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--doc-border);
+      font-family: var(--doc-font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    table.doc-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(18, 18, 18, 0.06);
+      color: var(--doc-text-secondary);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    table.doc-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.doc-table tr:hover td {
+      background: rgba(0, 0, 0, 0.015);
+    }
+
+    /* Expandable Progressive Disclosures */
+    details.doc-disclosure {
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 8px;
+      margin: 12px 0 18px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    details.doc-disclosure[open] {
+      border-color: var(--doc-border-strong);
+    }
+
+    summary.doc-disclosure-summary {
+      padding: 12px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--doc-text-primary);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    summary.doc-disclosure-summary:hover {
+      background: var(--doc-surface-subtle);
+    }
+
+    .doc-disclosure-body {
+      padding: 16px;
+      border-top: 1px solid var(--doc-border);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: var(--doc-text-secondary);
+      background: var(--doc-bg);
+    }
+
+    /* View Badge Pills */
+    .view-card {
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0 28px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .view-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--doc-border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .view-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .view-letter-tag {
+      font-family: var(--doc-font-mono);
+      font-weight: 800;
+      font-size: 0.78rem;
+      background: #121212;
+      color: #FFFFFF;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .view-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--doc-text-primary);
+    }
+
+    .view-qa-block {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+    }
+
+    .view-qa-label {
+      font-weight: 700;
+      color: var(--doc-text-primary);
+      font-family: var(--doc-font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+
+    .view-qa-text {
+      color: var(--doc-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Back to Top Floating Trigger */
+    .btn-back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #121212;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 999;
+    }
+
+    .btn-back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .btn-back-to-top:hover {
+      background: var(--doc-accent-orange);
+      transform: translateY(-2px);
+    }
+
+    /* Footer Meta */
+    .doc-footer {
+      border-top: 1px solid var(--doc-border);
+      padding: 40px 0 60px;
+      margin-top: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.88rem;
+      color: var(--doc-text-muted);
+    }
+
+    .doc-footer a {
+      color: var(--doc-text-secondary);
+      text-decoration: underline;
+    }
+
+    .doc-footer a:hover {
+      color: var(--doc-accent-orange);
+    }
+
+    /* Responsive Adaptations */
+    @media (max-width: 960px) {
+      .doc-sidebar {
+        display: none;
+      }
+      .mobile-menu-toggle {
+        display: block;
+      }
+      .mobile-toc-drawer {
+        display: block;
+        background: var(--doc-surface);
+        border: 1px solid var(--doc-border);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .workflow-switcher {
+        grid-template-columns: 1fr;
+      }
+      .view-qa-block {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+      .doc-content {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="doc-nav-header">
+    <a href="index.html" class="doc-brand-group" title="R-PARSE Investigation Home">
+      <span class="doc-brand-logo">
+        R—PARSE
+        <span class="badge-pill">Guide</span>
+      </span>
+    </a>
+
+    <div class="doc-header-actions">
+      <a href="/" class="btn-header-link btn-subtle" id="link-header-investigation">
+        <span>←</span>
+        <span>Investigation</span>
+      </a>
+      <a href="/studio" class="btn-header-link btn-primary" id="link-header-studio">
+        <span>Open Studio</span>
+        <span>↗</span>
+      </a>
+      <button class="mobile-menu-toggle" id="btn-toggle-mobile-toc" aria-label="Toggle Table of Contents">
+        ☰ Topics
+      </button>
+    </div>
+  </header>
+
+  <!-- Document Layout Container -->
+  <div class="doc-container">
+
+    <!-- Left Sticky Sidebar Table of Contents -->
+    <aside class="doc-sidebar" id="doc-sidebar" aria-label="Table of contents">
+      <div class="doc-toc-title">Guide Navigation</div>
+      <ul class="doc-toc-list">
+        <li class="doc-toc-item"><a href="#welcome" class="active"><span class="toc-num">01</span> Welcome to R-PARSE</a></li>
+        <li class="doc-toc-item"><a href="#choose-workflow"><span class="toc-num">02</span> Choose Your Workflow</a></li>
+        <li class="doc-toc-item"><a href="#method-a-studio"><span class="toc-num">03</span> Method A — Visual Studio</a></li>
+        <li class="doc-toc-item"><a href="#five-views"><span class="toc-num">04</span> Five Analysis Views</a></li>
+        <li class="doc-toc-item"><a href="#method-b-cli"><span class="toc-num">05</span> Method B — Command Line</a></li>
+        <li class="doc-toc-item"><a href="#cli-output"><span class="toc-num">06</span> Understanding CLI Output</a></li>
+        <li class="doc-toc-item"><a href="#complete-example"><span class="toc-num">07</span> End-to-End Example</a></li>
+        <li class="doc-toc-item"><a href="#common-errors"><span class="toc-num">08</span> Errors &amp; Solutions</a></li>
+        <li class="doc-toc-item"><a href="#can-and-cannot"><span class="toc-num">09</span> Capabilities &amp; Limits</a></li>
+        <li class="doc-toc-item"><a href="#faq"><span class="toc-num">10</span> Frequently Asked Questions</a></li>
+        <li class="doc-toc-item"><a href="#quick-reference"><span class="toc-num">11</span> Quick Reference Sheet</a></li>
+      </ul>
+
+      <div class="doc-toc-divider"></div>
+
+      <div class="doc-toc-title">Quick Actions</div>
+      <ul class="doc-toc-list">
+        <li class="doc-toc-item"><a href="#prerequisites"><span>⚡</span> Prerequisites Checklist</a></li>
+        <li class="doc-toc-item"><a href="#troubleshooting"><span>🛠</span> Troubleshooting Index</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Stream -->
+    <main class="doc-content">
+
+      <!-- Hero Header -->
+      <section class="doc-hero" id="top">
+        <div class="doc-eyebrow">Beginner-Friendly Documentation &amp; Walkthrough</div>
+        <h1 class="doc-title">How to Use R-PARSE</h1>
+        <div class="doc-tagline">From your first R script to understanding where every result came from.</div>
+        <p class="doc-lead-intro">
+          This tutorial teaches you how to inspect your R scripts with R-PARSE. Whether you are analyzing data pipelines visually through our web interface or running automated checks from the terminal, this guide explains every command, visual graph, and dependency concept in plain English.
+        </p>
+
+        <!-- Mobile TOC Drawer (Collapsible for small viewports) -->
+        <details class="mobile-toc-drawer doc-disclosure" id="mobile-toc-disclosure" style="display:none;">
+          <summary class="doc-disclosure-summary">📑 Table of Contents (Tap to jump to a topic)</summary>
+          <div class="doc-disclosure-body">
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li><a href="#welcome">1. Welcome to R-PARSE</a></li>
+              <li><a href="#choose-workflow">2. Choose Your Workflow</a></li>
+              <li><a href="#method-a-studio">3. Method A — Visual Studio</a></li>
+              <li><a href="#five-views">4. Five Analysis Views</a></li>
+              <li><a href="#method-b-cli">5. Method B — Command Line</a></li>
+              <li><a href="#cli-output">6. Understanding CLI Output</a></li>
+              <li><a href="#complete-example">7. End-to-End Example</a></li>
+              <li><a href="#common-errors">8. Errors &amp; Solutions</a></li>
+              <li><a href="#can-and-cannot">9. Capabilities &amp; Limits</a></li>
+              <li><a href="#faq">10. Frequently Asked Questions</a></li>
+              <li><a href="#quick-reference">11. Quick Reference Sheet</a></li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 1 — WELCOME TO R-PARSE
+           ==================================================================== -->
+      <section class="doc-section" id="welcome">
+        <h2><span>01</span> Welcome to R-PARSE</h2>
+        <p>
+          <strong>R-PARSE</strong> is a program analysis tool built in Rust for the R data science language. It helps you inspect how an R program is structured, how data columns depend on one another across pipelines, and which exact parts of a script contribute to a particular calculation.
+        </p>
+
+        <h3>The Core Concept: A Simple Example</h3>
+        <p>
+          Consider this simple R program:
+        </p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">R Source Code (example.R)</span>
+            <button class="btn-copy-code" data-copy="df <- data.frame(
+  price = c(10, 20),
+  quantity = c(2, 3)
+)
+
+df$total <- df$price * df$quantity">Copy</button>
+          </div>
+          <pre class="code-body"><code>df &lt;- data.frame(
+  price = c(10, 20),
+  quantity = c(2, 3)
+)
+
+df$total &lt;- df$price * df$quantity</code></pre>
+        </div>
+
+        <p>Here is what happens in this code line by line:</p>
+        <ol>
+          <li>A data frame named <code class="inline-code">df</code> is created in memory.</li>
+          <li>It contains two starting columns: <code class="inline-code">price</code> (values 10 and 20) and <code class="inline-code">quantity</code> (values 2 and 3).</li>
+          <li>A new column called <code class="inline-code">total</code> is calculated by multiplying <code class="inline-code">df$price</code> by <code class="inline-code">df$quantity</code>.</li>
+          <li>In ordinary R execution, the resulting values are <strong>20</strong> (10 × 2) and <strong>60</strong> (20 × 3).</li>
+          <li><strong>R-PARSE investigates the relationship:</strong> It mathematically proves that <code class="inline-code">total</code> was derived specifically from <code class="inline-code">price</code> and <code class="inline-code">quantity</code>.</li>
+        </ol>
+
+        <div class="doc-callout doc-callout-note">
+          <div class="callout-title">💡 Running Code vs. Static Analysis</div>
+          <p>
+            <strong>Running an R script</strong> executes the code line-by-line using an R interpreter (like GNU R or RStudio) to calculate concrete numbers (like 20 and 60).<br>
+            <strong>Static program analysis</strong> inspects the program's grammatical structure, variables, and dataflow <em>without running the code</em>. It determines <em>why</em> and <em>where</em> columns connect, making it 100% offline, deterministic, and safe for analyzing untrusted or unfamiliar scripts.
+          </p>
+        </div>
+
+        <h3>When is R-PARSE Useful?</h3>
+        <ul>
+          <li><strong>Auditing Unfamiliar Code:</strong> Understand complex 500-line scripts written by colleagues or predecessor researchers.</li>
+          <li><strong>Tracking Data Provenance:</strong> Discover exactly which source columns and calculations created an output metric.</li>
+          <li><strong>Program Slicing:</strong> Strip away hundreds of lines of unrelated code to isolate only the statements that affect a suspicious number.</li>
+          <li><strong>Pipeline Debugging:</strong> Verify how data frames evolve step-by-step through filtering, mutation, and selection verbs.</li>
+        </ul>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 2 — CHOOSE YOUR WORKFLOW
+           ==================================================================== -->
+      <section class="doc-section" id="choose-workflow">
+        <h2><span>02</span> Choose Your Workflow</h2>
+        <p>
+          R-PARSE provides two complementary interfaces to the exact same Rust analysis engine. Choose the approach that fits your background and task:
+        </p>
+
+        <div class="workflow-switcher">
+          <div class="workflow-card">
+            <div>
+              <div class="workflow-badge">Recommended for Beginners</div>
+              <div class="workflow-header">
+                <span class="workflow-icon">🖥️</span>
+                <span class="workflow-title">Visual Analysis Studio</span>
+              </div>
+              <div class="workflow-desc">
+                An interactive web workbench running on your local machine. Ideal for visually exploring column graphs, clicking nodes to inspect properties, toggling edge filters, and viewing highlighted backward slices side-by-side with source code.
+              </div>
+            </div>
+            <a href="#method-a-studio" class="workflow-btn workflow-btn-orange">Start with Visual Studio ↓</a>
+          </div>
+
+          <div class="workflow-card">
+            <div>
+              <div class="workflow-badge">For Developers &amp; Automation</div>
+              <div class="workflow-header">
+                <span class="workflow-icon">⌨️</span>
+                <span class="workflow-title">Command Line Interface (CLI)</span>
+              </div>
+              <div class="workflow-desc">
+                A high-speed terminal utility. Ideal for automated testing, continuous integration (CI) pipelines, batch-analyzing scripts, exporting machine-readable JSON or Graphviz DOT files, and running headless slices.
+              </div>
+            </div>
+            <a href="#method-b-cli" class="workflow-btn workflow-btn-dark">Learn the Command Line ↓</a>
+          </div>
+        </div>
+
+        <div class="doc-callout doc-callout-tip">
+          <div class="callout-title">✨ Same Engine, Different Lenses</div>
+          <p>
+            The Visual Studio and the CLI use the exact same R-PARSE compiler, tree-sitter parser, and deterministic dataflow transfer functions. You can develop and test scripts in the Visual Studio, then deploy the exact same checks to the CLI in automated pipelines.
+          </p>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 3 — METHOD A: USING THE VISUAL STUDIO
+           ==================================================================== -->
+      <section class="doc-section" id="method-a-studio">
+        <h2><span>03</span> Method A — Using the Visual Studio</h2>
+        <p>
+          Follow these numbered steps to start the R-PARSE Studio on your computer and begin analyzing code.
+        </p>
+
+        <div class="step-list">
+
+          <!-- Step 1 -->
+          <div class="step-card" id="prerequisites">
+            <div class="step-header">
+              <span class="step-badge">1</span>
+              <h3 class="step-heading">Understand What You Need (Prerequisites)</h3>
+            </div>
+            <p>
+              R-PARSE runs completely locally on your computer. Your code is never uploaded to any cloud service. Here is what you need:
+            </p>
+            <ul>
+              <li><strong>The R-PARSE Repository:</strong> A downloaded or cloned copy of the R-PARSE folder.</li>
+              <li><strong>Rust &amp; Cargo:</strong> The Rust compiler toolchain (version 1.70 or newer). Verify by typing <code class="inline-code">cargo --version</code> in your terminal.</li>
+              <li><strong>A Modern Web Browser:</strong> Google Chrome, Mozilla Firefox, Microsoft Edge, or Safari.</li>
+              <li><strong>GNU R (Optional):</strong> Only required if you explicitly run dynamic execution mode. Pure static analysis requires zero R installations.</li>
+            </ul>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">2</span>
+              <h3 class="step-heading">Open Your Terminal in the Project Directory</h3>
+            </div>
+            <p>
+              A <strong>terminal</strong> (PowerShell on Windows, Terminal on macOS/Linux) is a text window where you type commands. Open your terminal and change into the <code class="inline-code">implementation</code> subfolder of R-PARSE:
+            </p>
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-lang-label">PowerShell / Terminal</span>
+                <button class="btn-copy-code" data-copy="cd implementation">Copy</button>
+              </div>
+              <pre class="code-body"><code>cd implementation</code></pre>
+            </div>
+            <p>
+              Navigate to the <code class="inline-code">implementation</code> directory of the cloned repository:
+            </p>
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-lang-label">Terminal</span>
+                <button class="btn-copy-code" data-copy="cd implementation">Copy</button>
+              </div>
+              <pre class="code-body"><code>cd implementation</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">3</span>
+              <h3 class="step-heading">Start the Local Studio Server</h3>
+            </div>
+            <p>
+              Run the following command to compile and launch the local R-PARSE Studio server:
+            </p>
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-lang-label">PowerShell</span>
+                <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- studio fixtures/showcase_pipeline.R --port 8080 --open">Copy</button>
+              </div>
+              <pre class="code-body"><code>cargo run -p rparse-cli -- studio fixtures/showcase_pipeline.R --port 8080 --open</code></pre>
+            </div>
+            <p>Here is what each piece of this command does:</p>
+            <ul>
+              <li><code class="inline-code">cargo run</code>: Compiles and executes the Rust project.</li>
+              <li><code class="inline-code">-p rparse-cli</code>: Selects the command-line interface package in the workspace.</li>
+              <li><code class="inline-code">--</code>: Separates Cargo flags from R-PARSE arguments.</li>
+              <li><code class="inline-code">studio</code>: Subcommand that starts the local HTTP analysis daemon.</li>
+              <li><code class="inline-code">fixtures/showcase_pipeline.R</code>: Preloads a sample R script.</li>
+              <li><code class="inline-code">--port 8080</code>: Tells the server to listen on local port 8080.</li>
+              <li><code class="inline-code">--open</code>: Automatically launches your default web browser to the application.</li>
+            </ul>
+            <div class="doc-callout doc-callout-warning">
+              <div class="callout-title">⚠️ Keep this terminal window open!</div>
+              <p>
+                The Studio web interface communicates with the background server running in this terminal. If you close this terminal window or press <code class="inline-code">Ctrl+C</code>, the local server will shut down and the web page will show "Offline".
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">4</span>
+              <h3 class="step-heading">Open the Studio in Your Browser</h3>
+            </div>
+            <p>
+              If your browser did not automatically open, open Google Chrome, Firefox, or Edge and navigate to:
+            </p>
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-lang-label">URL Address</span>
+                <button class="btn-copy-code" data-copy="http://localhost:8080/studio">Copy</button>
+              </div>
+              <pre class="code-body"><code>http://localhost:8080/studio</code></pre>
+            </div>
+            <p>
+              You will see the R-PARSE Studio header, the source code buffer on the left, and the five analysis graph views on the right. Visit <code class="inline-code">http://localhost:8080/</code> at any time to return to the interactive landing page.
+            </p>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">5</span>
+              <h3 class="step-heading">Load or Edit an R Script</h3>
+            </div>
+            <p>
+              You have three ways to load code into R-PARSE Studio:
+            </p>
+            <ul>
+              <li><strong>Preset Examples:</strong> Click <code class="inline-code">New Analysis</code> in the top header to return to the entry card, then choose an example from the dropdown (such as <em>Showcase Pipeline</em> or <em>Uncertainty Handling</em>).</li>
+              <li><strong>Load a File:</strong> Click the <code class="inline-code">Load File...</code> button to open any <code class="inline-code">.R</code> file on your computer.</li>
+              <li><strong>Edit Code in Place:</strong> In the workspace, click the <code class="inline-code">Edit</code> button in the source pane toolbar. You can type or paste custom R code directly into the editor!</li>
+            </ul>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">6</span>
+              <h3 class="step-heading">Analyze the Program</h3>
+            </div>
+            <p>
+              Click the orange <code class="inline-code">▶ Analyze Program</code> button (or press <code class="inline-code">Ctrl + Enter</code> in the editor).
+            </p>
+            <p>
+              Within milliseconds, the Tier 1 deterministic Rust core parses the code, builds the AST, computes variable scopes, determines dataflow transfer functions, constructs the Program Dependence Graph, and updates all five visual tabs.
+            </p>
+            <div class="doc-callout doc-callout-important">
+              <div class="callout-title">⚠️ Stale Results Indicator</div>
+              <p>
+                If you edit source code in the editor, R-PARSE immediately displays an amber <strong>"Source code has been modified"</strong> banner. This prevents you from mistaking old graph results for newly typed code. Click <code class="inline-code">Reanalyze</code> to update or <code class="inline-code">Revert</code> to restore the original code.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 7 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">7</span>
+              <h3 class="step-heading">Explore Output Across the Five Views</h3>
+            </div>
+            <p>
+              Use the tab strip in the header to switch between the five analytical dimensions:
+            </p>
+            <ol>
+              <li><strong>Column Provenance:</strong> See how columns flow into verbs and produce new column versions.</li>
+              <li><strong>Unified PDG:</strong> Inspect statement-to-statement dataflow and control dependencies.</li>
+              <li><strong>Backward Slice:</strong> Choose an output column to highlight all contributing source statements.</li>
+              <li><strong>Schema Evolution:</strong> Track dataframe column additions, removals, and modifications step-by-step.</li>
+              <li><strong>AST Explorer:</strong> Inspect the concrete syntax tree (CST) and normalized semantic IR.</li>
+            </ol>
+            <p>
+              <em>See Section 4 below for a comprehensive guide to interpreting each of these five views!</em>
+            </p>
+          </div>
+
+          <!-- Step 8 -->
+          <div class="step-card">
+            <div class="step-header">
+              <span class="step-badge">8</span>
+              <h3 class="step-heading">Shut Down Safely When Finished</h3>
+            </div>
+            <p>
+              When you are finished using R-PARSE Studio:
+            </p>
+            <ul>
+              <li>Close your browser tab.</li>
+              <li>Switch back to your terminal window and press <code class="inline-code">Ctrl + C</code> on your keyboard.</li>
+              <li>The terminal will print <code class="inline-code">Studio server stopped.</code> and return to your standard prompt.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 4 — UNDERSTANDING THE FIVE ANALYSIS VIEWS
+           ==================================================================== -->
+      <section class="doc-section" id="five-views">
+        <h2><span>04</span> Understanding the Five Analysis Views</h2>
+        <p>
+          R-PARSE breaks program analysis down into five specialized visual perspectives. Here is how to understand and interpret each one:
+        </p>
+
+        <!-- View A -->
+        <div class="view-card" id="view-provenance">
+          <div class="view-card-header">
+            <div class="view-title-group">
+              <span class="view-letter-tag">VIEW A</span>
+              <h3 class="view-heading">Column Provenance Explorer</h3>
+            </div>
+            <span class="workflow-badge">Lineage &amp; Derivations</span>
+          </div>
+
+          <div class="view-qa-block">
+            <span class="view-qa-label">What is it?</span>
+            <span class="view-qa-text">A directed derivation graph tracking columns through pipeline operations.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">What it answers:</span>
+            <span class="view-qa-text"><em>"Which exact source columns and arithmetic expressions created output column X?"</em></span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">What to look at:</span>
+            <span class="view-qa-text">Orange pills represent <strong>Column Versions</strong> (e.g. <code class="inline-code">df$price</code>); green rounded boxes represent <strong>Derivation Verbs</strong> (e.g. <code class="inline-code">mutate</code>). Arrows point from inputs into derivations, and derivations point to output column versions.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Interaction:</span>
+            <span class="view-qa-text">Click any node to open the <strong>Contextual Inspector</strong> on the right. You can see its upstream dependencies, downstream consumers, and click <strong>"Jump to Source"</strong> to highlight the exact code line!</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Limitations:</span>
+            <span class="view-qa-text">Static analysis proves column dependencies, not concrete row numbers. Joins (like <code class="inline-code">left_join</code>) are not modeled statically.</span>
+          </div>
+        </div>
+
+        <!-- View B -->
+        <div class="view-card" id="view-pdg">
+          <div class="view-card-header">
+            <div class="view-title-group">
+              <span class="view-letter-tag">VIEW B</span>
+              <h3 class="view-heading">Unified Program Dependence Graph (PDG)</h3>
+            </div>
+            <span class="workflow-badge">Operation Structure</span>
+          </div>
+
+          <div class="view-qa-block">
+            <span class="view-qa-label">What is it?</span>
+            <span class="view-qa-text">A graph representing all control and data dependencies across every statement and variable in your script.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">What it answers:</span>
+            <span class="view-qa-text"><em>"How do statements communicate values, and which conditions control whether a statement runs?"</em></span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Dependency Types:</span>
+            <span class="view-qa-text">
+              • <strong>Data Dependency (Blue arrows):</strong> A value produced by statement A is used as an input to statement B.<br>
+              • <strong>Control Dependency (Purple dashed arrows):</strong> Whether statement B runs depends on an <code class="inline-code">if</code> condition in statement A.<br>
+              • <strong>Row Selection Dependency (Violet arrows):</strong> A dataframe filter condition (e.g. <code class="inline-code">price &gt; 0</code>) controls which rows flow into downstream operations.<br>
+              • <strong>Unknown Dependency (Red dashed arrows):</strong> Marks dynamic indexing or unmodeled calls.
+            </span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Toolbar Filters:</span>
+            <span class="view-qa-text">Use the checkboxes in the PDG toolbar to toggle Data, Control, RowSelection, and Unknown edges on and off to unclutter complex graphs.</span>
+          </div>
+        </div>
+
+        <!-- View C -->
+        <div class="view-card" id="view-slice">
+          <div class="view-card-header">
+            <div class="view-title-group">
+              <span class="view-letter-tag">VIEW C</span>
+              <h3 class="view-heading">Backward Program Slice Inspector</h3>
+            </div>
+            <span class="workflow-badge">Code Isolation</span>
+          </div>
+
+          <div class="view-qa-block">
+            <span class="view-qa-label">What is it?</span>
+            <span class="view-qa-text">A sub-program analysis technique that extracts only the statements and sub-expressions relevant to a specific slicing target.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">What it answers:</span>
+            <span class="view-qa-text"><em>"If I only care about calculating <code class="inline-code">df2$total</code>, which lines of code can I safely ignore?"</em></span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Retention States:</span>
+            <span class="view-qa-text">
+              • <strong style="color:var(--doc-success);">[FULL] (Fully Retained):</strong> The entire statement directly influences the target.<br>
+              • <strong style="color:var(--doc-accent-lilac);">[PARTIAL] (Partially Retained):</strong> Some parts of the line are needed (<span style="color:var(--doc-success); font-weight:700;">[KEEP]</span>) while unrelated calculations on the same line are discarded (<span style="color:var(--doc-error); font-weight:700;">[DROP]</span>). For example, in <code class="inline-code">mutate(df, total = price * qty, tax = age * 0.1)</code>, <code class="inline-code">total</code> is kept while <code class="inline-code">tax</code> is dropped!<br>
+              • <strong style="color:var(--doc-text-muted);">[NONE] (Not Retained):</strong> Unrelated or downstream code that has zero effect on the target.
+            </span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Crucial Note:</span>
+            <span class="view-qa-text">R-PARSE annotates and highlights your source code lines. It does <em>not</em> rewrite or output a new synthetic R script file.</span>
+          </div>
+        </div>
+
+        <!-- View D -->
+        <div class="view-card" id="view-schema">
+          <div class="view-card-header">
+            <div class="view-title-group">
+              <span class="view-letter-tag">VIEW D</span>
+              <h3 class="view-heading">Dataframe Schema Evolution</h3>
+            </div>
+            <span class="workflow-badge">Step-by-Step Schemas</span>
+          </div>
+
+          <div class="view-qa-block">
+            <span class="view-qa-label">What is it?</span>
+            <span class="view-qa-text">A timeline showing how a data frame's column schema changes across sequential pipeline steps.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">What it answers:</span>
+            <span class="view-qa-text"><em>"Which columns were added, dropped, or modified by each dplyr verb?"</em></span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Legend Indicators:</span>
+            <span class="view-qa-text">
+              • <strong style="color:var(--doc-success);">+added:</strong> New column created at this step.<br>
+              • <strong style="color:var(--doc-error);">-removed:</strong> Column dropped (e.g. by <code class="inline-code">select(-col)</code>).<br>
+              • <strong style="color:var(--doc-warning);">~modified:</strong> Column overwritten with new values.<br>
+              • <strong style="color:var(--doc-text-muted);">=retained:</strong> Column passed through unchanged from the previous version.
+            </span>
+          </div>
+        </div>
+
+        <!-- View E -->
+        <div class="view-card" id="view-ast">
+          <div class="view-card-header">
+            <div class="view-title-group">
+              <span class="view-letter-tag">VIEW E</span>
+              <h3 class="view-heading">AST &amp; CST Syntax Explorer</h3>
+            </div>
+            <span class="workflow-badge">Compiler Grammar</span>
+          </div>
+
+          <div class="view-qa-block">
+            <span class="view-qa-label">What is it?</span>
+            <span class="view-qa-text">An interactive hierarchical tree showing how the parser breaks your R text into grammatical syntax nodes.</span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Two Representations:</span>
+            <span class="view-qa-text">
+              • <strong>Concrete Syntax Tree (CST):</strong> Tree-sitter grammar nodes, preserving exact source tokens, operators, commas, and syntax recovery nodes.<br>
+              • <strong>Semantic IR / AST:</strong> Normalized semantic intermediate representation used by R-PARSE for scope analysis and dataflow equations.
+            </span>
+          </div>
+          <div class="view-qa-block">
+            <span class="view-qa-label">Features:</span>
+            <span class="view-qa-text">Search box with live match counter, Expand All / Collapse All buttons, and clicking any node automatically selects its exact line and byte range in the source editor!</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 5 — METHOD B: USING THE COMMAND LINE (CLI)
+           ==================================================================== -->
+      <section class="doc-section" id="method-b-cli">
+        <h2><span>05</span> Method B — Using the Command Line</h2>
+        <p>
+          The R-PARSE command line interface (CLI) is perfect for developers who prefer working in a terminal or want to automate analysis in CI/CD scripts.
+        </p>
+
+        <h3>Terminal Fundamentals (For Absolute Beginners)</h3>
+        <p>If you have never used a command line before, here are the key concepts:</p>
+        <ul>
+          <li><strong>Terminal:</strong> An application (like Windows PowerShell or Command Prompt) that executes text commands.</li>
+          <li><strong>Command:</strong> The program to run (e.g. <code class="inline-code">rparse</code> or <code class="inline-code">cargo run</code>).</li>
+          <li><strong>Argument:</strong> Information you give to the command, like the path to your file (<code class="inline-code">fixtures/showcase_pipeline.R</code>).</li>
+          <li><strong>Flag / Option:</strong> Modifiers prefixed with dashes, like <code class="inline-code">--format json</code> or <code class="inline-code">--help</code>.</li>
+          <li><strong>Current Directory:</strong> The folder your terminal is currently looking at. Check it by typing <code class="inline-code">pwd</code> or <code class="inline-code">Get-Location</code>.</li>
+        </ul>
+
+        <h3>Step 1: Check Environment &amp; Print Help</h3>
+        <p>
+          In your terminal, navigate to the <code class="inline-code">implementation</code> folder and verify R-PARSE:
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- --help">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- --help</code></pre>
+        </div>
+        <p>
+          You will see the top-level help menu listing the primary commands: <code class="inline-code">analyze</code>, <code class="inline-code">provenance</code>, <code class="inline-code">slice</code>, and <code class="inline-code">studio</code>.
+        </p>
+
+        <h3>Step 2: Command 1 — Analyze a Script (<code class="inline-code">analyze</code>)</h3>
+        <p>
+          The <code class="inline-code">analyze</code> command runs the complete parsing and semantic analysis pipeline, reporting statement counts, dataframe states, and graph topology:
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R</code></pre>
+        </div>
+
+        <p>
+          <strong>To get machine-readable JSON:</strong>
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R --format json">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R --format json</code></pre>
+        </div>
+
+        <p>
+          <strong>To generate a standalone interactive HTML report file:</strong>
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R --format html --output report.html">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- analyze fixtures/showcase_pipeline.R --format html --output report.html</code></pre>
+        </div>
+
+        <h3>Step 3: Command 2 — Trace Column Provenance (<code class="inline-code">provenance</code>)</h3>
+        <p>
+          The <code class="inline-code">provenance</code> command isolates how an individual dataframe column was derived. The target column is specified using the <code class="inline-code">--column</code> flag with <code class="inline-code">dataframe$column</code> syntax:
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- provenance fixtures/showcase_pipeline.R --column 'df2$total'">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- provenance fixtures/showcase_pipeline.R --column 'df2$total'</code></pre>
+        </div>
+        <p>
+          <em>Note:</em> In PowerShell, surround arguments containing the <code class="inline-code">$</code> sign in single quotes (e.g. <code class="inline-code">'df2$total'</code>) so PowerShell does not interpret <code class="inline-code">$total</code> as an empty shell variable!
+        </p>
+
+        <h3>Step 4: Command 3 — Compute a Backward Slice (<code class="inline-code">slice</code>)</h3>
+        <p>
+          The <code class="inline-code">slice</code> command takes a criterion and computes a backward slice, marking which statements and sub-expressions must be kept or dropped:
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- slice fixtures/showcase_pipeline.R --criterion 'df2$total'">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- slice fixtures/showcase_pipeline.R --criterion 'df2$total'</code></pre>
+        </div>
+
+        <h3>Step 5: Useful Options &amp; Flags</h3>
+        <div class="table-container">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Option Flag</th>
+                <th>Accepted Values</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code class="inline-code">--format</code></td>
+                <td><code class="inline-code">text</code>, <code class="inline-code">json</code>, <code class="inline-code">dot</code>, <code class="inline-code">html</code></td>
+                <td>Controls output representation. Defaults to human-readable <code class="inline-code">text</code>. Use <code class="inline-code">json</code> for automated pipelines.</td>
+              </tr>
+              <tr>
+                <td><code class="inline-code">-o, --output</code></td>
+                <td><code class="inline-code">&lt;FILE_PATH&gt;</code></td>
+                <td>Writes output directly to a file on disk instead of printing to the terminal stdout.</td>
+              </tr>
+              <tr>
+                <td><code class="inline-code">--graph</code></td>
+                <td><code class="inline-code">pdg</code>, <code class="inline-code">provenance</code>, <code class="inline-code">cfg</code></td>
+                <td>Used with <code class="inline-code">analyze</code> to export graph topologies into Graphviz DOT or JSON format.</td>
+              </tr>
+              <tr>
+                <td><code class="inline-code">--mode</code></td>
+                <td><code class="inline-code">static</code>, <code class="inline-code">assisted</code>, <code class="inline-code">execute</code></td>
+                <td>Analysis mode. Defaults to <code class="inline-code">static</code> (pure offline Rust). <code class="inline-code">execute</code> requires an installed GNU R interpreter.</td>
+              </tr>
+              <tr>
+                <td><code class="inline-code">--seed</code></td>
+                <td><code class="inline-code">df=col1,col2</code></td>
+                <td>Explicitly seeds the starting schema of an external or dynamically loaded dataframe.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 6 — UNDERSTANDING CLI OUTPUT
+           ==================================================================== -->
+      <section class="doc-section" id="cli-output">
+        <h2><span>06</span> Understanding CLI Output</h2>
+        <p>
+          Let's examine actual terminal output produced by R-PARSE and see how each section is interpreted.
+        </p>
+
+        <h3>Reading <code class="inline-code">rparse provenance</code> Output</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">Actual Terminal Output</span>
+          </div>
+          <pre class="code-body"><code>R-PARSE COLUMN PROVENANCE
+─────────────────────────
+Target Column:     df2$total (v2)
+Certainty State:   KNOWN_STATIC
+
+Direct Input Columns:
+  ← df$price (v0)
+  ← df$quantity (v0)
+
+Transitive Source Columns:
+  ← df$price (v0)
+  ← df$quantity (v0)
+
+Derivation Chain:
+  [Mutate] df$price, df$quantity → df2$total</code></pre>
+        </div>
+
+        <p>What this tells you:</p>
+        <ul>
+          <li><strong>Target Column:</strong> <code class="inline-code">df2$total (v2)</code> means this is column <code class="inline-code">total</code> on dataframe <code class="inline-code">df2</code> at version 2 of the pipeline.</li>
+          <li><strong>Certainty State:</strong> <code class="inline-code">KNOWN_STATIC</code> proves the relationship was deterministically verified by compiler analysis. If dynamic code like <code class="inline-code">eval()</code> was involved, it would display <code class="inline-code">UNKNOWN_STATIC</code>.</li>
+          <li><strong>Direct Input Columns:</strong> Lists the immediate inputs to the multiplication (<code class="inline-code">df$price</code> and <code class="inline-code">df$quantity</code>).</li>
+          <li><strong>Derivation Chain:</strong> Confirms that a <code class="inline-code">mutate</code> verb combined the price and quantity inputs to produce <code class="inline-code">total</code>.</li>
+        </ul>
+
+        <h3>Reading <code class="inline-code">rparse slice</code> Output</h3>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">Actual Terminal Output</span>
+          </div>
+          <pre class="code-body"><code>R-PARSE BACKWARD STATIC SLICE
+─────────────────────────────
+Criterion:         df2$total
+Confidence:        COMPLETE
+Contains Unknowns: NO
+
+Slice Metrics:
+  Retained Semantic Elements:  19
+  Fully Retained Statements:    1
+  Partially Retained Statements:2
+
+Retained Program Statements:
+  [PARTIAL] Line 25:  df &lt;- data.frame(price = 100, quantity = 2, age = 30)
+    [KEEP] price = 100
+    [KEEP] quantity = 2
+    [DROP] age = 30
+  [FULL] Line 26:  filtered &lt;- filter(df, price > 0)
+  [PARTIAL] Line 27:  df2 &lt;- mutate(filtered, total = price * quantity, discount = age * 0.05)
+    [KEEP] total = price * quantity
+    [DROP] discount = age * 0.05
+  [NONE] Line 28:  df3 &lt;- mutate(df2, tax = total * 0.18)</code></pre>
+        </div>
+
+        <p>What this tells you:</p>
+        <ul>
+          <li><strong>Sub-statement Attribution:</strong> Notice how Line 25 and Line 27 are marked <code class="inline-code">[PARTIAL]</code>. R-PARSE knows that <code class="inline-code">price</code> and <code class="inline-code">quantity</code> matter (<code class="inline-code">[KEEP]</code>), but <code class="inline-code">age = 30</code> and <code class="inline-code">discount = age * 0.05</code> have zero effect on <code class="inline-code">total</code> (<code class="inline-code">[DROP]</code>)!</li>
+          <li><strong>Control Dependency on Filter:</strong> Notice that Line 26 (<code class="inline-code">filter(df, price &gt; 0)</code>) is marked <code class="inline-code">[FULL]</code>. Even though it does not assign a new column value, filtering rows determines which data points flow into <code class="inline-code">total</code>!</li>
+          <li><strong>Downstream Exclusion:</strong> Line 28 (<code class="inline-code">df3 &lt;- mutate(df2, tax = total * 0.18)</code>) is marked <code class="inline-code">[NONE]</code> because downstream consumers cannot retroactively change earlier values.</li>
+        </ul>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 7 — COMPLETE END-TO-END EXAMPLE
+           ==================================================================== -->
+      <section class="doc-section" id="complete-example">
+        <h2><span>07</span> A Complete End-to-End Example</h2>
+        <p>
+          Let's walk through an entire analysis from creating an R script to interpreting every view.
+        </p>
+
+        <h3>Step 1: Save the R Script</h3>
+        <p>
+          Create a file named <code class="inline-code">pipeline.R</code> with the following content:
+        </p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">R (pipeline.R)</span>
+            <button class="btn-copy-code" data-copy="df <- data.frame(price = 100, quantity = 2, age = 30)
+filtered <- filter(df, price > 0)
+df2 <- mutate(filtered, total = price * quantity, discount = age * 0.05)
+df3 <- mutate(df2, tax = total * 0.18)">Copy</button>
+          </div>
+          <pre class="code-body"><code>df &lt;- data.frame(price = 100, quantity = 2, age = 30)
+filtered &lt;- filter(df, price > 0)
+df2 &lt;- mutate(filtered, total = price * quantity, discount = age * 0.05)
+df3 &lt;- mutate(df2, tax = total * 0.18)</code></pre>
+        </div>
+
+        <h3>Step 2: Trace Provenance for <code class="inline-code">df2$total</code></h3>
+        <p>In your terminal, run:</p>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- provenance pipeline.R --column 'df2$total'">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- provenance pipeline.R --column 'df2$total'</code></pre>
+        </div>
+        <p>
+          The output proves that <code class="inline-code">df2$total</code> originates from <code class="inline-code">df$price</code> and <code class="inline-code">df$quantity</code>, and is uninfluenced by <code class="inline-code">age</code>.
+        </p>
+
+        <h3>Step 3: Slice for <code class="inline-code">df2$total</code></h3>
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang-label">PowerShell</span>
+            <button class="btn-copy-code" data-copy="cargo run -p rparse-cli -- slice pipeline.R --criterion 'df2$total'">Copy</button>
+          </div>
+          <pre class="code-body"><code>cargo run -p rparse-cli -- slice pipeline.R --criterion 'df2$total'</code></pre>
+        </div>
+
+        <h3>What You Learned</h3>
+        <div class="doc-callout doc-callout-tip">
+          <div class="callout-title">🎓 Key Takeaways</div>
+          <ul>
+            <li><strong>Lineage:</strong> <code class="inline-code">total</code> depends on <code class="inline-code">price</code> and <code class="inline-code">quantity</code>.</li>
+            <li><strong>Independence:</strong> <code class="inline-code">discount = age * 0.05</code> is independent and safely dropped.</li>
+            <li><strong>Row Control:</strong> Row filters like <code class="inline-code">price &gt; 0</code> create row selection dependencies that are preserved.</li>
+            <li><strong>Downstream Safety:</strong> Later operations (like <code class="inline-code">tax = total * 0.18</code>) are excluded because they do not influence <code class="inline-code">total</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 8 — COMMON ERRORS AND SOLUTIONS
+           ==================================================================== -->
+      <section class="doc-section" id="common-errors">
+        <h2><span>08</span> Common Errors &amp; Solutions</h2>
+        <p>
+          Encountering an issue? Look up your situation in this troubleshooting guide:
+        </p>
+
+        <div class="table-container" id="troubleshooting">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">Symptom or Error</th>
+                <th style="width: 35%;">Likely Cause</th>
+                <th style="width: 40%;">Recommended Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Browser says "Unable to connect" or "Connection Refused"</strong></td>
+                <td>The local Studio server is not running or the terminal was closed.</td>
+                <td>Make sure your terminal is still running <code class="inline-code">cargo run -p rparse-cli -- studio ...</code>. Check that you are navigating to <code class="inline-code">http://127.0.0.1:8080/</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>"Address already in use" (Error: Port 8080 occupied)</strong></td>
+                <td>Another application (or a previous R-PARSE session) is already listening on port 8080.</td>
+                <td>Choose a different port with the <code class="inline-code">--port</code> flag, e.g. <code class="inline-code">--port 8085</code>, and open <code class="inline-code">http://127.0.0.1:8085/</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>"cargo: command not found" or "not recognized"</strong></td>
+                <td>The Rust toolchain is not installed or not in your system <code class="inline-code">PATH</code> environment variable.</td>
+                <td>Install Rust from <a href="https://rustup.rs" target="_blank" rel="noopener">rustup.rs</a>. Restart your terminal after installation.</td>
+              </tr>
+              <tr>
+                <td><strong>"Resolution error: Column 'X' not found in dataframe 'Y'"</strong></td>
+                <td>The column name in your <code class="inline-code">--column</code> or <code class="inline-code">--criterion</code> argument does not match any known column.</td>
+                <td>Run <code class="inline-code">rparse analyze script.R</code> first to inspect discovered dataframe schemas and exact column names.</td>
+              </tr>
+              <tr>
+                <td><strong>In PowerShell, argument gives empty string or error</strong></td>
+                <td>PowerShell treats unquoted <code class="inline-code">$total</code> as a shell variable and replaces it with nothing.</td>
+                <td>Always wrap criteria in single quotes: <code class="inline-code">'df2$total'</code>, or escape with backtick: <code class="inline-code">df2`$total</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Results do not match edited code in Studio</strong></td>
+                <td>The code was modified in the editor without triggering reanalysis.</td>
+                <td>Click the orange <code class="inline-code">Reanalyze</code> button in the stale warning banner or press <code class="inline-code">Ctrl+Enter</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Output shows UNKNOWN_STATIC or missing edges</strong></td>
+                <td>The script contains dynamic operations (like <code class="inline-code">eval()</code>, <code class="inline-code">get()</code>, or unmodeled joins).</td>
+                <td>R-PARSE explicitly models uncertainty rather than inventing false dependencies. See Section 9 below.</td>
+              </tr>
+              <tr>
+                <td><strong>"GNU R executable not found" in execute mode</strong></td>
+                <td>The <code class="inline-code">--mode execute</code> flag was passed, but R is not installed or not on <code class="inline-code">PATH</code>.</td>
+                <td>Static analysis mode (<code class="inline-code">--mode static</code>, the default) requires zero R installations. Only use <code class="inline-code">execute</code> if GNU R is installed.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 9 — WHAT R-PARSE CAN AND CANNOT DO
+           ==================================================================== -->
+      <section class="doc-section" id="can-and-cannot">
+        <h2><span>09</span> What R-PARSE Can and Cannot Do</h2>
+        <p>
+          Scientific honesty is a foundational value of R-PARSE. We clearly communicate the boundaries of our static analysis engine:
+        </p>
+
+        <h3>What R-PARSE Does (Capabilities):</h3>
+        <ul>
+          <li><strong>Deterministic Static Analysis:</strong> 100% offline analysis of R code, scopes, and column pipelines.</li>
+          <li><strong>Column-Aware Provenance:</strong> Traces derivations across verbs like <code class="inline-code">mutate</code>, <code class="inline-code">select</code>, <code class="inline-code">rename</code>, and <code class="inline-code">filter</code>.</li>
+          <li><strong>Sub-Statement Slicing:</strong> Annotates precisely which expressions within a line are retained or dropped.</li>
+          <li><strong>Explicit Uncertainty:</strong> Marks unresolvable expressions as <code class="inline-code">UNKNOWN_STATIC</code> rather than guessing or silently omitting them.</li>
+        </ul>
+
+        <h3>What R-PARSE Does Not Do (Limitations):</h3>
+        <ul>
+          <li><strong>It Does Not Execute R in Static Mode:</strong> Static analysis examines code structure. It does not compute concrete row values (e.g. it knows <code class="inline-code">total = price * qty</code>, but does not calculate that 10 × 2 = 20 unless runtime mode is used).</li>
+          <li><strong>It Does Not Rewrite Your Code:</strong> Backward slicing annotates and highlights source regions. It does not output a rewritten, synthesized R script.</li>
+          <li><strong>Joins are Currently Unmodeled:</strong> Verb joins such as <code class="inline-code">left_join</code> and <code class="inline-code">inner_join</code> are not modeled in the current Tier 1 engine.</li>
+          <li><strong>Dynamic Metaprogramming Cannot Be Statically Proven:</strong> Dynamic R features such as <code class="inline-code">eval(parse(text = ...))</code> cannot be known before execution and are marked <code class="inline-code">UNKNOWN_STATIC</code>.</li>
+          <li><strong>Local Server:</strong> The Studio runs on your local machine; there is no cloud deployment or remote hosting.</li>
+        </ul>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 10 — FREQUENTLY ASKED QUESTIONS (FAQ)
+           ==================================================================== -->
+      <section class="doc-section" id="faq">
+        <h2><span>10</span> Frequently Asked Questions</h2>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">Do I need to know the Rust programming language to use R-PARSE?</summary>
+          <div class="doc-disclosure-body">
+            <strong>No!</strong> R-PARSE is written in Rust for speed, safety, and determinism, but as a user you only interact with R code, the visual website, or standard terminal commands.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">Do I need GNU R installed on my computer?</summary>
+          <div class="doc-disclosure-body">
+            <strong>No, not for static analysis or the Visual Studio!</strong> Pure static analysis runs 100% offline inside the compiled Rust engine. GNU R is only required if you explicitly request dynamic runtime execution with the <code class="inline-code">--mode execute</code> flag.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">Does R-PARSE execute my script when I analyze it?</summary>
+          <div class="doc-disclosure-body">
+            <strong>No.</strong> In default static mode, R-PARSE parses the text into an Abstract Syntax Tree (AST) and evaluates mathematical dataflow transfer functions. Zero user code is executed, making it completely safe to analyze untrusted R code.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">Can I analyze my own custom .R script?</summary>
+          <div class="doc-disclosure-body">
+            <strong>Yes!</strong> In the Visual Studio, click <code class="inline-code">Load File...</code> or paste your code into the in-place editor. In the CLI, simply pass the path to your script: <code class="inline-code">rparse analyze path/to/my_script.R</code>.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">What is the difference between column provenance and a backward slice?</summary>
+          <div class="doc-disclosure-body">
+            <strong>Column Provenance</strong> shows the lineage tree of columns ($C_{in} \to C_{out}$).<br>
+            <strong>Backward Slicing</strong> highlights the actual lines and sub-expressions in your source code that contributed to calculating a target criterion.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">What does an UNKNOWN_STATIC result mean?</summary>
+          <div class="doc-disclosure-body">
+            It indicates that a line of code uses dynamic R features (such as <code class="inline-code">eval()</code>, runtime indexing, or unmodeled calls) whose behavior cannot be mathematically proven without running R. R-PARSE marks this uncertainty explicitly so you know where human inspection is required.
+          </div>
+        </details>
+
+        <details class="doc-disclosure">
+          <summary class="doc-disclosure-summary">Can I automate analysis using JSON output in GitHub Actions?</summary>
+          <div class="doc-disclosure-body">
+            <strong>Yes!</strong> Pass <code class="inline-code">--format json</code> to any command. R-PARSE outputs structured JSON containing statements, diagnostics, PDG nodes, and slice retention metadata, perfect for automated code quality gates.
+          </div>
+        </details>
+      </section>
+
+      <!-- ====================================================================
+           SECTION 11 — QUICK REFERENCE & NEXT STEPS
+           ==================================================================== -->
+      <section class="doc-section" id="quick-reference">
+        <h2><span>11</span> Quick Reference &amp; Next Steps</h2>
+        <p>Keep this cheat sheet handy for common daily tasks:</p>
+
+        <div class="table-container">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>I Want To...</th>
+                <th>CLI Command</th>
+                <th>Studio Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Start interactive workbench</strong></td>
+                <td><code class="inline-code">rparse studio script.R --open</code></td>
+                <td>Open <code class="inline-code">http://127.0.0.1:8080/</code></td>
+              </tr>
+              <tr>
+                <td><strong>Run full static check</strong></td>
+                <td><code class="inline-code">rparse analyze script.R</code></td>
+                <td>Click <code class="inline-code">▶ Analyze Program</code></td>
+              </tr>
+              <tr>
+                <td><strong>Generate standalone HTML report</strong></td>
+                <td><code class="inline-code">rparse analyze script.R --format html -o rep.html</code></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>Trace column lineage</strong></td>
+                <td><code class="inline-code">rparse provenance script.R -c 'df$col'</code></td>
+                <td>Click <strong>Column Provenance</strong> tab</td>
+              </tr>
+              <tr>
+                <td><strong>Compute backward slice</strong></td>
+                <td><code class="inline-code">rparse slice script.R -c 'df$col'</code></td>
+                <td>Click <strong>Backward Slice</strong> tab</td>
+              </tr>
+              <tr>
+                <td><strong>Inspect AST grammar</strong></td>
+                <td>—</td>
+                <td>Click <strong>AST Explorer</strong> tab</td>
+              </tr>
+              <tr>
+                <td><strong>Track dataframe schema steps</strong></td>
+                <td>—</td>
+                <td>Click <strong>Schema Evolution</strong> tab</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Next Steps</h3>
+        <p>Now that you know how to use R-PARSE, explore the rest of the project:</p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
+          <a href="index.html" class="btn-header-link btn-subtle">← Read The Investigation Narrative</a>
+          <a href="http://127.0.0.1:8080/" target="_blank" class="btn-header-link btn-primary">Launch Studio Session ↗</a>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="doc-footer">
+        <div>
+          <strong>R-PARSE</strong> · Robust R Language Parsing &amp; Program Analysis Engine<br>
+          Deterministic Rust Core · Broad-Compatibility Program Slicing
+        </div>
+        <div>
+          <a href="#top">Back to Top ↑</a> · <a href="index.html">Investigation Home</a>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Floating Back to Top Trigger -->
+  <button class="btn-back-to-top" id="btn-back-to-top" title="Back to top" aria-label="Scroll back to top">↑</button>
+
+  <!-- Interactive Client Script -->
+  <script>
+    (function() {
+      // 1. Copy Buttons Handling
+      document.querySelectorAll('.btn-copy-code').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-copy');
+          if (!text) return;
+          navigator.clipboard.writeText(text.trim()).then(() => {
+            const original = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = original;
+              btn.classList.remove('copied');
+            }, 1800);
+          }).catch(() => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
+          });
+        });
+      });
+
+      // 2. Active Section Highlighting in Sidebar TOC
+      const sections = document.querySelectorAll('.doc-section');
+      const tocLinks = document.querySelectorAll('.doc-toc-item a');
+
+      function updateActiveToc() {
+        let currentSectionId = '';
+        const scrollY = window.scrollY;
+
+        sections.forEach(sec => {
+          const sectionTop = sec.offsetTop - 120;
+          const sectionHeight = sec.offsetHeight;
+          if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+            currentSectionId = sec.getAttribute('id');
+          }
+        });
+
+        if (currentSectionId) {
+          tocLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === '#' + currentSectionId) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        }
+      }
+
+      window.addEventListener('scroll', updateActiveToc, { passive: true });
+      updateActiveToc();
+
+      // 3. Floating Back to Top Button
+      const btnBackTop = document.getElementById('btn-back-to-top');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+          btnBackTop?.classList.add('visible');
+        } else {
+          btnBackTop?.classList.remove('visible');
+        }
+      }, { passive: true });
+
+      btnBackTop?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // 4. Mobile TOC Toggle
+      const mobileToggle = document.getElementById('btn-toggle-mobile-toc');
+      const mobileDrawer = document.getElementById('mobile-toc-disclosure');
+      if (mobileToggle && mobileDrawer) {
+        mobileToggle.addEventListener('click', () => {
+          mobileDrawer.open = !mobileDrawer.open;
+          if (mobileDrawer.open) {
+            mobileDrawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+candidate_id,candidate_name,candidate_type,problem_significance,gap_strength,user_pain,differentiation,technical_depth,research_value,engineering_value,broad_r_compatibility,feasibility,demonstrability,benchmarkability,extensibility,ecosystem_integration,reproduction_defensibility,resilience_vs_existing_tool,research_score,strategic_score,classification,confidence
+C1,Standalone Native Core Engine,Foundation / Core Engine,8,8,7,5,7,4,9,8,8,7,9,8,8,5,4,7.45,6.85,C — Useful Infrastructure / Foundation,HIGH
+C2,Extended Tree-sitter Parser,Foundation,6,4,4,2,4,2,6,9,9,4,9,5,8,1,1,5.85,4.15,C — Useful Infrastructure (Component of C1),HIGH
+C3,Column-Level Schema Lineage,Domain Semantics,9,9,8,9,8,9,8,6,6,9,8,9,9,8,9,8.10,8.40,A — Core Strategic Opportunity,HIGH
+C4,Statistical Formula Semantic IR,Domain Semantics,8,8,6,8,7,8,7,7,8,8,8,8,8,7,8,7.70,7.50,A — Core Strategic Opportunity,HIGH
+C5,ggplot2 Layer Composition IR,Domain Semantics / Developer Tooling,7,8,7,8,6,7,6,7,8,9,7,8,8,6,7,7.20,7.30,B — Strong Supporting Capability,HIGH
+C6,IDE-Integrated Program Slicing,Core Engine / Workflow Tooling,8,7,8,8,8,8,8,6,6,9,8,8,9,7,8,7.60,7.60,A — Core Strategic Opportunity,HIGH
+C7,Native Linter Execution Engine,Developer Tooling / Distribution,7,6,6,3,5,2,7,8,8,8,9,7,9,3,1,6.50,5.50,D — Interesting but Weak Differentiation,HIGH

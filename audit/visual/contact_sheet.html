@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>R-PARSE Visual Forensic Audit — Master Screenshot Contact Sheet</title>
+  <style>
+    :root {
+      --bg: #0F0F12;
+      --card-bg: #18181D;
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #FF5A1F;
+      --text: #F1F1F4;
+      --text-muted: #9E9EA8;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      padding: 40px 48px;
+      line-height: 1.5;
+    }
+    header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .sub {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .stats {
+      margin-top: 16px;
+      display: flex;
+      gap: 24px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+    }
+    h2 {
+      font-size: 20px;
+      margin: 48px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .category-count {
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+    .img-wrap {
+      background: #000;
+      width: 100%;
+      height: 260px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+      cursor: zoom-in;
+    }
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: transform 0.3s;
+    }
+    .card:hover .img-wrap img {
+      transform: scale(1.02);
+    }
+    .card-meta {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .filename {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFF;
+      word-break: break-all;
+    }
+    .file-dim {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    /* Modal Viewer */
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+    #lightbox img {
+      max-width: 95vw;
+      max-height: 90vh;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+    #lightbox-title {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: #FFF;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 24px;
+      color: #FFF;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Visual Quality Engineering · Phase 1 Audit</div>
+  <h1>R-PARSE — Visual Forensic Screenshot Contact Sheet</h1>
+  <p class="sub">Complete photographic evidence index captured from active local servers (Port 3000 Landing / Port 8080 Studio).</p>
+  <div class="stats">
+    <span>TOTAL CAPTURED: 53 SCREENSHOTS</span>
+    <span>VIEWPORT: 1440×900 (DESKTOP) + RESPONSIVE</span>
+    <span>STATUS: COMPLETE EVIDENCE BASE</span>
+  </div>
+</header>
+<h2><span>Landing Page Visuals</span> <span class="category-count">21 captures</span></h2>
+<div class="grid">
+
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-01-hero-initial.png')">
+            <img src="landing-01-hero-initial.png" alt="landing-01-hero-initial.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-01-hero-initial.png</div>
+            <div class="file-dim">1440 × 900 px · 130 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-02-header-scrolled.png')">
+            <img src="landing-02-header-scrolled.png" alt="landing-02-header-scrolled.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-02-header-scrolled.png</div>
+            <div class="file-dim">1440 × 900 px · 103 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-03-nav-drawer-open.png')">
+            <img src="landing-03-nav-drawer-open.png" alt="landing-03-nav-drawer-open.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-03-nav-drawer-open.png</div>
+            <div class="file-dim">1440 × 900 px · 142 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-04-section-question.png')">
+            <img src="landing-04-section-question.png" alt="landing-04-section-question.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-04-section-question.png</div>
+            <div class="file-dim">1440 × 900 px · 102 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-05-section-case-opens.png')">
+            <img src="landing-05-section-case-opens.png" alt="landing-05-section-case-opens.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-05-section-case-opens.png</div>
+            <div class="file-dim">1440 × 900 px · 112 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-06-pinned-evidence-stage-1.png')">
+            <img src="landing-06-pinned-evidence-stage-1.png" alt="landing-06-pinned-evidence-stage-1.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-06-pinned-evidence-stage-1.png</div>
+            <div class="file-dim">1440 × 900 px · 51 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-07-pinned-evidence-stage-2.png')">
+            <img src="landing-07-pinned-evidence-stage-2.png" alt="landing-07-pinned-evidence-stage-2.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-07-pinned-evidence-stage-2.png</div>
+            <div class="file-dim">1440 × 900 px · 68 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-08-section-central-reveal.png')">
+            <img src="landing-08-section-central-reveal.png" alt="landing-08-section-central-reveal.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-08-section-central-reveal.png</div>
+            <div class="file-dim">1440 × 900 px · 106 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-09-evidence-room-ast.png')">
+            <img src="landing-09-evidence-room-ast.png" alt="landing-09-evidence-room-ast.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-09-evidence-room-ast.png</div>
+            <div class="file-dim">1440 × 900 px · 93 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-10-evidence-room-provenance.png')">
+            <img src="landing-10-evidence-room-provenance.png" alt="landing-10-evidence-room-provenance.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-10-evidence-room-provenance.png</div>
+            <div class="file-dim">1440 × 900 px · 123 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-11-evidence-room-pdg.png')">
+            <img src="landing-11-evidence-room-pdg.png" alt="landing-11-evidence-room-pdg.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-11-evidence-room-pdg.png</div>
+            <div class="file-dim">1440 × 900 px · 110 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-12-evidence-room-slicing.png')">
+            <img src="landing-12-evidence-room-slicing.png" alt="landing-12-evidence-room-slicing.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-12-evidence-room-slicing.png</div>
+            <div class="file-dim">1440 × 900 px · 115 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-13-section-limits.png')">
+            <img src="landing-13-section-limits.png" alt="landing-13-section-limits.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-13-section-limits.png</div>
+            <div class="file-dim">1440 × 900 px · 114 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-14-pinned-assembly-stage.png')">
+            <img src="landing-14-pinned-assembly-stage.png" alt="landing-14-pinned-assembly-stage.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-14-pinned-assembly-stage.png</div>
+            <div class="file-dim">1440 × 900 px · 41 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-15-footer.png')">
+            <img src="landing-15-footer.png" alt="landing-15-footer.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-15-footer.png</div>
+            <div class="file-dim">1440 × 900 px · 77 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-16-studio-modal-default.png')">
+            <img src="landing-16-studio-modal-default.png" alt="landing-16-studio-modal-default.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-16-studio-modal-default.png</div>
+            <div class="file-dim">1440 × 900 px · 183 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-16b-root-modal-default.png')">
+            <img src="landing-16b-root-modal-default.png" alt="landing-16b-root-modal-default.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-16b-root-modal-default.png</div>
+            <div class="file-dim">1440 × 900 px · 166 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-17-studio-modal-cli-expanded.png')">
+            <img src="landing-17-studio-modal-cli-expanded.png" alt="landing-17-studio-modal-cli-expanded.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-17-studio-modal-cli-expanded.png</div>
+            <div class="file-dim">1440 × 900 px · 205 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-18-mobile-hero.png')">
+            <img src="landing-18-mobile-hero.png" alt="landing-18-mobile-hero.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-18-mobile-hero.png</div>
+            <div class="file-dim">390 × 844 px · 75 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-19-mobile-nav-drawer.png')">
+            <img src="landing-19-mobile-nav-drawer.png" alt="landing-19-mobile-nav-drawer.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-19-mobile-nav-drawer.png</div>
+            <div class="file-dim">390 × 844 px · 39 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('landing-20-tablet-evidence-room.png')">
+            <img src="landing-20-tablet-evidence-room.png" alt="landing-20-tablet-evidence-room.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">landing-20-tablet-evidence-room.png</div>
+            <div class="file-dim">1024 × 768 px · 79 KB</div>
+          </div>
+        </div>
+        </div>
+<h2><span>Studio Workspace Visuals</span> <span class="category-count">27 captures</span></h2>
+<div class="grid">
+
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-01-entry-screen.png')">
+            <img src="studio-01-entry-screen.png" alt="studio-01-entry-screen.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-01-entry-screen.png</div>
+            <div class="file-dim">1440 × 900 px · 48 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-02-entry-screen-validation-error.png')">
+            <img src="studio-02-entry-screen-validation-error.png" alt="studio-02-entry-screen-validation-error.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-02-entry-screen-validation-error.png</div>
+            <div class="file-dim">1440 × 900 px · 122 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-03-entry-example-dropdown.png')">
+            <img src="studio-03-entry-example-dropdown.png" alt="studio-03-entry-example-dropdown.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-03-entry-example-dropdown.png</div>
+            <div class="file-dim">1440 × 900 px · 122 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-04-workspace-initial.png')">
+            <img src="studio-04-workspace-initial.png" alt="studio-04-workspace-initial.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-04-workspace-initial.png</div>
+            <div class="file-dim">1440 × 900 px · 123 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-05-header-detail.png')">
+            <img src="studio-05-header-detail.png" alt="studio-05-header-detail.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-05-header-detail.png</div>
+            <div class="file-dim">1440 × 120 px · 22 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-06-tab-provenance.png')">
+            <img src="studio-06-tab-provenance.png" alt="studio-06-tab-provenance.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-06-tab-provenance.png</div>
+            <div class="file-dim">1440 × 900 px · 122 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-07-provenance-node-selected.png')">
+            <img src="studio-07-provenance-node-selected.png" alt="studio-07-provenance-node-selected.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-07-provenance-node-selected.png</div>
+            <div class="file-dim">1440 × 900 px · 137 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-08-provenance-filtered.png')">
+            <img src="studio-08-provenance-filtered.png" alt="studio-08-provenance-filtered.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-08-provenance-filtered.png</div>
+            <div class="file-dim">1440 × 900 px · 135 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-09-tab-pdg.png')">
+            <img src="studio-09-tab-pdg.png" alt="studio-09-tab-pdg.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-09-tab-pdg.png</div>
+            <div class="file-dim">1440 × 900 px · 194 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-10-pdg-edge-filters-toggled.png')">
+            <img src="studio-10-pdg-edge-filters-toggled.png" alt="studio-10-pdg-edge-filters-toggled.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-10-pdg-edge-filters-toggled.png</div>
+            <div class="file-dim">1440 × 900 px · 194 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-11-pdg-node-selected.png')">
+            <img src="studio-11-pdg-node-selected.png" alt="studio-11-pdg-node-selected.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-11-pdg-node-selected.png</div>
+            <div class="file-dim">1440 × 900 px · 174 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-12-tab-backward-slice.png')">
+            <img src="studio-12-tab-backward-slice.png" alt="studio-12-tab-backward-slice.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-12-tab-backward-slice.png</div>
+            <div class="file-dim">1440 × 900 px · 119 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-13-slice-criterion-changed.png')">
+            <img src="studio-13-slice-criterion-changed.png" alt="studio-13-slice-criterion-changed.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-13-slice-criterion-changed.png</div>
+            <div class="file-dim">1440 × 900 px · 121 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-14-tab-schema-evolution.png')">
+            <img src="studio-14-tab-schema-evolution.png" alt="studio-14-tab-schema-evolution.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-14-tab-schema-evolution.png</div>
+            <div class="file-dim">1440 × 900 px · 124 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-15-schema-step-selected.png')">
+            <img src="studio-15-schema-step-selected.png" alt="studio-15-schema-step-selected.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-15-schema-step-selected.png</div>
+            <div class="file-dim">1440 × 900 px · 139 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-16-tab-ast-explorer-cst.png')">
+            <img src="studio-16-tab-ast-explorer-cst.png" alt="studio-16-tab-ast-explorer-cst.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-16-tab-ast-explorer-cst.png</div>
+            <div class="file-dim">1440 × 900 px · 198 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-17-tab-ast-explorer-ir.png')">
+            <img src="studio-17-tab-ast-explorer-ir.png" alt="studio-17-tab-ast-explorer-ir.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-17-tab-ast-explorer-ir.png</div>
+            <div class="file-dim">1440 × 900 px · 124 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-18-ast-search-filter.png')">
+            <img src="studio-18-ast-search-filter.png" alt="studio-18-ast-search-filter.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-18-ast-search-filter.png</div>
+            <div class="file-dim">1440 × 900 px · 115 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-19-source-pane-word-wrap-on.png')">
+            <img src="studio-19-source-pane-word-wrap-on.png" alt="studio-19-source-pane-word-wrap-on.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-19-source-pane-word-wrap-on.png</div>
+            <div class="file-dim">1440 × 900 px · 124 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-20-source-pane-word-wrap-off.png')">
+            <img src="studio-20-source-pane-word-wrap-off.png" alt="studio-20-source-pane-word-wrap-off.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-20-source-pane-word-wrap-off.png</div>
+            <div class="file-dim">1440 × 900 px · 116 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-21-source-pane-edit-mode.png')">
+            <img src="studio-21-source-pane-edit-mode.png" alt="studio-21-source-pane-edit-mode.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-21-source-pane-edit-mode.png</div>
+            <div class="file-dim">1440 × 900 px · 106 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-22-source-stale-banner.png')">
+            <img src="studio-22-source-stale-banner.png" alt="studio-22-source-stale-banner.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-22-source-stale-banner.png</div>
+            <div class="file-dim">1440 × 900 px · 108 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-23-evidence-drawer-open.png')">
+            <img src="studio-23-evidence-drawer-open.png" alt="studio-23-evidence-drawer-open.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-23-evidence-drawer-open.png</div>
+            <div class="file-dim">1440 × 900 px · 119 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-24-inspector-collapsed-vs-expanded.png')">
+            <img src="studio-24-inspector-collapsed-vs-expanded.png" alt="studio-24-inspector-collapsed-vs-expanded.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-24-inspector-collapsed-vs-expanded.png</div>
+            <div class="file-dim">1440 × 900 px · 121 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-25-responsive-1024x768.png')">
+            <img src="studio-25-responsive-1024x768.png" alt="studio-25-responsive-1024x768.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-25-responsive-1024x768.png</div>
+            <div class="file-dim">1024 × 768 px · 96 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-26-responsive-768x1024.png')">
+            <img src="studio-26-responsive-768x1024.png" alt="studio-26-responsive-768x1024.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-26-responsive-768x1024.png</div>
+            <div class="file-dim">768 × 1024 px · 66 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('studio-27-responsive-390x844.png')">
+            <img src="studio-27-responsive-390x844.png" alt="studio-27-responsive-390x844.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">studio-27-responsive-390x844.png</div>
+            <div class="file-dim">390 × 844 px · 46 KB</div>
+          </div>
+        </div>
+        </div>
+<h2><span>Cross-Product User Journeys</span> <span class="category-count">5 captures</span></h2>
+<div class="grid">
+
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('journey-01-landing-to-modal.png')">
+            <img src="journey-01-landing-to-modal.png" alt="journey-01-landing-to-modal.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">journey-01-landing-to-modal.png</div>
+            <div class="file-dim">1440 × 900 px · 183 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('journey-02-modal-to-studio.png')">
+            <img src="journey-02-modal-to-studio.png" alt="journey-02-modal-to-studio.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">journey-02-modal-to-studio.png</div>
+            <div class="file-dim">1440 × 900 px · 184 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('journey-03-studio-to-landing.png')">
+            <img src="journey-03-studio-to-landing.png" alt="journey-03-studio-to-landing.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">journey-03-studio-to-landing.png</div>
+            <div class="file-dim">1440 × 900 px · 122 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('journey-04-new-analysis-flow.png')">
+            <img src="journey-04-new-analysis-flow.png" alt="journey-04-new-analysis-flow.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">journey-04-new-analysis-flow.png</div>
+            <div class="file-dim">1440 × 900 px · 50 KB</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="img-wrap" onclick="openLightbox('journey-05-node-to-source-jump.png')">
+            <img src="journey-05-node-to-source-jump.png" alt="journey-05-node-to-source-jump.png" loading="lazy">
+          </div>
+          <div class="card-meta">
+            <div class="filename">journey-05-node-to-source-jump.png</div>
+            <div class="file-dim">1440 × 900 px · 137 KB</div>
+          </div>
+        </div>
+        </div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <span id="lightbox-title"></span>
+  <button id="lightbox-close">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+function openLightbox(fn) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const title = document.getElementById('lightbox-title');
+  img.src = fn;
+  title.textContent = fn;
+  lb.style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
+
+</body>
+</html>

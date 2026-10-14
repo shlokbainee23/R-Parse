@@ -1,0 +1,26 @@
+# Rust Workspace Artifacts
+target/
+implementation/target/
+**/*.rs.bk
+Cargo.lock.backup
+
+# Environment Configurations & Secrets
+.env
+.env.*
+!.env.example
+
+# Editor & Tooling Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+.gemini/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Temporary Files
+*.log
+*.tmp

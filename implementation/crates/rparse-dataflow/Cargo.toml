@@ -1,0 +1,11 @@
+[package]
+name = "rparse-dataflow"
+version = "0.1.0"
+edition = "2021"
+description = "Variable dataflow, reaching definitions, and control dependencies for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }
+rparse-scope = { path = "../rparse-scope" }
+rparse-cfg = { path = "../rparse-cfg" }

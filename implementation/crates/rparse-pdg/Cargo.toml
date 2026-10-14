@@ -1,0 +1,13 @@
+[package]
+name = "rparse-pdg"
+version = "0.1.0"
+edition = "2021"
+description = "Program Dependence Graph (PDG) integrating scalar dataflow, column provenance, control dependencies, and row selection for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }
+rparse-scope = { path = "../rparse-scope" }
+rparse-cfg = { path = "../rparse-cfg" }
+rparse-dataflow = { path = "../rparse-dataflow" }
+rparse-dataframe = { path = "../rparse-dataframe" }

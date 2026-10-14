@@ -1,0 +1,25 @@
+[package]
+name = "rparse-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Command-line interface and unified static analysis pipeline orchestration for R-PARSE"
+
+[[bin]]
+name = "rparse"
+path = "src/main.rs"
+
+[lib]
+name = "rparse_cli"
+path = "src/lib.rs"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-parser = { path = "../rparse-parser" }
+rparse-ir = { path = "../rparse-ir" }
+rparse-scope = { path = "../rparse-scope" }
+rparse-cfg = { path = "../rparse-cfg" }
+rparse-dataflow = { path = "../rparse-dataflow" }
+rparse-dataframe = { path = "../rparse-dataframe" }
+rparse-pdg = { path = "../rparse-pdg" }
+rparse-slicing = { path = "../rparse-slicing" }
+rparse-runtime = { path = "../rparse-runtime" }

@@ -1,0 +1,9 @@
+[package]
+name = "rparse-cfg"
+version = "0.1.0"
+edition = "2021"
+description = "Control-Flow Graph (CFG) for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }

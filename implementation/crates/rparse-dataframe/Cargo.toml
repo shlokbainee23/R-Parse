@@ -1,0 +1,12 @@
+[package]
+name = "rparse-dataframe"
+version = "0.1.0"
+edition = "2021"
+description = "DataFrame semantic layer, column versioning, and fine-grained column provenance for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }
+rparse-scope = { path = "../rparse-scope" }
+rparse-cfg = { path = "../rparse-cfg" }
+rparse-dataflow = { path = "../rparse-dataflow" }

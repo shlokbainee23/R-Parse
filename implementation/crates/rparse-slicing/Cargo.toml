@@ -1,0 +1,14 @@
+[package]
+name = "rparse-slicing"
+version = "0.1.0"
+edition = "2021"
+description = "Column-aware static backward slicing over the Unified PDG for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }
+rparse-scope = { path = "../rparse-scope" }
+rparse-cfg = { path = "../rparse-cfg" }
+rparse-dataflow = { path = "../rparse-dataflow" }
+rparse-dataframe = { path = "../rparse-dataframe" }
+rparse-pdg = { path = "../rparse-pdg" }

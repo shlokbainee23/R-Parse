@@ -1,0 +1,11 @@
+target/
+implementation/target/
+.git/
+.github/
+.gemini/
+*.log
+*.tmp
+.env
+.env.local
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/rparse-core",
+    "crates/rparse-parser",
+    "crates/rparse-ir",
+    "crates/rparse-scope",
+    "crates/rparse-cfg",
+    "crates/rparse-dataflow",
+    "crates/rparse-dataframe",
+    "crates/rparse-pdg",
+    "crates/rparse-slicing",
+    "crates/rparse-runtime",
+    "crates/rparse-cli",
+]
+
+[profile.release]
+debug = true
+
+[profile.release.build-override]
+opt-level = 0
+debug = true

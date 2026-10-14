@@ -1,0 +1,11 @@
+[package]
+name = "rparse-scope"
+version = "0.1.0"
+edition = "2021"
+description = "Symbol and lexical scope analysis for R-PARSE"
+
+[dependencies]
+rparse-core = { path = "../rparse-core" }
+rparse-ir = { path = "../rparse-ir" }
+
+

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R-PARSE Studio — Unified Design System Prototype (Isolated)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       R-PARSE UNIFIED DESIGN SYSTEM TOKENS (DARK-FIRST SCIENTIFIC INSTRUMENT)
+       ========================================================================== */
+    :root {
+      --bg-canvas: #121216;
+      --bg-panel: #18181E;
+      --bg-surface: #22222A;
+      --bg-surface-hover: #2B2B35;
+      --bg-input: #15151B;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --border-focus: #FF5A1F;
+      
+      --text-main: #F4F4F6;
+      --text-muted: #9E9EA8;
+      --text-dim: #6A6A76;
+      --text-inverse: #121216;
+
+      --accent-primary: #FF5A1F;
+      --accent-primary-hover: #E04810;
+      --accent-primary-glow: rgba(255, 90, 31, 0.25);
+      --accent-dataflow: #B8A6FF;
+      --accent-emerald: #059669;
+      --accent-emerald-subtle: rgba(5, 150, 105, 0.15);
+      --accent-amber: #F59E0B;
+      --accent-amber-subtle: rgba(245, 158, 11, 0.15);
+      --accent-rose: #EF4444;
+      --accent-rose-subtle: rgba(239, 68, 68, 0.15);
+
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.55);
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* ==========================================================================
+       PROPOSAL 1: STREAMLINED 44PX UNIFIED APPLICATION HEADER
+       ========================================================================== */
+    .app-header {
+      height: 44px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    /* Left: Brand & File Breadcrumb */
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 240px;
+    }
+    .brand-mark {
+      display: flex;
+      gap: 2px;
+      width: 14px;
+      height: 14px;
+    }
+    .brand-mark span {
+      flex: 1;
+      background: var(--text-dim);
+      border-radius: 1px;
+    }
+    .brand-mark span:nth-child(2) { background: var(--accent-primary); }
+    .brand-wordmark {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--text-main);
+    }
+    .header-sep {
+      color: var(--text-dim);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      opacity: 0.5;
+    }
+    .file-breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Center: Integrated View Tabs */
+    .header-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s var(--ease-spring);
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn.active {
+      color: #FFF;
+      background: var(--bg-surface);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    .tab-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      display: none;
+    }
+    .tab-btn.active .tab-dot { display: block; }
+
+    /* Right: Quiet Status & High-Priority Actions */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .status-led {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px rgba(5, 150, 105, 0.6);
+    }
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+    }
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #FFF;
+      box-shadow: 0 1px 8px var(--accent-primary-glow);
+    }
+    .btn-primary:hover {
+      background: var(--accent-primary-hover);
+    }
+
+    /* ==========================================================================
+       PROPOSAL 2: RESILIENT WORKSPACE LAYOUT (30/70 SPLIT)
+       ========================================================================== */
+    .workspace-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Left: Persistent Source Code Pane (30%) */
+    .pane-source {
+      width: 32%;
+      min-width: 280px;
+      max-width: 50%;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+    }
+    .pane-toolbar {
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-panel);
+    }
+    .pane-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-count {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .pane-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-icon {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .btn-icon:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+    .btn-icon.active {
+      color: var(--accent-primary);
+      border-color: rgba(255, 90, 31, 0.3);
+      background: rgba(255, 90, 31, 0.08);
+    }
+
+    /* Source Code Viewer with High-Contrast Slicing Lines */
+    .source-viewer {
+      flex: 1;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.55;
+      padding: 8px 0;
+      color: #D6D6E0;
+    }
+    .code-line {
+      display: flex;
+      padding: 0 12px;
+      position: relative;
+    }
+    .line-gutter {
+      width: 32px;
+      text-align: right;
+      color: var(--text-dim);
+      user-select: none;
+      padding-right: 12px;
+      flex-shrink: 0;
+    }
+    .line-text {
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    /* Slicing retention highlights */
+    .code-line.slice-keep {
+      background: var(--accent-emerald-subtle);
+      border-left: 3px solid var(--accent-emerald);
+    }
+    .code-line.slice-keep .line-gutter { color: var(--accent-emerald); font-weight: 600; }
+    .code-line.slice-drop {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+
+    /* Splitter */
+    .splitter {
+      width: 4px;
+      background: var(--border-subtle);
+      cursor: col-resize;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .splitter:hover {
+      background: var(--accent-primary);
+    }
+
+    /* ==========================================================================
+       PROPOSAL 4 & 5: ENGINEERING CANVAS & DOCKED INSPECTOR
+       ========================================================================== */
+    .canvas-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-canvas);
+      position: relative;
+      overflow: hidden;
+    }
+    .canvas-toolbar {
+      height: 36px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(24, 24, 30, 0.7);
+      backdrop-filter: blur(8px);
+    }
+    .canvas-filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .search-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      width: 180px;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    /* Canvas Work Area with Engineering Dot Grid */
+    .canvas-viewport {
+      flex: 1;
+      display: flex;
+      position: relative;
+      background-color: var(--bg-canvas);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+      overflow: hidden;
+    }
+
+    /* SVG Canvas Area */
+    .svg-area {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Docked Non-Obscuring Inspector Panel */
+    .docked-inspector {
+      width: 320px;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.25);
+    }
+    .inspector-header {
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .inspector-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+    .inspector-content {
+      padding: 16px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .property-row {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .prop-lbl { color: var(--text-dim); font-size: 11px; }
+    .prop-val { font-family: var(--font-mono); font-size: 11px; color: var(--accent-dataflow); }
+
+    /* Mock SVG Graph Elements */
+    .node-rect {
+      fill: #1E1E24;
+      stroke: var(--border-strong);
+      stroke-width: 1.5;
+      rx: 6;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .node-rect:hover, .node-rect.selected {
+      stroke: var(--accent-primary);
+      fill: #262630;
+      filter: drop-shadow(0 0 8px rgba(255, 90, 31, 0.35));
+    }
+    .node-label {
+      fill: #F1F1F4;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-anchor: middle;
+      user-select: none;
+    }
+    .edge-line {
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .edge-line.dataflow {
+      stroke: var(--accent-primary);
+      stroke-width: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       UNIFIED 44PX HEADER
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-mark" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <span class="brand-wordmark">R—PARSE</span>
+      <span class="header-sep">/</span>
+      <span class="file-breadcrumb" title="showcase_pipeline.R">showcase_pipeline.R</span>
+    </div>
+
+    <!-- Centered Navigation Tabs -->
+    <nav class="header-tabs" role="tablist">
+      <button class="tab-btn active">
+        <span class="tab-dot"></span>
+        <span>Provenance</span>
+      </button>
+      <button class="tab-btn">
+        <span class="tab-dot"></span>
+        <span>PDG Graph</span>
+      </button>
+      <button class="tab-btn">
+        <span class="tab-dot"></span>
+        <span>Backward Slice</span>
+      </button>
+      <button class="tab-btn">
+        <span class="tab-dot"></span>
+        <span>Schema Evolution</span>
+      </button>
+      <button class="tab-btn">
+        <span class="tab-dot"></span>
+        <span>AST Explorer</span>
+      </button>
+    </nav>
+
+    <!-- Right: Quiet Status & Primary Actions -->
+    <div class="header-right">
+      <div class="status-badge" title="Deterministic Rust static analysis pipeline">
+        <span class="status-led"></span>
+        <span>Static Ready</span>
+      </div>
+      <a href="/landing" class="btn btn-secondary" style="font-size:11px; padding:3px 8px;">Investigation ↗</a>
+      <button class="btn btn-secondary" style="font-size:11px; padding:3px 8px;">Evidence</button>
+      <button class="btn btn-primary" style="font-size:11px; padding:3px 10px;">New Analysis</button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       WORKSPACES: SOURCE (32%) + CANVAS (68%)
+       ======================================================================== -->
+  <div class="workspace-body">
+    <!-- Left: Source Code Pane -->
+    <aside class="pane-source">
+      <div class="pane-toolbar">
+        <span class="pane-title">Source Code <span class="badge-count">15 lines</span></span>
+        <div class="pane-actions">
+          <button class="btn-icon active">Wrap</button>
+          <button class="btn-icon">Clear</button>
+          <button class="btn-icon">Edit</button>
+        </div>
+      </div>
+      <div class="source-viewer">
+        <div class="code-line slice-keep">
+          <span class="line-gutter">1</span>
+          <span class="line-text">df &lt;- read.csv("sales_data.csv")</span>
+        </div>
+        <div class="code-line slice-keep">
+          <span class="line-gutter">2</span>
+          <span class="line-text">df &lt;- filter(df, region == "EMEA" &amp; active == TRUE)</span>
+        </div>
+        <div class="code-line slice-keep">
+          <span class="line-gutter">3</span>
+          <span class="line-text">df &lt;- mutate(df, subtotal = price * quantity)</span>
+        </div>
+        <div class="code-line slice-keep">
+          <span class="line-gutter">4</span>
+          <span class="line-text">df2 &lt;- mutate(df, total = subtotal * 1.20)</span>
+        </div>
+        <div class="code-line slice-drop">
+          <span class="line-gutter">5</span>
+          <span class="line-text">df_aux &lt;- mutate(df, audit_tag = "BATCH_01")</span>
+        </div>
+        <div class="code-line slice-drop">
+          <span class="line-gutter">6</span>
+          <span class="line-text">write.csv(df_aux, "audit_log.csv")</span>
+        </div>
+        <div class="code-line slice-keep">
+          <span class="line-gutter">7</span>
+          <span class="line-text">print(df2$total)</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Splitter Divider -->
+    <div class="splitter"></div>
+
+    <!-- Right: Analytical Canvas + Docked Inspector -->
+    <main class="canvas-pane">
+      <div class="canvas-toolbar">
+        <div class="canvas-filter">
+          <input type="text" class="search-box" placeholder="Filter columns or nodes..." value="total" />
+          <span style="font-size:11px; color:var(--text-dim);">Criterion: <strong>df2$total</strong></span>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;">-</button>
+          <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;">+</button>
+          <button class="btn btn-secondary" style="padding:2px 8px; font-size:11px;">Fit View</button>
+        </div>
+      </div>
+
+      <div class="canvas-viewport">
+        <!-- SVG Interactive Graph Area -->
+        <svg class="svg-area" viewBox="0 0 700 500">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#FF5A1F" />
+            </marker>
+          </defs>
+
+          <!-- Edges -->
+          <path d="M 160 120 C 240 120, 260 220, 340 220" class="edge-line dataflow" marker-end="url(#arrow)" />
+          <path d="M 160 180 C 240 180, 260 220, 340 220" class="edge-line dataflow" marker-end="url(#arrow)" />
+          <path d="M 440 220 C 500 220, 520 220, 560 220" class="edge-line dataflow" marker-end="url(#arrow)" />
+
+          <!-- Nodes: Inputs -->
+          <g>
+            <rect x="60" y="100" width="100" height="40" class="node-rect" />
+            <text x="110" y="125" class="node-label">df$price</text>
+          </g>
+          <g>
+            <rect x="60" y="160" width="100" height="40" class="node-rect" />
+            <text x="110" y="185" class="node-label">df$quantity</text>
+          </g>
+
+          <!-- Transformation -->
+          <g>
+            <rect x="340" y="200" width="100" height="40" class="node-rect selected" />
+            <text x="390" y="225" class="node-label" style="fill:#FF5A1F; font-weight:600;">subtotal</text>
+          </g>
+
+          <!-- Output Column -->
+          <g>
+            <rect x="560" y="200" width="100" height="40" class="node-rect selected" />
+            <text x="610" y="225" class="node-label">df2$total</text>
+          </g>
+        </svg>
+
+        <!-- Docked Contextual Inspector (NOT an overlay covering nodes) -->
+        <aside class="docked-inspector">
+          <div class="inspector-header">
+            <span class="inspector-title">Metadata Inspector</span>
+            <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;">Source ↗</button>
+          </div>
+          <div class="inspector-content">
+            <div class="property-row">
+              <span class="prop-lbl">Selected Target</span>
+              <span class="prop-val">df2$total</span>
+            </div>
+            <div class="property-row">
+              <span class="prop-lbl">Derivation Formula</span>
+              <span class="prop-val">subtotal * 1.20</span>
+            </div>
+            <div class="property-row">
+              <span class="prop-lbl">Input Lineage</span>
+              <span class="prop-val">[price, quantity]</span>
+            </div>
+            <div class="property-row">
+              <span class="prop-lbl">Row Selection</span>
+              <span class="prop-val" style="color:var(--accent-amber);">filter(region == "EMEA")</span>
+            </div>
+            <div class="property-row">
+              <span class="prop-lbl">Static Confidence</span>
+              <span class="prop-val" style="color:var(--accent-emerald);">KNOWN_STATIC</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
