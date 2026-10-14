@@ -9,43 +9,97 @@ pub const CSS_STYLES: &str = r###"
    ========================================================================== */
 
 :root {
-  /* Editorial Paper Palette (Specification Phase 2.2) */
-  --paper-0: #F6F4EF;
-  --paper-1: #EEEAE3;
-  --paper-2: #E6E1D8;
+  /* ========================================================================
+     R-PARSE UNIFIED DESIGN SYSTEM — CANONICAL TOKENS (FROM LANDING PAGE)
+     Editorial Warm Paper Canvas, Precision Ink Typography, Signal Orange
+     ======================================================================== */
+
+  /* Editorial Surfaces */
+  --bg-bone: #EEEBE4;
+  --bg-paper: #F7F5F0;
+  --bg-card: #FFFFFF;
   --surface-white: #FFFFFF;
 
-  --line: #D9D3C7;
-  --line-strong: #BDB6A8;
+  --paper-0: var(--bg-paper);       /* #F7F5F0 (Master canvas & workspace) */
+  --paper-1: var(--bg-bone);        /* #EEEBE4 (Subtle surface) */
+  --paper-2: #E6E2D8;               /* Elevated hover & active state */
 
-  --ink: #111111;
-  --ink-2: #3D3A35;
-  --ink-3: #6B665D;
-  --ink-4: #8E887D;
+  /* Fine Rules & Borders */
+  --rule-fine: rgba(18, 18, 18, 0.10);
+  --rule-strong: rgba(18, 18, 18, 0.22);
+  --line: #DFDCD5;                  /* Crisp opaque equivalent of rule-fine */
+  --line-strong: #C5C2BA;           /* Crisp opaque equivalent of rule-strong */
+  --line-soft: rgba(18, 18, 18, 0.07);
 
-  --orange: #FF5A1F;
-  --orange-text: #C2410C;
-  --orange-tint: #FDE9E0;
-  --orange-line: #F9CDB8;
+  /* Canonical Ink Typography */
+  --text-ink: #121212;
+  --text-ink-secondary: #3A3936;
+  --text-muted: #77736B;
+  --text-subtle: #A39E93;
 
+  --ink: var(--text-ink);           /* #121212 */
+  --ink-1: var(--text-ink);         /* #121212 */
+  --ink-2: var(--text-ink-secondary);/* #3A3936 */
+  --ink-3: var(--text-muted);       /* #77736B */
+  --ink-4: var(--text-subtle);      /* #A39E93 */
+
+  /* Canonical Brand & Accents */
+  --accent-orange: #FF5A1F;
+  --accent-orange-hover: #E04810;
+  --accent-orange-subtle: rgba(255, 90, 31, 0.12);
+  --accent-orange-glow: rgba(255, 90, 31, 0.35);
+
+  --orange: var(--accent-orange);   /* #FF5A1F */
+  --orange-hover: var(--accent-orange-hover); /* #E04810 */
+  --orange-text: #C2410C;           /* High contrast text orange for readability */
+  --orange-dark: #C2410C;           /* Semantic dark orange alias */
+  --orange-tint: rgba(255, 90, 31, 0.12);
+  --orange-line: rgba(255, 90, 31, 0.32);
+
+  /* Secondary Accents */
+  --accent-lilac: #B8A6FF;
+  --accent-lilac-subtle: rgba(184, 166, 255, 0.15);
+  --accent-lilac-text: #7B61FF;
+  --accent-chartreuse: #D4FF3A;
+  --accent-chartreuse-subtle: rgba(212, 255, 58, 0.16);
+  --accent-amber: #F59E0B;
+  --accent-amber-subtle: rgba(245, 158, 11, 0.15);
+
+  /* Semantic Status Tokens */
+  --status-ok: #2F7D4F;
+  --status-ok-subtle: rgba(47, 125, 79, 0.12);
+  --status-warn: #8A5A00;
+  --status-warn-subtle: rgba(245, 158, 11, 0.15);
+  --status-err: #B3261E;
+  --status-err-subtle: rgba(179, 38, 30, 0.12);
+
+  --ok: var(--status-ok);
+  --warn: var(--status-warn);
+  --err: var(--status-err);
+
+  /* Derivation & Column Lineage */
   --teal-text: #0F766E;
-  --teal-tint: #DDF0EC;
+  --teal-600: #0F766E;
+  --teal-700: #0D635C;
+  --teal-tint: rgba(15, 118, 110, 0.12);
 
-  --ok: #2F7D4F;
-  --warn: #8A5A00;
-  --err: #B3261E;
-
+  /* Interactive Radii & Dimensions */
   --r-xs: 4px;
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 24px;
-  --r-pill: 999px;
+  --r-pill: 9999px;
 
   --h-sm: 28px;
   --h-md: 32px;
   --h-lg: 40px;
 
-  --focus: 0 0 0 2px var(--paper-0), 0 0 0 4px var(--orange-text);
+  --btn-h-sm: 28px;
+  --btn-h-md: 32px;
+  --btn-h-lg: 40px;
+
+  --focus: 0 0 0 2px var(--bg-paper), 0 0 0 4px var(--orange-text);
+  --focus-ring: rgba(255, 90, 31, 0.25);
 
   /* Layout Dimensions */
   --topbar-height: 52px;
@@ -54,86 +108,74 @@ pub const CSS_STYLES: &str = r###"
   --inspector-width: 320px;
   --source-dock-min-height: 180px;
 
-  /* Graph Palette Tokens (Section 4 Specification) */
-  --graph-canvas: #F6F4EF;
-  --graph-node: #FFFFFF;
-  --graph-node-border: #BDB6A8;
-  --graph-text: #111111;
-  --graph-secondary-text: #3D3A35;
-  --graph-edge: #6B665D;
-  --graph-line: #D9D3C7;
-  --graph-derivation: #0F766E;
-  --graph-derivation-tint: #DDF0EC;
-  --graph-selected: #FDE9E0;
-  --graph-selected-border: #C2410C;
+  /* Graph Palette Tokens */
+  --graph-canvas: var(--bg-paper);
+  --graph-node: var(--bg-card);
+  --graph-node-border: var(--line-strong);
+  --graph-text: var(--text-ink);
+  --graph-secondary-text: var(--text-ink-secondary);
+  --graph-edge: var(--text-muted);
+  --graph-line: var(--line);
+  --graph-derivation: var(--teal-text);
+  --graph-derivation-tint: var(--teal-tint);
+  --graph-selected: rgba(255, 90, 31, 0.12);
+  --graph-selected-border: var(--orange-text);
 
   /* Typography Stacks */
   --font-sans: 'General Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Source Syntax Palette (Specification Phase 2.4) */
+  /* Source Syntax Palette */
   --syntax-identifier: #1E3A8A;
-  --syntax-function: #B4234B;
-  --syntax-string: #2F7D4F;
+  --syntax-function: #9F1239;
+  --syntax-string: var(--status-ok);
   --syntax-number: #9A4A06;
-  --syntax-comment: #6B665D;
-  --source-retained-bg: #FDF3EC;
-  --source-pruned-text: #8E887D;
+  --syntax-comment: var(--text-muted);
+  --source-retained-bg: rgba(255, 90, 31, 0.08);
+  --source-pruned-text: var(--text-subtle);
 
   /* Semantic Compatibility Tokens & Test Aliases */
-  --surface-app: var(--paper-0);
-  --surface-panel: var(--surface-white);
-  --surface-raised: var(--surface-white);
-  --surface-subtle: var(--paper-1);
+  --surface-app: var(--bg-paper);
+  --surface-panel: var(--bg-card);
+  --surface-raised: var(--bg-card);
+  --surface-subtle: var(--bg-bone);
   --surface-input: #FCFAF7;
   --surface-hover: var(--paper-2);
   --border-subtle: var(--line);
   --border-default: var(--line);
   --border-strong: var(--line-strong);
-  --focus-ring: rgba(255, 90, 31, 0.25);
-  --text-primary: var(--ink);
-  --text-secondary: var(--ink-2);
-  --text-muted: var(--ink-3);
-  --text-dim: var(--ink-4);
+  --text-primary: var(--text-ink);
+  --text-secondary: var(--text-ink-secondary);
+  --text-muted: var(--text-muted);
+  --text-dim: var(--text-subtle);
   --text-inverse: #FFFFFF;
-  --color-accent-primary: var(--orange);
-  --color-accent-primary-hover: #E04810;
-  --color-accent-secondary: #B8A6FF;
-  --color-accent-subtle: var(--orange-tint);
-  --status-success: var(--ok);
-  --status-warning: var(--warn);
-  --status-error: var(--err);
-  --status-unknown: var(--warn);
+  --color-accent-primary: var(--accent-orange);
+  --color-accent-primary-hover: var(--accent-orange-hover);
+  --color-accent-secondary: var(--accent-lilac);
+  --color-accent-subtle: rgba(255, 90, 31, 0.12);
+  --status-success: var(--status-ok);
+  --status-warning: var(--status-warn);
+  --status-error: var(--status-err);
+  --status-unknown: var(--status-warn);
 
-  /* Legacy aliases preserved for tests: --accent-blue */
+  /* Legacy aliases preserved for tests */
   --accent-blue: var(--orange);
   --accent-blue-subtle: var(--orange-tint);
-  --accent-orange: var(--orange);
-  --accent-orange-hover: #E04810;
-  --accent-orange-subtle: var(--orange-tint);
-  --accent-orange-glow: rgba(255, 90, 31, 0.22);
   --accent-orange-border: var(--orange-line);
-  --accent-lilac: #B8A6FF;
-  --accent-lilac-subtle: rgba(184, 166, 255, 0.15);
   --accent-green: var(--ok);
-  --accent-green-subtle: #ECFDF5;
-  --accent-amber: var(--warn);
-  --accent-amber-subtle: #FEF3C7;
+  --accent-green-subtle: var(--status-ok-subtle);
+  --accent-amber-subtle: var(--status-warn-subtle);
   --accent-rose: var(--err);
-  --accent-rose-subtle: #FEE2E2;
+  --accent-rose-subtle: var(--status-err-subtle);
   --bg-page: var(--paper-0);
   --bg-canvas: var(--paper-0);
   --bg-panel: var(--surface-white);
-  --bg-card: var(--surface-white);
   --bg-subtle: var(--paper-1);
   --bg-input: #FCFAF7;
   --text-main: var(--ink);
   --border: var(--line);
   --border-focus: var(--orange);
 
-  --btn-h-sm: 26px;
-  --btn-h-md: 32px;
-  --btn-h-lg: 38px;
   --radius-xs: 3px;
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -269,17 +311,17 @@ body {
   letter-spacing: 0.04em;
 }
 .pill-full, .pill-keep {
-  background: #ECFDF5;
+  background: var(--status-ok-subtle);
   color: var(--ok);
   border: 1px solid rgba(47, 125, 79, 0.25);
 }
 .pill-drop {
-  background: #FEF2F2;
+  background: var(--status-err-subtle);
   color: var(--err);
   border: 1px solid rgba(179, 38, 30, 0.25);
 }
 .pill-partial {
-  background: #FFFBEB;
+  background: var(--status-warn-subtle);
   color: var(--warn);
   border: 1px solid rgba(138, 90, 0, 0.25);
 }
@@ -411,10 +453,10 @@ body {
   border-radius: var(--r-sm);
   font-size: 11.5px;
   line-height: 1.4;
-  background: #FEF2F2;
-  color: #991B1B;
-  border: 1px solid #DC2626;
-  border-left: 4px solid #DC2626;
+  background: var(--status-err-subtle);
+  color: var(--status-err);
+  border: 1px solid rgba(179, 38, 30, 0.25);
+  border-left: 4px solid var(--status-err);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -776,10 +818,10 @@ body {
 .source-stale-banner {
   display: none;
   padding: 6px 12px;
-  background: #FEF3C7;
-  border-bottom: 1px solid rgba(217, 119, 6, 0.35);
+  background: var(--status-warn-subtle);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.35);
   font-size: 11px;
-  color: #92400e;
+  color: var(--status-warn);
   align-items: center;
   justify-content: space-between;
 }
@@ -998,7 +1040,7 @@ body {
   border-left-color: var(--orange) !important;
 }
 .code-line.highlighted-span {
-  background: rgba(235, 110, 48, 0.15) !important;
+  background: var(--accent-orange-subtle) !important;
   border-left-color: var(--orange) !important;
 }
 .source-line.slice-kept, .code-line.slice-kept {
@@ -1006,7 +1048,7 @@ body {
   border-left-color: var(--orange);
 }
 .source-line.slice-partial, .code-line.slice-partial {
-  background: #F4FBFB;
+  background: var(--teal-tint);
   border-left-color: var(--teal-600);
 }
 .source-line.slice-dropped, .code-line.slice-dropped {
@@ -1171,34 +1213,34 @@ svg.graph-svg {
   stroke-width: 1.4px;
 }
 .svg-node rect.node-stmt {
-  fill: #FFFFFF;
+  fill: var(--bg-card);
   stroke: var(--graph-node-border);
   stroke-width: 1.4px;
 }
 .svg-node rect.node-vardef {
-  fill: #FAF5FF;
-  stroke: #7C3AED;
+  fill: var(--accent-lilac-subtle);
+  stroke: var(--accent-lilac-text);
   stroke-width: 1.4px;
 }
 .svg-node rect.node-varuse {
-  fill: #F0FDFA;
-  stroke: #0D9488;
+  fill: var(--teal-tint);
+  stroke: var(--teal-text);
   stroke-width: 1.4px;
 }
 .svg-node rect.node-expr {
-  fill: #F8FAFC;
-  stroke: #64748B;
+  fill: var(--paper-1);
+  stroke: var(--line-strong);
   stroke-width: 1.3px;
 }
 .svg-node rect.node-rowsel {
-  fill: #FAF5FF;
-  stroke: #7C3AED;
+  fill: var(--accent-lilac-subtle);
+  stroke: var(--accent-lilac-text);
   stroke-width: 1.4px;
   stroke-dasharray: 4,3;
 }
 .svg-node rect.node-unk {
-  fill: #FFFBEB;
-  stroke: #D97706;
+  fill: var(--status-warn-subtle);
+  stroke: var(--status-warn);
   stroke-width: 1.4px;
   stroke-dasharray: 4,3;
 }
@@ -1232,10 +1274,10 @@ svg.graph-svg {
   transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
 }
 .edge-data { stroke: var(--graph-edge); stroke-width: 1.4px; }
-.edge-ctrl { stroke: #D97706; stroke-width: 1.4px; stroke-dasharray: 4,3; }
-.edge-rowsel { stroke: #7C3AED; stroke-width: 1.4px; stroke-dasharray: 4,3; }
+.edge-ctrl { stroke: var(--accent-amber); stroke-width: 1.4px; stroke-dasharray: 4,3; }
+.edge-rowsel { stroke: var(--accent-lilac-text); stroke-width: 1.4px; stroke-dasharray: 4,3; }
 .edge-colver { stroke: var(--graph-derivation); stroke-width: 1.4px; }
-.edge-unk { stroke: #DC2626; stroke-width: 1.4px; stroke-dasharray: 3,3; }
+.edge-unk { stroke: var(--status-err); stroke-width: 1.4px; stroke-dasharray: 3,3; }
 
 .svg-edge.highlighted {
   stroke-width: 2.2px !important;
@@ -1303,22 +1345,22 @@ svg.graph-svg {
   letter-spacing: 0.03em;
 }
 .slice-badge-sound {
-  background: #ECFDF5;
+  background: var(--status-ok-subtle);
   color: var(--ok);
   border: 1px solid rgba(47, 125, 79, 0.25);
 }
 .slice-badge-approx {
-  background: #FFFBEB;
+  background: var(--status-warn-subtle);
   color: var(--warn);
   border: 1px solid rgba(138, 90, 0, 0.25);
 }
 .slice-badge-warn {
-  background: #FEF2F2;
+  background: var(--status-err-subtle);
   color: var(--err);
   border: 1px solid rgba(179, 38, 30, 0.25);
 }
 .slice-badge-ok {
-  background: #ECFDF5;
+  background: var(--status-ok-subtle);
   color: var(--ok);
   border: 1px solid rgba(47, 125, 79, 0.25);
 }
@@ -1406,11 +1448,11 @@ svg.graph-svg {
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .stmt-card.full {
-  background: #FFF8F3;
+  background: var(--accent-orange-subtle);
   border-left: 3px solid var(--orange);
 }
 .stmt-card.partial {
-  background: #F4FBFB;
+  background: var(--teal-tint);
   border-left: 3px solid var(--teal-600);
 }
 .stmt-card.none {
@@ -1422,7 +1464,7 @@ svg.graph-svg {
   opacity: 1;
 }
 .stmt-card.unknown {
-  background: #FFFDF5;
+  background: var(--status-warn-subtle);
   border-left: 3px solid var(--warn);
 }
 .stmt-header {
@@ -1460,14 +1502,14 @@ svg.graph-svg {
   text-transform: uppercase;
 }
 .stmt-status-badge.badge-full {
-  background: rgba(235, 110, 48, 0.12);
+  background: var(--accent-orange-subtle);
   color: var(--orange-dark);
-  border: 1px solid rgba(235, 110, 48, 0.35);
+  border: 1px solid rgba(255, 90, 31, 0.35);
 }
 .stmt-status-badge.badge-partial {
-  background: rgba(18, 126, 134, 0.12);
+  background: var(--teal-tint);
   color: var(--teal-700);
-  border: 1px solid rgba(18, 126, 134, 0.3);
+  border: 1px solid rgba(15, 118, 110, 0.3);
 }
 .stmt-status-badge.badge-none {
   background: var(--paper-1);
@@ -1475,7 +1517,7 @@ svg.graph-svg {
   border: 1px solid var(--line);
 }
 .stmt-status-badge.badge-unknown {
-  background: #FFFBEB;
+  background: var(--status-warn-subtle);
   color: var(--warn);
   border: 1px solid rgba(138, 90, 0, 0.25);
 }
@@ -1530,9 +1572,9 @@ svg.graph-svg {
   border-radius: 2px;
 }
 .sub-item-badge.sub-keep {
-  background: rgba(235, 110, 48, 0.12);
+  background: var(--accent-orange-subtle);
   color: var(--orange-dark);
-  border: 1px solid rgba(235, 110, 48, 0.25);
+  border: 1px solid rgba(255, 90, 31, 0.25);
 }
 .sub-item-badge.sub-drop {
   background: var(--paper-1);
@@ -1578,8 +1620,8 @@ svg.graph-svg {
   border-radius: 3px;
   font-weight: 600;
 }
-.diff-added { background: #ECFDF5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); }
-.diff-removed { background: #FEF2F2; color: #DC2626; border: 1px solid rgba(220, 38, 38, 0.2); }
+.diff-added { background: var(--status-ok-subtle); color: var(--status-ok); border: 1px solid rgba(47, 125, 79, 0.25); }
+.diff-removed { background: var(--status-err-subtle); color: var(--status-err); border: 1px solid rgba(179, 38, 30, 0.25); }
 .diff-mod { background: var(--orange-tint); color: var(--orange-text); border: 1px solid var(--orange-line); }
 .diff-ret { background: var(--paper-1); color: var(--ink-3); border: 1px solid var(--line); }
 
@@ -2038,13 +2080,13 @@ pub const HTML_BODY_MARKUP: &str = r###"
               <svg class="graph-svg" id="svg-provenance">
                 <defs>
                   <marker id="arrow-prov-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#6B665D" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#77736B" />
                   </marker>
                   <marker id="arrow-prov-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                     <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E" />
                   </marker>
                   <marker id="arrow-prov-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#DC2626" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#B3261E" />
                   </marker>
                 </defs>
               </svg>
@@ -2055,19 +2097,19 @@ pub const HTML_BODY_MARKUP: &str = r###"
               <svg class="graph-svg" id="svg-pdg">
                 <defs>
                   <marker id="arrow-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#6B665D" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#77736B" />
                   </marker>
                   <marker id="arrow-ctrl" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#D97706" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#F59E0B" />
                   </marker>
                   <marker id="arrow-rowsel" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#7c3aed" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#7B61FF" />
                   </marker>
                   <marker id="arrow-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                     <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E" />
                   </marker>
                   <marker id="arrow-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#DC2626" />
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#B3261E" />
                   </marker>
                 </defs>
               </svg>
@@ -2206,8 +2248,8 @@ pub const JS_SCRIPTS: &str = r###"
       function showStatusNotification(msg, isError = true) {
         if (!sourceStatusBanner || !sourceStatusMsg) return;
         sourceStatusMsg.textContent = msg;
-        sourceStatusBanner.style.background = isError ? 'var(--accent-rose-subtle)' : 'var(--accent-blue-subtle)';
-        sourceStatusBanner.style.color = isError ? '#991b1b' : '#0369a1';
+        sourceStatusBanner.style.background = isError ? 'var(--status-err-subtle)' : 'var(--orange-tint)';
+        sourceStatusBanner.style.color = isError ? 'var(--status-err)' : 'var(--orange-text)';
         sourceStatusBanner.style.display = 'flex';
       }
 
@@ -3528,7 +3570,7 @@ pub const JS_SCRIPTS: &str = r###"
         const edges = data.provenance?.edges || [];
 
         if (nodes.length === 0) {
-          svg.innerHTML += '<text x="50%" y="50%" fill="#64748b" text-anchor="middle">No column provenance derivations available.</text>';
+          svg.innerHTML += '<text x="50%" y="50%" fill="var(--text-muted, #77736B)" font-family="var(--font-mono)" font-size="12" text-anchor="middle">No column provenance derivations available.</text>';
           return;
         }
 
@@ -3750,7 +3792,7 @@ pub const JS_SCRIPTS: &str = r###"
         const edges = data.pdg?.edges || [];
 
         if (nodes.length === 0) {
-          svg.innerHTML += '<text x="50%" y="50%" fill="#64748b" text-anchor="middle">Empty Program Dependence Graph.</text>';
+          svg.innerHTML += '<text x="50%" y="50%" fill="var(--text-muted, #77736B)" font-family="var(--font-mono)" font-size="12" text-anchor="middle">Empty Program Dependence Graph.</text>';
           return;
         }
 
@@ -3873,13 +3915,13 @@ pub const JS_SCRIPTS: &str = r###"
           textKind.setAttribute('font-family', 'var(--font-mono)');
           textKind.setAttribute('letter-spacing', '0.5');
 
-          let kindColor = 'var(--ink-3)';
-          if (isVarDef) kindColor = '#7C3AED';
-          else if (isVarUse) kindColor = '#0D9488';
-          else if (isCol) kindColor = 'var(--orange-text)';
-          else if (isExpr) kindColor = '#3B82F6';
-          else if (isRowSel) kindColor = '#7C3AED';
-          else if (n.is_unknown) kindColor = '#DC2626';
+          let kindColor = 'var(--text-muted)';
+          if (isVarDef) kindColor = 'var(--accent-lilac-text, #7B61FF)';
+          else if (isVarUse) kindColor = 'var(--teal-text, #0F766E)';
+          else if (isCol) kindColor = 'var(--orange-text, #C2410C)';
+          else if (isExpr) kindColor = 'var(--text-ink-secondary, #3A3936)';
+          else if (isRowSel) kindColor = 'var(--accent-lilac-text, #7B61FF)';
+          else if (n.is_unknown) kindColor = 'var(--status-err, #B3261E)';
 
           textKind.setAttribute('fill', kindColor);
           const lineStr = n.span?.start_line ? ` L${n.span.start_line}` : '';
