@@ -1971,8 +1971,15 @@ mod milestone3_visualizer_tests {
         assert!(file_content.contains("<!DOCTYPE html>"));
         let _ = fs::remove_file(&target_file);
 
-        // Invalid output path error handling
-        let invalid_target = PathBuf::from("Z:\\nonexistent_invalid_dir_99999\\report.html");
+        // Invalid output path error handling. The parent directory must be
+        // absent on every OS: `Z:\...` is one legal filename on Unix, where
+        // `\` is not a separator, so that write succeeds.
+        let invalid_target = std::env::temp_dir()
+            .join(format!(
+                "rparse_nonexistent_invalid_dir_{}",
+                std::process::id()
+            ))
+            .join("report.html");
         let (code_err, out_err) = run_cli(vec![
             "rparse".to_string(),
             "analyze".to_string(),
@@ -2900,6 +2907,12 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
             listener.set_nonblocking(true).unwrap();
             while running_clone.load(Ordering::Relaxed) {
                 if let Ok((mut stream, _)) = listener.accept() {
+                    // macOS accept() copies the listener's O_NONBLOCK flag.
+                    // A nonblocking read then returns WouldBlock, the socket
+                    // is dropped, and the client sees ECONNRESET.
+                    if stream.set_nonblocking(false).is_err() {
+                        continue;
+                    }
                     let mut reader = BufReader::new(&mut stream);
                     let mut line = String::new();
                     if reader.read_line(&mut line).is_ok() {
@@ -2907,6 +2920,25 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
                         if parts.len() >= 2 {
                             let method = parts[0];
                             let path = parts[1];
+                            // Read the remaining headers before responding.
+                            // Closing with unread request bytes resets the
+                            // peer on macOS.
+                            let mut content_length = 0usize;
+                            loop {
+                                let mut header = String::new();
+                                match reader.read_line(&mut header) {
+                                    Ok(0) => break,
+                                    Ok(_) if header.trim().is_empty() => break,
+                                    Ok(_) => {
+                                        if let Some((k, v)) = header.split_once(':') {
+                                            if k.trim().eq_ignore_ascii_case("content-length") {
+                                                content_length = v.trim().parse().unwrap_or(0);
+                                            }
+                                        }
+                                    }
+                                    Err(_) => break,
+                                }
+                            }
                             match (method, path) {
                                 ("GET", "/api/health") => {
                                     let body =
@@ -2931,21 +2963,7 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
                                     let _ = stream.write_all(resp.as_bytes());
                                 }
                                 ("POST", "/api/analyze") => {
-                                    let mut len = 0;
-                                    loop {
-                                        let mut h_line = String::new();
-                                        if reader.read_line(&mut h_line).unwrap_or(0) == 0
-                                            || h_line.trim().is_empty()
-                                        {
-                                            break;
-                                        }
-                                        if let Some((k, v)) = h_line.split_once(':') {
-                                            if k.trim().eq_ignore_ascii_case("content-length") {
-                                                len = v.trim().parse::<usize>().unwrap_or(0);
-                                            }
-                                        }
-                                    }
-                                    let mut body = vec![0u8; len];
+                                    let mut body = vec![0u8; content_length];
                                     let _ = reader.read_exact(&mut body);
                                     let body_str = String::from_utf8_lossy(&body);
                                     let (code, json_resp) =
@@ -3025,6 +3043,10 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
             listener.set_nonblocking(true).unwrap();
             while running_clone.load(Ordering::Relaxed) {
                 if let Ok((stream, _)) = listener.accept() {
+                    // Same macOS accept() behavior as the loopback endpoint test.
+                    if stream.set_nonblocking(false).is_err() {
+                        continue;
+                    }
                     let studio_clone = studio_html.clone();
                     thread::spawn(move || {
                         let _ = crate::server::handle_connection(stream, &studio_clone);
