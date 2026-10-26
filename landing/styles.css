@@ -301,19 +301,17 @@ button {
 .header-mark {
   width: 24px;
   height: 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 2.5px;
+  display: block;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-normal) var(--ease-editorial),
+              padding var(--duration-normal) var(--ease-editorial);
 }
 
-.header-mark span {
-  background: currentColor;
-  border-radius: 1px;
-}
-
-.header-mark span:last-child {
-  background: var(--accent-orange);
+/* The monogram is charcoal; on the dark header it sits on a paper tile instead of being recoloured. */
+.site-header.is-dark .header-mark {
+  background: var(--bg-paper);
+  padding: 2px;
 }
 
 .header-brand {
@@ -339,40 +337,6 @@ button {
 
 .site-header.is-dark .header-desc {
   color: var(--text-subtle);
-}
-
-.header-center {
-  display: none;
-}
-
-@media (min-width: 900px) {
-  .header-center {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    background: rgba(0, 0, 0, 0.04);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--rule-fine);
-  }
-
-  .site-header.is-dark .header-center {
-    color: var(--text-subtle);
-    background: rgba(255, 255, 255, 0.06);
-    border-color: var(--border-dark);
-  }
-}
-
-.ticker-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--accent-orange);
 }
 
 .header-right {
@@ -2381,10 +2345,6 @@ button {
   .header-actions .btn-header-studio {
     padding: 7px 12px;
     font-size: 11px;
-  }
-
-  .header-center-ticker {
-    display: none;
   }
 }
 

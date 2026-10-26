@@ -12,9 +12,14 @@ Cargo.lock.backup
 # Editor & Tooling Settings
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 .gemini/
+
+# Local third-party research checkouts. Not part of the public tree.
+# Preserved copies live outside this repository.
+research/repos/
 
 # Operating System Files
 .DS_Store

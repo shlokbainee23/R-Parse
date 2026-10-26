@@ -3,9 +3,19 @@ implementation/target/
 .git/
 .github/
 .gemini/
+.cursor/
 *.log
 *.tmp
 .env
 .env.local
 .DS_Store
 Thumbs.db
+
+# Third-party research checkouts and editor state are not image inputs.
+research/repos/
+
+# Generated artifacts the image does not copy.
+audit/visual/*.png
+implementation/showcase_report.html
+**/*.rs.bk
+Cargo.lock.backup

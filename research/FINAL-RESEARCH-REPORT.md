@@ -2,7 +2,14 @@
 
 **Lead Research Engineer & Software Archaeology Agent Report**  
 **Date:** October 2026  
-**Status:** Research Phase Complete (Pre-Architecture & Pre-Scope Freeze)
+**Status:** Historical snapshot (pre-architecture and pre-scope freeze)
+
+The canonical external-project record is now [`reference-landscape.md`](reference-landscape.md). Two inventory rows below are superseded in specificity and were left in place so this snapshot stays intact:
+
+- tree-sitter-r and the pipe placeholder `_`: at local commit `58a2279`, `grammar.js` accepts a lone `_` as an identifier and does not give it a separate token. See the landscape.
+- flowR and dataframes: shape analysis exists and is not what the slicer walks. See [`flowr-deep-gap-audit.md`](flowr-deep-gap-audit.md).
+
+The paths `research/repos/...` in the inventory named local checkouts. Those checkouts are not part of the public tree.
 
 ---
 

@@ -204,9 +204,9 @@ To prevent scope drift and maintain research rigor, the primary contribution is 
 6. Merely wrapping or rebranding flowR.
 
 ### Concrete Forensic Evidence Supporting the Gap
-As established in the forensic source audit ([`flowr-deep-gap-audit.md`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/research/flowr-deep-gap-audit.md)):
-- **flowR Dataframe Analysis is Exclusively Geometric/Schema Tracking:** FlowR's `DataFrameDomain` ([`dataframe-domain.ts:L6-L15`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/research/repos/flowr/src/abstract-interpretation/data-frame/dataframe-domain.ts#L6-L15)) tracks only `colnames` (`SetRangeDomain`), `cols` (`PosIntervalDomain`), and `rows` (`PosIntervalDomain`). It records no column-to-column derivation edges.
-- **flowR Slicing is Decoupled from Dataframe Analysis:** FlowR's static slicer ([`static-slicer.ts:L66-L203`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/research/repos/flowr/src/slicing/static/static-slicer.ts#L66-L203)) traverses `DataflowGraph` treating dataframes as monolithic scalar variables (`VariableDefinitionVertex`). There is zero connection between `DataFrameShapeAnalysis` and `staticSlice`.
+As established in the forensic source audit ([`flowr-deep-gap-audit.md`](flowr-deep-gap-audit.md)), against flowR commit `3ea266c712b34a585402f1a3c66811850340313b`:
+- **flowR Dataframe Analysis is Exclusively Geometric/Schema Tracking:** FlowR's `DataFrameDomain` ([`dataframe-domain.ts:L6-L15`](https://github.com/flowr-analysis/flowr/blob/3ea266c712b34a585402f1a3c66811850340313b/src/abstract-interpretation/data-frame/dataframe-domain.ts#L6-L15)) tracks only `colnames` (`SetRangeDomain`), `cols` (`PosIntervalDomain`), and `rows` (`PosIntervalDomain`). It records no column-to-column derivation edges.
+- **flowR Slicing is Decoupled from Dataframe Analysis:** FlowR's static slicer ([`static-slicer.ts:L66-L203`](https://github.com/flowr-analysis/flowr/blob/3ea266c712b34a585402f1a3c66811850340313b/src/slicing/static/static-slicer.ts#L66-L203)) traverses `DataflowGraph` treating dataframes as monolithic scalar variables (`VariableDefinitionVertex`). There is zero connection between `DataFrameShapeAnalysis` and `staticSlice`.
 - **Termination of Information:** FlowR's inferred dataframe shapes terminate strictly in a linter check and a CLI debug printer. They never flow into dataflow, reaching definitions, or program slices.
 
 R-PARSE fills this verified architectural void.

@@ -3036,7 +3036,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 1. GET / serves the Landing Page HTML
         let mut s1 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s1.write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s1.write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r1 = String::new();
         s1.read_to_string(&mut r1).unwrap();
         assert!(r1.starts_with("HTTP/1.1 200 OK"));
@@ -3045,7 +3046,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 2. GET /studio serves the Studio Workspace HTML
         let mut s2 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s2.write_all(b"GET /studio HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s2.write_all(b"GET /studio HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r2 = String::new();
         s2.read_to_string(&mut r2).unwrap();
         assert!(r2.starts_with("HTTP/1.1 200 OK"));
@@ -3054,7 +3056,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 3. GET /api/health serves backend health JSON
         let mut s3 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s3.write_all(b"GET /api/health HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s3.write_all(b"GET /api/health HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r3 = String::new();
         s3.read_to_string(&mut r3).unwrap();
         assert!(r3.starts_with("HTTP/1.1 200 OK"));
@@ -3077,7 +3080,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 5. Unknown API route returns 404 JSON, not HTML
         let mut s5 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s5.write_all(b"GET /api/nonexistent HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s5.write_all(b"GET /api/nonexistent HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r5 = String::new();
         s5.read_to_string(&mut r5).unwrap();
         assert!(r5.starts_with("HTTP/1.1 404 Not Found"));
@@ -3086,7 +3090,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 6. Missing static JS asset returns 404 text, not HTML
         let mut s6 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s6.write_all(b"GET /missing_script.js HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s6.write_all(b"GET /missing_script.js HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r6 = String::new();
         s6.read_to_string(&mut r6).unwrap();
         assert!(r6.starts_with("HTTP/1.1 404 Not Found"));
@@ -3095,7 +3100,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 7. Unknown page returns 404 text, not HTML
         let mut s7 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s7.write_all(b"GET /unknown_page HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s7.write_all(b"GET /unknown_page HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r7 = String::new();
         s7.read_to_string(&mut r7).unwrap();
         assert!(r7.starts_with("HTTP/1.1 404 Not Found"));
@@ -3103,7 +3109,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 8. Static assets (CSS) served properly
         let mut s8 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s8.write_all(b"GET /landing/styles.css HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s8.write_all(b"GET /landing/styles.css HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r8 = String::new();
         s8.read_to_string(&mut r8).unwrap();
         assert!(r8.starts_with("HTTP/1.1 200 OK"));
@@ -3111,16 +3118,35 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 9. Favicon SVG route served properly
         let mut s9 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s9.write_all(b"GET /favicon.svg HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s9.write_all(b"GET /favicon.svg HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r9 = String::new();
         s9.read_to_string(&mut r9).unwrap();
         assert!(r9.starts_with("HTTP/1.1 200 OK"));
         assert!(r9.contains("image/svg+xml"));
         assert!(r9.contains("<svg"));
 
+        // 9b. Raster favicon set (ICO + PNG) served with correct content types
+        for (path, mime) in [
+            ("/favicon.ico", "image/x-icon"),
+            ("/favicon-32x32.png", "image/png"),
+            ("/apple-touch-icon.png", "image/png"),
+            ("/brand/rparse-mark-96.png", "image/png"),
+        ] {
+            let mut s = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
+            s.write_all(format!("GET {} HTTP/1.1\r\nHost: localhost\r\n\r\n", path).as_bytes())
+                .unwrap();
+            let mut bytes = Vec::new();
+            s.read_to_end(&mut bytes).unwrap();
+            let head = String::from_utf8_lossy(&bytes[..bytes.len().min(256)]);
+            assert!(head.starts_with("HTTP/1.1 200 OK"), "{path}");
+            assert!(head.contains(mime), "{path}");
+        }
+
         // 10. Hero diagram JS asset served properly
         let mut s10 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s10.write_all(b"GET /landing/hero_diagram.js HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s10.write_all(b"GET /landing/hero_diagram.js HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r10 = String::new();
         s10.read_to_string(&mut r10).unwrap();
         assert!(r10.starts_with("HTTP/1.1 200 OK"));
@@ -3128,7 +3154,8 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
         // 11. Direct query string stripping on routes
         let mut s11 = TcpStream::connect(format!("127.0.0.1:{}", port)).unwrap();
-        s11.write_all(b"GET /studio?sample=1 HTTP/1.1\r\nHost: localhost\r\n\r\n").unwrap();
+        s11.write_all(b"GET /studio?sample=1 HTTP/1.1\r\nHost: localhost\r\n\r\n")
+            .unwrap();
         let mut r11 = String::new();
         s11.read_to_string(&mut r11).unwrap();
         assert!(r11.starts_with("HTTP/1.1 200 OK"));
@@ -3457,19 +3484,125 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
     mod studio_redesign_tests {
         use crate::format_html::build_default_studio_html;
 
+        fn assert_studio_view_shortcuts(html: &str) {
+            let shortcuts = [
+                ("1", "view-ast", "tab-ast", "ast", "Switch to AST Explorer"),
+                ("2", "view-pdg", "tab-pdg", "pdg", "Switch to PDG Graph"),
+                (
+                    "3",
+                    "view-schema",
+                    "tab-schema",
+                    "schema",
+                    "Switch to Schema Evolution",
+                ),
+                (
+                    "4",
+                    "view-prov",
+                    "tab-provenance",
+                    "provenance",
+                    "Switch to Provenance",
+                ),
+                (
+                    "5",
+                    "view-slice",
+                    "tab-slice",
+                    "slice",
+                    "Switch to Backward Slice",
+                ),
+            ];
+
+            let mut previous = 0usize;
+            for (key, action, tab, view, label) in shortcuts {
+                let marker = format!(r#"data-action="{action}""#);
+                let at = html
+                    .find(&marker)
+                    .unwrap_or_else(|| panic!("palette missing {action}"));
+                assert!(
+                    at >= previous,
+                    "palette order must be AST, PDG, Schema, Provenance, Slice"
+                );
+                previous = at;
+
+                let end = html[at..]
+                    .find("</div>")
+                    .map(|offset| at + offset)
+                    .unwrap_or(html.len());
+                let item = &html[at..end];
+                assert!(
+                    item.contains(label),
+                    "palette label for {action} must be {label}"
+                );
+                assert!(
+                    item.contains(&format!(r#"<kbd class="kbd-shortcut">{key}</kbd>"#)),
+                    "palette shortcut for {label} must be {key}"
+                );
+
+                let key_marker = format!("e.key === '{key}'");
+                let key_at = html
+                    .find(&key_marker)
+                    .unwrap_or_else(|| panic!("missing key handler for {key}"));
+                let handler_window = &html[key_at..(key_at + 80).min(html.len())];
+                assert!(
+                    handler_window.contains(&format!("switchView('{view}')")),
+                    "key {key} must open {view}"
+                );
+
+                let click =
+                    format!("action === '{action}') document.getElementById('{tab}')?.click();");
+                assert!(
+                    html.contains(&click),
+                    "palette action {action} must open {tab}"
+                );
+            }
+        }
+
         #[test]
         fn test_studio_premium_header_markup_and_css() {
             let html = build_default_studio_html();
 
             // Row 1 Identity
+            assert!(html.contains(r#"<img class="brand-mark" src="/brand/rparse-mark-96.png""#));
+            assert!(html.contains(r#"class="workspace-inspector collapsed""#));
+            assert!(html.contains(r#"id="btn-theme-toggle""#));
+            assert!(html.contains(r#"id="btn-pdg-neighborhood""#));
+            assert!(html.contains("function choosePdgOrientation"));
+            assert!(html.contains("function placePdgViewport"));
+            assert!(html.contains("This is one hop, not every transitive dependency."));
+            assert!(html.contains(r#"class="palette-item-icon""#));
+            assert!(html.contains(r#"class="palette-search-icon""#));
+            assert!(!html.contains("📝 Load Program"));
+            assert!(!html.contains("📊 Switch to Column Provenance"));
+            assert!(!html.contains("🕸️ Switch to Unified PDG Graph"));
+            assert!(!html.contains("🎯 Switch to Backward Slice"));
+            assert!(!html.contains("🧬 Switch to Schema Evolution"));
+            assert!(!html.contains("🌲 Switch to AST"));
+            assert!(!html.contains("⚡ Reanalyze Program"));
+            assert!(!html.contains("↩️ Toggle Source Word Wrap"));
+            assert!(!html.contains("📋 Copy Current CLI Command"));
+            assert!(!html.contains("📖 Open How to Use Guide"));
+            assert!(html.contains(r#"class="ui-icon""#));
+            assert!(!html.contains("🔍"));
+            assert!(!html.contains("🎯"));
+            assert!(!html.contains("📖"));
+            assert!(!html.contains("⚡"));
+            assert!(!html.contains("⚠️"));
+            assert!(html.contains("Jump to Source (Line"));
+            assert!(html.contains("Compute Backward Slice for"));
+            assert!(html.contains("Filter Dependency Applied"));
+            assert!(html.contains(">Guide</span>"));
+            assert!(html.contains(r#"id="btn-forced-black""#));
+            assert!(html.contains(r#"html[data-theme="dark"]"#));
+            assert!(html.contains(r#"html[data-theme="black"]"#));
+            assert!(html.contains("rparse-studio-theme"));
             assert!(html.contains(r#"<span class="brand-logo">R—PARSE</span>"#));
-            assert!(html.contains(r#"<span class="header-sub">Studio</span>"#));
-            assert!(html.contains(r#"<span class="header-sep" aria-hidden="true"></span>"#));
-            assert!(html.contains(r#"<span class="header-filename" id="header-file-name">"#));
+            assert!(!html.contains(r#"<span class="header-sub">Studio</span>"#));
+            assert!(!html.contains(r#"<span class="header-sep" aria-hidden="true"></span>"#));
+            assert!(!html.contains(r#"id="header-file-name""#));
 
-            // Row 1 Status and Metrics
-            assert!(html.contains(r#"id="header-status-dot""#));
-            assert!(html.contains(r#"id="header-status-text""#));
+            // Row 1 Metrics (status badge and search shortcut hint removed)
+            assert!(!html.contains(r#"id="analysis-status-badge""#));
+            assert!(!html.contains(r#"id="header-status-dot""#));
+            assert!(!html.contains(r#"<kbd class="kbd-shortcut">⌘K</kbd>"#));
             assert!(html.contains(r#"id="header-mode""#));
             assert!(html.contains(r#"id="stat-unk""#));
             assert!(html.contains(r#"id="stat-stmts""#));
@@ -3479,13 +3612,38 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
             // Row 1 Actions (Evidence button removed per specification)
             assert!(!html.contains(r#"id="btn-toggle-evidence""#));
             assert!(html.contains(r#"id="btn-new-analysis""#));
+            assert!(html.contains(r#""source_code":"""#));
+            assert!(html.contains(r#""statement_count":0"#));
+            assert!(html.contains(r#"id="load-program-modal""#));
+            assert!(html.contains(".view-toolbar"));
+            assert!(html.contains("min-height: 38px"));
+            assert!(html.contains("flex-wrap: wrap"));
+            assert!(html.contains(".toolbar-actions"));
+            assert!(html.contains("min-height: 40px"));
+            assert!(html.contains(r#"html[data-theme="dark"] .select-dropdown"#));
+            assert!(html.contains(r#"html[data-theme="black"] .select-dropdown"#));
+            assert!(html.contains(r#"stroke='%23A8A296'"#));
+            assert!(html.contains(r#"stroke='%23B7B3AA'"#));
+            assert!(html.contains(r#"class="btn btn-secondary" id="btn-ast-expand-all""#));
+            assert!(html.contains(r#"class="btn btn-secondary" id="btn-ast-collapse-all""#));
+            assert!(!html.contains("btn-outline"));
+            assert!(html.contains(r#"<span class="toolbar-label">Legend:</span>"#));
+            assert!(!html.contains("text-transform:uppercase; letter-spacing:0.04em;"));
 
-            // Row 2 Analysis Navigation (All 5 views with flat styling)
-            assert!(html.contains(r#"id="tab-provenance""#));
-            assert!(html.contains(r#"id="tab-pdg""#));
-            assert!(html.contains(r#"id="tab-slice""#));
-            assert!(html.contains(r#"id="tab-schema""#));
-            assert!(html.contains(r#"id="tab-ast""#));
+            // Row 2 Analysis Navigation (workflow order: AST → PDG → Schema → Provenance → Slice)
+            let tab_ast = html.find(r#"id="tab-ast""#).expect("AST tab");
+            let tab_pdg = html.find(r#"id="tab-pdg""#).expect("PDG tab");
+            let tab_schema = html.find(r#"id="tab-schema""#).expect("Schema tab");
+            let tab_provenance = html.find(r#"id="tab-provenance""#).expect("Provenance tab");
+            let tab_slice = html.find(r#"id="tab-slice""#).expect("Slice tab");
+            assert!(
+                tab_ast < tab_pdg
+                    && tab_pdg < tab_schema
+                    && tab_schema < tab_provenance
+                    && tab_provenance < tab_slice,
+                "nav tabs must follow AST → PDG → Schema → Provenance → Slice"
+            );
+            assert_studio_view_shortcuts(&html);
 
             // Ensure no rectangular boxed tab borders or pill containers
             assert!(html.contains(".nav-tab.active"));
@@ -3504,6 +3662,10 @@ df2 <- mutate(df, dynamic_col = .data[[get_col_name()]])
 
             // Default state has word-wrap-enabled
             assert!(html.contains(r#"class="pane-source word-wrap-enabled" id="source-pane""#));
+            assert!(html.contains(r#"id="btn-toggle-source""#));
+            assert!(html.contains(r#"class="source-rail-chevron""#));
+            assert!(!html.contains(r#"id="scenario-summary-card""#));
+            assert!(!html.contains(r#"id="btn-toggle-scenario""#));
 
             // CSS rules for word wrap
             assert!(html.contains("#source-pane.word-wrap-enabled .source-viewer"));

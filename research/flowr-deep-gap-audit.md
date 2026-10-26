@@ -3,7 +3,7 @@
 
 **Author:** R-PARSE Lead Research Engineer & Software Archaeology Agent  
 **Date:** October 2026  
-**Scope:** Local Source-Level Forensic Audit of `flowR` (`research/repos/flowr/src/`)  
+**Scope:** Local source-level forensic audit of flowR at commit `3ea266c712b34a585402f1a3c66811850340313b` (https://github.com/flowr-analysis/flowr). That checkout is not part of the public tree. Line citations below are the files and lines inspected in that checkout. Absolute `file:///` links in this audit are local inspection paths.\
 **Objective:** Determine from actual flowR source code what dataframe capabilities flowR already implements, where the information flows, where the information terminates, and whether a defensible technical gap remains for a unified R Semantic Program Model (R-SPM).
 
 ---

@@ -72,6 +72,9 @@ pub const CSS_STYLES: &str = r###"
   --status-warn-subtle: rgba(245, 158, 11, 0.15);
   --status-err: #B3261E;
   --status-err-subtle: rgba(179, 38, 30, 0.12);
+  --status-ok-line: rgba(47, 125, 79, 0.25);
+  --status-warn-line: rgba(138, 90, 0, 0.25);
+  --status-err-line: rgba(179, 38, 30, 0.25);
 
   --ok: var(--status-ok);
   --warn: var(--status-warn);
@@ -82,6 +85,20 @@ pub const CSS_STYLES: &str = r###"
   --teal-600: #0F766E;
   --teal-700: #0D635C;
   --teal-tint: rgba(15, 118, 110, 0.12);
+  --teal-line: rgba(15, 118, 110, 0.30);
+
+  /* Ink washes & overlays (translucent --text-ink, so they stay warm on paper and bone) */
+  --ink-wash-1: rgba(18, 18, 18, 0.04);
+  --ink-wash-2: rgba(18, 18, 18, 0.05);
+  --ink-wash-3: rgba(18, 18, 18, 0.08);
+  --scrim: rgba(18, 18, 18, 0.50);
+  --shadow-overlay: 0 20px 48px rgba(18, 18, 18, 0.20);
+  --shadow-drawer: -8px 0 24px rgba(18, 18, 18, 0.10);
+  --shadow-raised: 0 1px 3px rgba(18, 18, 18, 0.10);
+  --shadow-hover: 0 2px 8px rgba(18, 18, 18, 0.06);
+  --orange-flash: rgba(255, 90, 31, 0.16);
+  --text-selection: rgba(255, 90, 31, 0.22);
+  --orange-tint-solid: #FFF1EA;     /* --orange-tint flattened onto white; opaque so edges never show through */
 
   /* Interactive Radii & Dimensions */
   --r-xs: 4px;
@@ -111,15 +128,27 @@ pub const CSS_STYLES: &str = r###"
   /* Graph Palette Tokens */
   --graph-canvas: var(--bg-paper);
   --graph-node: var(--bg-card);
-  --graph-node-border: var(--line-strong);
+  --graph-node-border: var(--text-ink-secondary);
   --graph-text: var(--text-ink);
   --graph-secondary-text: var(--text-ink-secondary);
-  --graph-edge: var(--text-muted);
+  --graph-edge: var(--text-ink-secondary);
   --graph-line: var(--line);
-  --graph-derivation: var(--teal-text);
-  --graph-derivation-tint: var(--teal-tint);
-  --graph-selected: rgba(255, 90, 31, 0.12);
-  --graph-selected-border: var(--orange-text);
+  --graph-derivation: var(--teal-700);
+  --graph-derivation-tint: #D3EEEA;
+  --graph-selected: var(--orange-tint-solid);
+  --graph-selected-border: var(--accent-orange);
+  --graph-selected-glow: rgba(255, 90, 31, 0.22);
+  --graph-upstream: var(--accent-orange);
+  --graph-downstream: var(--teal-text);
+  --graph-edge-control: var(--accent-amber);
+  --graph-edge-rowsel: var(--accent-lilac-text);
+  --graph-edge-unknown: var(--status-err);
+  --graph-unknown: var(--status-warn);
+  --graph-unknown-tint: var(--status-warn-subtle);
+  --graph-hover-shadow: rgba(18, 18, 18, 0.18);
+  --graph-node-shadow: rgba(18, 18, 18, 0.16);
+  --graph-lilac-tint: #EFEAFF;
+  --graph-unknown-fill: #F8E7C4;
 
   /* Typography Stacks */
   --font-sans: 'General Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -131,6 +160,9 @@ pub const CSS_STYLES: &str = r###"
   --syntax-string: var(--status-ok);
   --syntax-number: #9A4A06;
   --syntax-comment: var(--text-muted);
+  --syntax-identifier-tint: rgba(30, 58, 138, 0.08);
+  --syntax-function-tint: rgba(159, 18, 57, 0.08);
+  --syntax-number-tint: rgba(154, 74, 6, 0.09);
   --source-retained-bg: rgba(255, 90, 31, 0.08);
   --source-pruned-text: var(--text-subtle);
 
@@ -146,7 +178,6 @@ pub const CSS_STYLES: &str = r###"
   --border-strong: var(--line-strong);
   --text-primary: var(--text-ink);
   --text-secondary: var(--text-ink-secondary);
-  --text-muted: var(--text-muted);
   --text-dim: var(--text-subtle);
   --text-inverse: #FFFFFF;
   --color-accent-primary: var(--accent-orange);
@@ -164,7 +195,6 @@ pub const CSS_STYLES: &str = r###"
   --accent-orange-border: var(--orange-line);
   --accent-green: var(--ok);
   --accent-green-subtle: var(--status-ok-subtle);
-  --accent-amber-subtle: var(--status-warn-subtle);
   --accent-rose: var(--err);
   --accent-rose-subtle: var(--status-err-subtle);
   --bg-page: var(--paper-0);
@@ -185,6 +215,205 @@ pub const CSS_STYLES: &str = r###"
   --shadow-md: 0 4px 12px rgba(18, 18, 18, 0.06);
   --shadow-lg: 0 12px 28px rgba(18, 18, 18, 0.10);
   --shadow-focus: 0 0 0 2px var(--surface-panel), 0 0 0 4px var(--color-accent-primary);
+
+  /* Motion (curves shared with landing/styles.css; durations tuned for a dense workspace) */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-hover: 140ms;
+  --motion-press: 120ms;
+  --motion-view: 240ms;
+  --motion-panel: 280ms;
+
+  accent-color: var(--accent-orange);
+}
+
+/* Studio dark theme. Scoped to this document via html[data-theme="dark"]; the landing page does not load these styles. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-bone: #141311;
+  --bg-paper: #1B1A17;
+  --bg-card: #242320;
+  --surface-white: #242320;
+  --paper-2: #2E2C28;
+
+  --rule-fine: rgba(244, 241, 234, 0.10);
+  --rule-strong: rgba(244, 241, 234, 0.18);
+  --line: #34322C;
+  --line-strong: #4E4A43;
+  --line-soft: rgba(244, 241, 234, 0.07);
+
+  --text-ink: #F4F1EA;
+  --text-ink-secondary: #D2CDC3;
+  --text-muted: #A8A296;
+  --text-subtle: #8C877D;
+
+  --orange-text: #FF8A5C;
+  --orange-dark: #FF8A5C;
+  --orange-tint: rgba(255, 90, 31, 0.16);
+  --orange-line: rgba(255, 90, 31, 0.42);
+  --accent-orange-subtle: rgba(255, 90, 31, 0.16);
+  --accent-orange-glow: rgba(255, 90, 31, 0.28);
+  --orange-tint-solid: #3A241C;
+  --orange-flash: rgba(255, 90, 31, 0.22);
+  --text-selection: rgba(255, 138, 92, 0.28);
+  --color-accent-subtle: rgba(255, 90, 31, 0.16);
+
+  --accent-lilac-text: #C4B5FD;
+  --accent-lilac-subtle: rgba(196, 181, 253, 0.16);
+  --accent-amber: #E0B15A;
+  --accent-amber-subtle: rgba(224, 177, 90, 0.16);
+
+  --status-ok: #6FCF97;
+  --status-ok-subtle: rgba(111, 207, 151, 0.14);
+  --status-warn: #E0B15A;
+  --status-warn-subtle: rgba(224, 177, 90, 0.16);
+  --status-err: #F07167;
+  --status-err-subtle: rgba(240, 113, 103, 0.14);
+  --status-ok-line: rgba(111, 207, 151, 0.32);
+  --status-warn-line: rgba(224, 177, 90, 0.32);
+  --status-err-line: rgba(240, 113, 103, 0.32);
+
+  --teal-text: #5DCFC4;
+  --teal-600: #5DCFC4;
+  --teal-700: #3DB8AE;
+  --teal-tint: rgba(93, 207, 196, 0.14);
+  --teal-line: rgba(93, 207, 196, 0.36);
+
+  --ink-wash-1: rgba(244, 241, 234, 0.04);
+  --ink-wash-2: rgba(244, 241, 234, 0.07);
+  --ink-wash-3: rgba(244, 241, 234, 0.11);
+  --scrim: rgba(0, 0, 0, 0.62);
+  --shadow-overlay: 0 20px 48px rgba(0, 0, 0, 0.45);
+  --shadow-drawer: -8px 0 24px rgba(0, 0, 0, 0.35);
+  --shadow-raised: 0 1px 3px rgba(0, 0, 0, 0.40);
+  --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.50);
+
+  --surface-input: #1E1D1A;
+  --bg-input: #1E1D1A;
+
+  --graph-canvas: #121110;
+  --graph-node: #2C2B27;
+  --graph-node-border: #B7B2A8;
+  --graph-derivation-tint: #1A3330;
+  --graph-selected-glow: rgba(255, 90, 31, 0.28);
+  --graph-hover-shadow: rgba(0, 0, 0, 0.40);
+  --graph-node-shadow: rgba(0, 0, 0, 0.45);
+  --graph-lilac-tint: #2A2540;
+  --graph-unknown-fill: #3A3020;
+
+  --syntax-identifier: #9EBEF2;
+  --syntax-function: #F0A0B4;
+  --syntax-number: #E0B15A;
+  --syntax-identifier-tint: rgba(158, 190, 242, 0.14);
+  --syntax-function-tint: rgba(240, 160, 180, 0.14);
+  --syntax-number-tint: rgba(224, 177, 90, 0.14);
+  --source-retained-bg: rgba(255, 90, 31, 0.16);
+}
+
+html[data-theme="dark"] .brand-mark {
+  background: #F4F1EA;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+/* Experimental forced-black theme. Separate from the charcoal dark theme above. */
+html[data-theme="black"] {
+  color-scheme: dark;
+
+  --bg-bone: #000000;
+  --bg-paper: #000000;
+  --bg-card: #000000;
+  --surface-white: #000000;
+  --paper-2: #161616;
+
+  --rule-fine: rgba(255, 255, 255, 0.14);
+  --rule-strong: rgba(255, 255, 255, 0.28);
+  --line: #3A3A3A;
+  --line-strong: #6A6A6A;
+  --line-soft: rgba(255, 255, 255, 0.10);
+
+  --text-ink: #F7F7F5;
+  --text-ink-secondary: #E2E0DA;
+  --text-muted: #B7B3AA;
+  --text-subtle: #9A968E;
+
+  --orange-text: #FF9A6A;
+  --orange-dark: #FF9A6A;
+  --orange-tint: rgba(255, 90, 31, 0.20);
+  --orange-line: rgba(255, 154, 106, 0.55);
+  --accent-orange-subtle: rgba(255, 90, 31, 0.20);
+  --accent-orange-glow: rgba(255, 90, 31, 0.30);
+  --orange-tint-solid: #2A120C;
+  --orange-flash: rgba(255, 90, 31, 0.28);
+  --text-selection: rgba(255, 154, 106, 0.32);
+  --color-accent-subtle: rgba(255, 90, 31, 0.20);
+
+  --accent-lilac-text: #D2C4FF;
+  --accent-lilac-subtle: rgba(210, 196, 255, 0.18);
+  --accent-amber: #F0C36A;
+  --accent-amber-subtle: rgba(240, 195, 106, 0.18);
+
+  --status-ok: #7DDBA4;
+  --status-ok-subtle: rgba(125, 219, 164, 0.16);
+  --status-warn: #F0C36A;
+  --status-warn-subtle: rgba(240, 195, 106, 0.16);
+  --status-err: #FF8B82;
+  --status-err-subtle: rgba(255, 139, 130, 0.16);
+  --status-ok-line: rgba(125, 219, 164, 0.40);
+  --status-warn-line: rgba(240, 195, 106, 0.40);
+  --status-err-line: rgba(255, 139, 130, 0.40);
+
+  --teal-text: #7EE0D6;
+  --teal-600: #7EE0D6;
+  --teal-700: #5DCFC4;
+  --teal-tint: rgba(126, 224, 214, 0.16);
+  --teal-line: rgba(126, 224, 214, 0.42);
+
+  --ink-wash-1: rgba(255, 255, 255, 0.05);
+  --ink-wash-2: rgba(255, 255, 255, 0.08);
+  --ink-wash-3: rgba(255, 255, 255, 0.12);
+  --scrim: rgba(0, 0, 0, 0.72);
+  --surface-input: #000000;
+  --bg-input: #000000;
+
+  --graph-canvas: #000000;
+  --graph-node: #1A1A1A;
+  --graph-node-border: #D4D4D4;
+  --graph-edge: #E4E4E4;
+  --graph-derivation-tint: #102E2C;
+  --graph-selected-glow: rgba(255, 90, 31, 0.34);
+  --graph-hover-shadow: rgba(0, 0, 0, 0.55);
+  --graph-node-shadow: rgba(0, 0, 0, 0.65);
+  --graph-lilac-tint: #241F38;
+  --graph-unknown-fill: #3A2C12;
+
+  --syntax-identifier: #B7D4FF;
+  --syntax-function: #FFB3C4;
+  --syntax-number: #F0C36A;
+  --syntax-identifier-tint: rgba(183, 212, 255, 0.16);
+  --syntax-function-tint: rgba(255, 179, 196, 0.16);
+  --syntax-number-tint: rgba(240, 195, 106, 0.16);
+  --source-retained-bg: rgba(255, 90, 31, 0.20);
+}
+
+html[data-theme="black"] .brand-mark {
+  background: #F4F1EA;
+  border-radius: 4px;
+  padding: 2px;
+}
+html[data-theme="black"] .svg-node rect.node-col,
+html[data-theme="black"] .svg-node rect.node-stmt,
+html[data-theme="black"] .svg-node rect.node-expr {
+  fill: var(--graph-node);
+}
+
+::selection {
+  background-color: var(--text-selection);
+  color: inherit;
 }
 
 /* Base Reset & Typography */
@@ -213,44 +442,59 @@ body {
   align-items: center;
   gap: 6px;
   height: var(--btn-h-md);
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: var(--r-sm);
+  padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--surface-white);
   color: var(--ink);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out),
+              box-shadow var(--motion-hover) var(--ease-out),
+              transform var(--motion-press) var(--ease-out);
   user-select: none;
   text-decoration: none;
+  white-space: nowrap;
 }
 .btn:hover {
   background: var(--paper-1);
   border-color: var(--line-strong);
 }
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
 .btn:focus-visible {
   outline: none;
   box-shadow: var(--focus);
 }
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .btn-primary {
   background: var(--orange);
   border-color: var(--orange);
-  color: #FFFFFF;
-  font-weight: 600;
+  color: var(--text-inverse);
 }
 .btn-primary:hover {
   background: var(--color-accent-primary-hover);
   border-color: var(--color-accent-primary-hover);
-  color: #FFFFFF;
+  color: var(--text-inverse);
+  box-shadow: 0 3px 12px var(--accent-orange-glow);
 }
 .btn-secondary {
-  background: var(--paper-1);
-  border-color: var(--line);
-  color: var(--ink-2);
+  background: transparent;
+  border-color: var(--rule-strong);
+  color: var(--ink);
 }
 .btn-secondary:hover {
-  background: var(--paper-2);
+  background: var(--ink-wash-2);
+  border-color: var(--ink);
   color: var(--ink);
 }
 .btn-ghost {
@@ -259,42 +503,58 @@ body {
   color: var(--ink-3);
 }
 .btn-ghost:hover {
-  background: var(--paper-1);
-  border-color: var(--line);
+  background: var(--ink-wash-2);
   color: var(--ink);
 }
 .btn-ghost.active {
-  background: var(--orange-tint);
-  border-color: var(--orange-line);
-  color: var(--orange-text);
-  font-weight: 600;
+  background: var(--ink-wash-3);
+  border-color: var(--rule-fine);
+  color: var(--ink);
 }
 .btn-sm {
   height: var(--btn-h-sm);
-  padding: 0 8px;
-  font-size: 11px;
+  padding: 0 10px;
+  font-size: 10.5px;
 }
 .btn-lg {
   height: var(--h-lg);
-  padding: 0 18px;
-  font-size: 13px;
+  padding: 0 20px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
 /* Dropdowns & Inputs */
 .select-dropdown {
   height: var(--btn-h-md);
-  padding: 0 10px;
-  font-size: 11px;
+  padding: 0 30px 0 12px;
+  font-size: 11.5px;
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
-  background: var(--surface-white);
+  background-color: var(--surface-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2377736B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  background-size: 10px 6px;
+  -webkit-appearance: none;
+  appearance: none;
   color: var(--ink);
   outline: none;
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font-mono);
+  transition: border-color var(--motion-hover) var(--ease-out), box-shadow var(--motion-hover) var(--ease-out);
 }
-.select-dropdown:focus {
+.select-dropdown:hover {
+  border-color: var(--line-strong);
+}
+.select-dropdown:focus-visible {
   border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+html[data-theme="dark"] .select-dropdown {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23A8A296' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+html[data-theme="black"] .select-dropdown {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23B7B3AA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 /* Pills & Badges */
@@ -310,20 +570,25 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+.pill-neutral {
+  background: var(--ink-wash-2);
+  color: var(--ink-2);
+  border: 1px solid var(--rule-fine);
+}
 .pill-full, .pill-keep {
   background: var(--status-ok-subtle);
   color: var(--ok);
-  border: 1px solid rgba(47, 125, 79, 0.25);
+  border: 1px solid var(--status-ok-line);
 }
 .pill-drop {
   background: var(--status-err-subtle);
   color: var(--err);
-  border: 1px solid rgba(179, 38, 30, 0.25);
+  border: 1px solid var(--status-err-line);
 }
 .pill-partial {
   background: var(--status-warn-subtle);
   color: var(--warn);
-  border: 1px solid rgba(138, 90, 0, 0.25);
+  border: 1px solid var(--status-warn-line);
 }
 
 /* ========================================================================= */
@@ -333,16 +598,16 @@ body {
   position: fixed;
   inset: 0;
   z-index: 9500;
-  background: rgba(18, 18, 18, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.22s ease;
+  transition: opacity var(--motion-view) var(--ease-out);
 }
 .load-modal-backdrop.open {
   opacity: 1;
@@ -352,23 +617,25 @@ body {
   background: var(--surface-white);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  box-shadow: 0 20px 48px rgba(18, 18, 18, 0.22);
+  box-shadow: var(--shadow-overlay);
   width: 100%;
   max-width: 780px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transform: translateY(12px) scale(0.99);
-  transition: transform 0.25s ease-out;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: transform var(--motion-panel) var(--ease-editorial), opacity var(--motion-view) var(--ease-out);
 }
 .load-modal-backdrop.open .load-program-dialog {
-  transform: translateY(0) scale(1);
+  opacity: 1;
+  transform: translateY(0);
 }
 .load-modal-header {
   padding: 14px 20px;
   border-bottom: 1px solid var(--line);
-  background: var(--paper-1);
+  background: var(--bg-paper);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -379,10 +646,10 @@ body {
   gap: 10px;
 }
 .load-wordmark {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 15px;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 .load-badge-label {
@@ -398,20 +665,30 @@ body {
   text-transform: uppercase;
 }
 .load-close-btn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--r-xs);
+  border: 1px solid var(--rule-fine);
+  border-radius: var(--r-pill);
   color: var(--ink-3);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1;
-  padding: 4px 8px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out);
 }
 .load-close-btn:hover {
-  background: var(--paper-2);
+  background: var(--ink-wash-2);
   color: var(--ink);
-  border-color: var(--line);
+  border-color: var(--rule-strong);
+}
+.load-close-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
 }
 .load-modal-body {
   padding: 24px 24px 28px;
@@ -447,15 +724,15 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color var(--motion-hover) var(--ease-out), box-shadow var(--motion-hover) var(--ease-out);
 }
 .load-code-box:focus-within {
   border-color: var(--orange);
-  box-shadow: 0 0 0 1px var(--orange);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 .load-code-topbar {
   padding: 8px 12px;
-  background: var(--paper-1);
+  background: var(--bg-paper);
   border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
@@ -485,13 +762,20 @@ body {
   font-size: 12.5px;
   line-height: 1.6;
   color: var(--ink);
+  caret-color: var(--orange);
   resize: vertical;
   tab-size: 2;
   box-sizing: border-box;
 }
+.load-code-textarea::placeholder {
+  color: var(--ink-4);
+}
+.play-icon {
+  font-size: 9px;
+}
 .load-code-footer {
   padding: 6px 12px;
-  background: var(--paper-1);
+  background: var(--bg-paper);
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: flex-end;
@@ -504,7 +788,7 @@ body {
 .load-hint kbd {
   background: var(--paper-2);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   padding: 1px 4px;
   font-size: 10px;
   color: var(--ink-2);
@@ -521,7 +805,7 @@ body {
   line-height: 1.4;
   background: var(--status-err-subtle);
   color: var(--status-err);
-  border: 1px solid rgba(179, 38, 30, 0.25);
+  border: 1px solid var(--status-err-line);
   border-left: 4px solid var(--status-err);
   display: flex;
   align-items: center;
@@ -549,8 +833,8 @@ body {
 /* 3.1 Top Bar (56px) */
 .app-header {
   height: var(--topbar-height);
-  background: var(--surface-white);
-  border-bottom: 1px solid var(--line);
+  background: var(--bg-bone);
+  border-bottom: 1px solid var(--rule-fine);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -570,43 +854,23 @@ body {
 .header-identity {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
 }
+.header-identity .brand-mark {
+  width: 22px;
+  height: 22px;
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-right: -2px;
+}
 .header-identity .brand-logo {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 16px;
+  letter-spacing: -0.02em;
   color: var(--ink);
-}
-.header-sep {
-  display: inline-block;
-  width: 8px;
-  text-align: center;
-  user-select: none;
-}
-.header-sep::after {
-  content: "/";
-  color: var(--ink-4);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  opacity: 0.6;
-}
-.header-sub {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-3);
-}
-.header-filename {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--ink-2);
-  background: var(--paper-1);
-  padding: 2px 7px;
-  border-radius: var(--r-xs);
-  border: 1px solid var(--line);
 }
 .header-center-info {
   display: flex;
@@ -614,25 +878,25 @@ body {
   gap: 10px;
   flex-shrink: 0;
 }
-.analysis-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--ink-2);
-  user-select: none;
-}
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--ok);
   display: inline-block;
   flex-shrink: 0;
+  transition: background-color var(--motion-view) var(--ease-out);
 }
 .status-dot.error { background: var(--err); }
 .status-dot.uncertain { background: var(--warn); }
+.status-dot.analyzing {
+  background: var(--orange);
+  animation: rp-status-busy 1s ease-in-out infinite alternate;
+}
+@keyframes rp-status-busy {
+  from { opacity: 1; }
+  to { opacity: 0.35; }
+}
 .header-meta-group {
   display: none;
 }
@@ -645,27 +909,30 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--paper-0);
-  border: 1px solid var(--line);
+  height: var(--btn-h-md);
+  background: var(--ink-wash-1);
+  border: 1px solid var(--rule-fine);
   border-radius: var(--r-pill);
-  padding: 4px 12px;
+  padding: 0 14px 0 12px;
+  font-family: var(--font-sans);
   font-size: 12px;
   color: var(--ink-3);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out);
 }
 .search-pill-btn:hover {
-  background: var(--paper-1);
-  border-color: var(--line-strong);
+  background: var(--surface-white);
+  border-color: var(--rule-strong);
   color: var(--ink);
 }
-.search-pill-btn .kbd-shortcut {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  background: var(--surface-white);
-  border: 1px solid var(--line);
-  border-radius: var(--r-xs);
-  padding: 1px 4px;
+.search-pill-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.search-pill-btn .search-icon {
+  display: inline-flex;
   color: var(--ink-4);
 }
 .header-actions-row {
@@ -675,16 +942,41 @@ body {
   flex-shrink: 0;
 }
 .header-nav-link {
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   color: var(--ink-3);
   text-decoration: none;
-  padding: 4px 8px;
-  border-radius: var(--r-sm);
-  transition: all 0.12s ease;
+  padding: 6px 10px;
+  border-radius: var(--r-pill);
+  transition: background-color var(--motion-hover) var(--ease-out), color var(--motion-hover) var(--ease-out);
 }
 .header-nav-link:hover {
-  background: var(--paper-1);
+  background: var(--ink-wash-2);
   color: var(--ink);
+}
+.header-nav-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+.theme-toggle .theme-icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .theme-icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .theme-icon-sun { display: block; }
+.theme-toggle.active {
+  color: var(--ink);
+  border-color: var(--rule-strong);
 }
 
 /* 3-Column Working Workspace Container */
@@ -700,11 +992,11 @@ body {
 /* Horizontal Feature Navigation Row (Section 3: Directly below Header) */
 .feature-nav-bar {
   height: var(--nav-height);
-  background: var(--paper-1);
-  border-bottom: 1px solid var(--line);
+  background: var(--bg-bone);
+  border-bottom: 1px solid var(--rule-fine);
   display: flex;
-  align-items: center;
-  padding: 0 16px;
+  align-items: stretch;
+  padding: 0 12px;
   flex-shrink: 0;
   z-index: 45;
   box-sizing: border-box;
@@ -713,48 +1005,67 @@ body {
 }
 .feature-tabs-list {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: stretch;
+  gap: 2px;
   height: 100%;
 }
 .nav-tab {
-  height: 32px;
+  position: relative;
+  height: 100%;
   padding: 0 14px;
   background: transparent;
   border: none;
   border-bottom: 2px solid var(--accent-blue); /* Retained for test assertion */
   border-color: transparent;
-  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  border-radius: 0;
   color: var(--ink-3);
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.12s ease;
+  transition: color var(--motion-hover) var(--ease-out), background-color var(--motion-hover) var(--ease-out);
   white-space: nowrap;
   outline: none;
   box-sizing: border-box;
 }
+.nav-tab::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent-orange);
+  transform: scaleX(0);
+  transition: transform var(--motion-view) var(--ease-editorial);
+}
 .nav-tab:hover {
-  background: var(--paper-2);
+  background: var(--ink-wash-1);
   color: var(--ink);
 }
 .nav-tab:focus-visible {
-  box-shadow: var(--focus);
+  box-shadow: inset 0 0 0 2px var(--orange-line);
 }
 .nav-tab.active {
-  background: var(--orange-tint);
-  border-bottom: 2px solid var(--accent-blue);
-  color: var(--orange-text);
-  font-weight: 600;
+  background: transparent;
+  color: var(--ink);
+}
+.nav-tab.active::after {
+  transform: scaleX(1);
 }
 .nav-tab-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   stroke: currentColor;
   flex-shrink: 0;
+  transition: color var(--motion-hover) var(--ease-out);
+}
+.nav-tab.active .nav-tab-icon {
+  color: var(--accent-orange);
 }
 .nav-tab-label {
   white-space: nowrap;
@@ -762,15 +1073,16 @@ body {
 .nav-count {
   font-family: var(--font-mono);
   font-size: 10px;
+  font-weight: 500;
   color: var(--ink-4);
-  background: var(--surface-white);
-  border: 1px solid var(--line);
+  background: var(--ink-wash-1);
+  border: 1px solid transparent;
   border-radius: var(--r-pill);
   padding: 1px 6px;
+  transition: color var(--motion-hover) var(--ease-out), background-color var(--motion-hover) var(--ease-out);
 }
 .nav-tab.active .nav-count {
-  background: var(--surface-white);
-  border-color: var(--orange-line);
+  background: var(--orange-tint);
   color: var(--orange-text);
 }
 .nav-count.count-zero, .nav-count:empty {
@@ -794,8 +1106,8 @@ body {
 }
 .pane-header {
   height: 38px;
-  padding: 0 14px;
-  background: var(--paper-1);
+  padding: 0 10px 0 14px;
+  background: var(--bg-paper);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -809,24 +1121,31 @@ body {
 /* Resizable Column Splitter between Source and Center */
 .col-splitter {
   width: 6px;
-  background: var(--line);
+  margin-left: -3px;
+  margin-right: -3px;
+  background: transparent;
   cursor: col-resize;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   user-select: none;
-  transition: background 0.12s ease;
+  transition: background-color var(--motion-hover) var(--ease-out);
   z-index: 20;
+  outline: none;
 }
-.col-splitter:hover, .col-splitter.active {
-  background: var(--orange);
+.col-splitter:hover, .col-splitter.active, .col-splitter:focus-visible {
+  background: var(--orange-line);
 }
 .col-splitter-handle {
   width: 2px;
   height: 28px;
   border-radius: var(--r-pill);
   background: var(--line-strong);
+  transition: background-color var(--motion-hover) var(--ease-out);
+}
+.col-splitter:hover .col-splitter-handle, .col-splitter.active .col-splitter-handle, .col-splitter:focus-visible .col-splitter-handle {
+  background: var(--orange);
 }
 
 /* 2.2 Center Panel — Active Analysis View */
@@ -849,25 +1168,117 @@ body {
   position: relative;
 }
 .pane-title {
+  font-family: var(--font-mono);
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.08em;
-  color: var(--ink-3);
-  font-weight: 700;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.pane-title-toggle {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+}
+.pane-title-toggle:hover {
+  color: var(--ink);
+}
+.pane-title-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: var(--r-xs);
+}
+.pane-icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+}
+.pane-icon-btn .icon-view {
+  display: none;
+}
+.pane-icon-btn.is-editing .icon-edit {
+  display: none;
+}
+.pane-icon-btn.is-editing .icon-view {
+  display: block;
+}
+.pane-source.source-collapsed {
+  width: 36px;
+  min-width: 36px;
+  max-width: 36px;
+}
+.pane-source.source-collapsed .pane-header {
+  height: 100%;
+  padding: 14px 0;
+  justify-content: flex-start;
+}
+.pane-source.source-collapsed .pane-header > div:first-child {
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+.source-rail-chevron {
+  display: none;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+.pane-source.source-collapsed .source-rail-chevron {
+  display: block;
+}
+.pane-source.source-collapsed .pane-title-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  width: 100%;
+}
+.pane-source.source-collapsed .pane-title-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.pane-source.source-collapsed .pane-badge,
+.pane-source.source-collapsed .pane-header > div:last-child,
+.pane-source.source-collapsed .source-stale-banner,
+.pane-source.source-collapsed .source-status-banner,
+.pane-source.source-collapsed .source-viewer,
+.pane-source.source-collapsed .source-editor-textarea {
+  display: none !important;
+}
+.workspace-main:has(.pane-source.source-collapsed) .col-splitter {
+  display: none;
 }
 .pane-badge {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   color: var(--ink-4);
 }
 .source-viewer {
   flex: 1;
   overflow: auto;
-  background: var(--surface-white);
+  scrollbar-width: none;
+  background: linear-gradient(to right, var(--bg-paper) 47px, var(--surface-white) 47px) local;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 22px;
   padding: 6px 0;
+}
+.source-viewer::-webkit-scrollbar,
+.source-editor-textarea::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 .source-editor-textarea {
   display: none;
@@ -879,17 +1290,27 @@ body {
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 22px;
+  color: var(--ink);
+  caret-color: var(--orange);
   resize: none;
+  scrollbar-width: none;
+  box-shadow: inset 2px 0 0 var(--orange);
 }
 .source-stale-banner {
   display: none;
   padding: 6px 12px;
   background: var(--status-warn-subtle);
-  border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+  border-bottom: 1px solid var(--status-warn-line);
   font-size: 11px;
   color: var(--status-warn);
   align-items: center;
   justify-content: space-between;
+}
+.stale-banner-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 .source-status-banner {
   display: none;
@@ -898,42 +1319,6 @@ body {
   font-size: 11px;
   align-items: center;
   justify-content: space-between;
-}
-
-/* Scenario Summary Card in Source Dock (Phase 4.1) */
-.scenario-summary-card {
-  margin: 6px 12px;
-  background: var(--paper-0);
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 6px 10px;
-  font-size: 11px;
-  transition: all 0.15s ease;
-}
-.scenario-summary-card.collapsed .scenario-body {
-  display: none;
-}
-.scenario-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-}
-.scenario-title {
-  font-weight: 700;
-  color: var(--ink-2);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-}
-.scenario-body {
-  margin-top: 6px;
-  color: var(--ink-3);
-  line-height: 1.45;
-  border-top: 1px dashed var(--line);
-  padding-top: 6px;
 }
 
 /* 3.4 Right Inspector (320px column) */
@@ -957,8 +1342,8 @@ body {
 }
 .inspector-header {
   height: 38px;
-  padding: 0 14px;
-  background: var(--paper-1);
+  padding: 0 10px 0 14px;
+  background: var(--bg-paper);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -973,20 +1358,24 @@ body {
 .inspector-content {
   flex: 1;
   overflow-y: auto;
-  padding: 14px;
+  padding: 16px;
+}
+.inspector-content > * {
+  animation: rp-reveal var(--motion-panel) var(--ease-editorial);
 }
 .inspector-section {
-  margin-top: 14px;
-  padding-top: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 .inspector-section-title {
+  font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   color: var(--ink-3);
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -998,19 +1387,31 @@ body {
   padding: 12px;
   margin-bottom: 10px;
 }
+.inspector-content > .card {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 0;
+  background: transparent;
+}
 .prop-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
 }
 .prop-table td {
-  padding: 4px 0;
+  padding: 5px 0;
   vertical-align: top;
+  border-bottom: 1px solid var(--line-soft);
+}
+.prop-table tr:last-child td {
+  border-bottom: none;
 }
 .prop-table .key {
-  color: var(--ink-4);
+  color: var(--ink-3);
   width: 40%;
-  font-size: 10.5px;
+  font-size: 11px;
+  padding-right: 8px;
 }
 .prop-table .val {
   color: var(--ink);
@@ -1026,28 +1427,47 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px;
+  gap: 8px;
+  padding: 5px 8px;
   background: var(--paper-0);
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   border-radius: var(--r-xs);
   cursor: pointer;
   font-size: 11px;
-  transition: all 0.1s ease;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out),
+              transform var(--motion-hover) var(--ease-out);
 }
 .conn-item:hover {
   background: var(--orange-tint);
   border-color: var(--orange-line);
+  transform: translateX(2px);
 }
 .conn-label {
   font-family: var(--font-mono);
   color: var(--ink-2);
 }
 .conn-pill {
-  font-size: 9px;
-  padding: 1px 5px;
-  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  padding: 1px 6px;
+  border-radius: var(--r-pill);
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.inspector-content details > summary {
+  list-style-position: inside;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  transition: color var(--motion-hover) var(--ease-out);
+}
+.inspector-content details > summary:hover {
+  color: var(--ink) !important;
+}
+.inspector-content details[open] > .raw-json {
+  animation: rp-reveal var(--motion-view) var(--ease-editorial);
 }
 .badge-count {
   font-family: var(--font-mono);
@@ -1094,12 +1514,12 @@ body {
   min-height: 22px;
   cursor: pointer;
   border-left: 3px solid transparent;
-  transition: background 0.08s ease, border-left-color 0.08s ease;
+  transition: background-color var(--motion-hover) var(--ease-out), border-left-color var(--motion-hover) var(--ease-out);
   width: 100%;
   box-sizing: border-box;
 }
 .source-line:hover, .code-line:hover {
-  background: var(--paper-1);
+  background: var(--bg-paper);
 }
 .source-line.line-selected, .code-line.active-line, .code-line.line-selected {
   background: var(--source-retained-bg) !important;
@@ -1108,6 +1528,18 @@ body {
 .code-line.highlighted-span {
   background: var(--accent-orange-subtle) !important;
   border-left-color: var(--orange) !important;
+}
+.source-line.line-selected, .code-line.line-selected, .code-line.highlighted-span {
+  animation: rp-line-flash 700ms var(--ease-out);
+}
+.source-line.line-selected .line-num, .code-line.line-selected .line-num,
+.code-line.active-line .line-num, .code-line.highlighted-span .line-num {
+  color: var(--orange-text);
+  font-weight: 600;
+}
+@keyframes rp-line-flash {
+  from { box-shadow: inset 0 0 0 100vmax var(--orange-flash); }
+  to { box-shadow: inset 0 0 0 100vmax transparent; }
 }
 .source-line.slice-kept, .code-line.slice-kept {
   background: var(--source-retained-bg);
@@ -1126,14 +1558,19 @@ body {
   min-width: 44px;
   max-width: 44px;
   text-align: right;
-  padding-right: 12px;
+  padding-right: 10px;
   padding-left: 4px;
+  margin-right: 10px;
+  align-self: stretch;
   color: var(--ink-4);
+  background: var(--bg-paper);
+  border-right: 1px solid var(--line-soft);
   user-select: none;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 22px;
   flex-shrink: 0;
   box-sizing: border-box;
+  transition: color var(--motion-hover) var(--ease-out);
 }
 .line-text {
   flex: 1;
@@ -1156,65 +1593,182 @@ body {
 
 /* Toolbars */
 .view-toolbar {
-  height: 38px;
-  background: var(--surface-white);
+  min-height: 38px;
+  height: auto;
+  background: var(--bg-paper);
   border-bottom: 1px solid var(--line);
-  padding: 0 14px;
+  padding: 5px 12px;
   display: flex;
   align-items: center;
+  align-content: center;
   justify-content: space-between;
   flex-shrink: 0;
-  gap: 10px;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 6px;
 }
 .toolbar-group {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  row-gap: 6px;
+}
+.view-toolbar > .toolbar-group:first-child {
+  flex: 1 1 220px;
+}
+.view-toolbar > .toolbar-group:last-child,
+.view-toolbar > .zoom-cluster {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.toolbar-actions {
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+.pdg-neighborhood-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+.zoom-cluster {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 2px;
+  gap: 1px;
+  flex-shrink: 0;
+  background: var(--surface-white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+}
+.zoom-btn,
+.zoom-fit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.zoom-btn {
+  width: 24px;
+  color: var(--ink-2);
+}
+.zoom-fit {
+  gap: 5px;
+  padding: 0 9px 0 7px;
+}
+.zoom-btn:hover,
+.zoom-fit:hover {
+  background: var(--ink-wash-2);
+  color: var(--ink);
+}
+.zoom-btn:focus-visible,
+.zoom-fit:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+.zoom-cluster-rule {
+  width: 1px;
+  height: 12px;
+  background: var(--line);
+  margin: 0 2px;
+  flex-shrink: 0;
 }
 .toolbar-label {
   font-size: 11px;
   color: var(--ink-3);
   font-weight: 500;
+  white-space: nowrap;
 }
 .filter-box {
   display: flex;
   align-items: center;
-  background: var(--paper-0);
+  flex: 1 1 140px;
+  min-width: 120px;
+  max-width: 240px;
+  background: var(--surface-white);
   border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 2px 8px;
-  height: 26px;
+  border-radius: var(--r-pill);
+  padding: 2px 10px;
+  height: var(--btn-h-sm);
+  transition: border-color var(--motion-hover) var(--ease-out), box-shadow var(--motion-hover) var(--ease-out);
+}
+.filter-box:hover {
+  border-color: var(--line-strong);
+}
+.filter-box:focus-within {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 .filter-input {
   border: none;
   background: transparent;
   outline: none;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--ink);
   font-family: inherit;
-  width: 170px;
+  width: 100%;
+  min-width: 0;
+}
+.filter-input::placeholder, .ast-search-box input::placeholder, .palette-input::placeholder {
+  color: var(--ink-4);
 }
 .filter-clear {
   border: none;
   background: transparent;
   color: var(--ink-4);
   cursor: pointer;
+  transition: color var(--motion-hover) var(--ease-out);
+}
+.filter-clear:hover {
+  color: var(--ink);
 }
 .toggle-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px 0 8px;
   border-radius: var(--r-pill);
   font-size: 11px;
-  background: var(--paper-0);
+  font-weight: 500;
+  background: transparent;
   border: 1px solid var(--line);
   cursor: pointer;
   user-select: none;
-  color: var(--ink-2);
+  color: var(--ink-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out);
+}
+.toggle-chip:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.toggle-chip:has(input:checked) {
+  background: var(--surface-white);
+  color: var(--ink);
+}
+.toggle-chip:has(input:focus-visible) {
+  box-shadow: var(--focus);
 }
 .toggle-chip input {
   cursor: pointer;
+  margin: 0;
 }
 
 /* Canvases */
@@ -1249,112 +1803,132 @@ svg.graph-svg {
   height: 100%;
   display: block;
   background: var(--graph-canvas);
+  fill: var(--graph-text);
 }
 
 /* SVG Node Base */
 .svg-node {
   cursor: pointer;
-  transition: opacity 0.15s ease, filter 0.15s ease;
+  transition: opacity var(--motion-view) var(--ease-out);
+}
+.svg-node text {
+  font-family: var(--font-mono);
+  pointer-events: none;
 }
 .svg-node rect {
   fill: var(--graph-node);
   stroke: var(--graph-node-border);
-  stroke-width: 1.4px;
-  transition: stroke 0.15s ease, stroke-width 0.15s ease, fill 0.15s ease;
+  stroke-width: 1.75px;
+  filter: drop-shadow(0 1px 2px var(--graph-node-shadow));
+  transition: stroke var(--motion-hover) var(--ease-out),
+              stroke-width var(--motion-hover) var(--ease-out),
+              fill var(--motion-hover) var(--ease-out);
 }
 .svg-node:hover rect {
-  stroke: var(--graph-secondary-text);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
+  stroke: var(--ink);
+  filter: drop-shadow(0 2px 6px var(--graph-hover-shadow));
+}
+.svg-graph-empty {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
 /* Specific Node Kinds (Section 4.1 Specification) */
 .svg-node rect.node-col {
-  fill: #FFFFFF;
+  fill: var(--bg-card);
   stroke: var(--graph-node-border);
-  stroke-width: 1.4px;
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-deriv {
   fill: var(--graph-derivation-tint);
   stroke: var(--graph-derivation);
-  stroke-width: 1.4px;
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-stmt {
   fill: var(--bg-card);
   stroke: var(--graph-node-border);
-  stroke-width: 1.4px;
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-vardef {
-  fill: var(--accent-lilac-subtle);
+  fill: var(--graph-lilac-tint);
   stroke: var(--accent-lilac-text);
-  stroke-width: 1.4px;
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-varuse {
-  fill: var(--teal-tint);
-  stroke: var(--teal-text);
-  stroke-width: 1.4px;
+  fill: var(--graph-derivation-tint);
+  stroke: var(--graph-derivation);
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-expr {
-  fill: var(--paper-1);
-  stroke: var(--line-strong);
-  stroke-width: 1.3px;
+  fill: var(--bg-card);
+  stroke: var(--graph-node-border);
+  stroke-width: 1.75px;
 }
 .svg-node rect.node-rowsel {
-  fill: var(--accent-lilac-subtle);
+  fill: var(--graph-lilac-tint);
   stroke: var(--accent-lilac-text);
-  stroke-width: 1.4px;
+  stroke-width: 1.75px;
   stroke-dasharray: 4,3;
 }
 .svg-node rect.node-unk {
-  fill: var(--status-warn-subtle);
-  stroke: var(--status-warn);
-  stroke-width: 1.4px;
+  fill: var(--graph-unknown-fill);
+  stroke: var(--graph-unknown);
+  stroke-width: 1.75px;
   stroke-dasharray: 4,3;
 }
 
 /* Node Selection & Upstream/Downstream Lineage Highlights */
 .svg-node.selected rect {
   fill: var(--graph-selected) !important;
-  stroke: var(--graph-selected-border) !important;
-  stroke-width: 2.2px !important;
-  filter: drop-shadow(0 0 8px rgba(255, 90, 31, 0.35));
+  stroke: var(--accent-orange) !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0 2px 10px var(--graph-selected-glow));
 }
 .svg-node.connected-upstream rect {
-  stroke: var(--orange) !important;
-  stroke-width: 1.8px !important;
-  filter: drop-shadow(0 0 6px rgba(255, 90, 31, 0.22));
+  stroke: var(--graph-upstream) !important;
+  stroke-width: 2.25px !important;
 }
 .svg-node.connected-downstream rect {
-  stroke: var(--graph-derivation) !important;
-  stroke-width: 1.8px !important;
-  filter: drop-shadow(0 0 6px rgba(15, 118, 110, 0.22));
+  stroke: var(--graph-downstream) !important;
+  stroke-width: 2.25px !important;
 }
 .svg-node.dimmed {
-  opacity: 0.45 !important;
+  opacity: 0.4 !important;
 }
 
 /* SVG Edges (Section 4.2 Specification) */
 .svg-edge {
   fill: none;
   stroke: var(--graph-edge);
-  stroke-width: 1.4px;
-  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
+  stroke-width: 2px;
+  stroke-opacity: 1;
+  transition: stroke var(--motion-hover) var(--ease-out),
+              stroke-width var(--motion-hover) var(--ease-out),
+              opacity var(--motion-view) var(--ease-out);
 }
-.edge-data { stroke: var(--graph-edge); stroke-width: 1.4px; }
-.edge-ctrl { stroke: var(--accent-amber); stroke-width: 1.4px; stroke-dasharray: 4,3; }
-.edge-rowsel { stroke: var(--accent-lilac-text); stroke-width: 1.4px; stroke-dasharray: 4,3; }
-.edge-colver { stroke: var(--graph-derivation); stroke-width: 1.4px; }
-.edge-unk { stroke: var(--status-err); stroke-width: 1.4px; stroke-dasharray: 3,3; }
+.edge-data { stroke: var(--graph-edge); stroke-width: 2px; }
+.edge-ctrl { stroke: var(--graph-edge-control); stroke-width: 2px; stroke-dasharray: 5,3; }
+.edge-rowsel { stroke: var(--graph-edge-rowsel); stroke-width: 2px; stroke-dasharray: 5,3; }
+.edge-colver { stroke: var(--graph-derivation); stroke-width: 2px; }
+.edge-unk { stroke: var(--graph-edge-unknown); stroke-width: 2px; stroke-dasharray: 4,3; }
 
 .svg-edge.highlighted {
-  stroke-width: 2.2px !important;
+  stroke-width: 2px !important;
+  stroke-opacity: 1;
   opacity: 1 !important;
 }
 .svg-edge.highlighted.inbound {
-  stroke: var(--orange) !important;
+  stroke: var(--graph-upstream) !important;
 }
 .svg-edge.highlighted.outbound {
-  stroke: var(--graph-derivation) !important;
+  stroke: var(--graph-downstream) !important;
 }
+#arrow-data path, #arrow-prov-data path { fill: var(--graph-edge); }
+#arrow-ctrl path { fill: var(--graph-edge-control); }
+#arrow-rowsel path { fill: var(--graph-edge-rowsel); }
+#arrow-colver path, #arrow-prov-colver path { fill: var(--graph-derivation); }
+#arrow-unk path, #arrow-prov-unk path { fill: var(--graph-edge-unknown); }
 .svg-edge.dimmed {
   opacity: 0.22 !important;
 }
@@ -1364,11 +1938,17 @@ svg.graph-svg {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  scrollbar-width: none;
   padding: 16px 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+.slice-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 .slice-summary-panel {
   background: var(--surface-white);
@@ -1387,11 +1967,12 @@ svg.graph-svg {
   gap: 8px;
 }
 .slice-summary-title {
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
   color: var(--ink-2);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1413,22 +1994,22 @@ svg.graph-svg {
 .slice-badge-sound {
   background: var(--status-ok-subtle);
   color: var(--ok);
-  border: 1px solid rgba(47, 125, 79, 0.25);
+  border: 1px solid var(--status-ok-line);
 }
 .slice-badge-approx {
   background: var(--status-warn-subtle);
   color: var(--warn);
-  border: 1px solid rgba(138, 90, 0, 0.25);
+  border: 1px solid var(--status-warn-line);
 }
 .slice-badge-warn {
   background: var(--status-err-subtle);
   color: var(--err);
-  border: 1px solid rgba(179, 38, 30, 0.25);
+  border: 1px solid var(--status-err-line);
 }
 .slice-badge-ok {
   background: var(--status-ok-subtle);
   color: var(--ok);
-  border: 1px solid rgba(47, 125, 79, 0.25);
+  border: 1px solid var(--status-ok-line);
 }
 .slice-stats-grid {
   display: grid;
@@ -1479,11 +2060,12 @@ svg.graph-svg {
   border-bottom: 1px solid var(--line);
 }
 .slice-section-title {
-  font-size: 11px;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
   color: var(--ink-2);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 .slice-section-meta {
   font-size: 11px;
@@ -1502,7 +2084,10 @@ svg.graph-svg {
   border-radius: var(--r-xs);
   padding: 10px 14px;
   cursor: pointer;
-  transition: border-color 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+  transition: border-color var(--motion-hover) var(--ease-out),
+              background-color var(--motion-hover) var(--ease-out),
+              box-shadow var(--motion-hover) var(--ease-out),
+              opacity var(--motion-hover) var(--ease-out);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1511,7 +2096,7 @@ svg.graph-svg {
 }
 .stmt-card:hover {
   border-color: var(--orange-line);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-hover);
 }
 .stmt-card.full {
   background: var(--accent-orange-subtle);
@@ -1555,7 +2140,7 @@ svg.graph-svg {
   color: var(--ink-2);
   background: var(--paper-1);
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   border: 1px solid var(--line);
 }
 .stmt-status-badge {
@@ -1564,18 +2149,18 @@ svg.graph-svg {
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 2px 8px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   text-transform: uppercase;
 }
 .stmt-status-badge.badge-full {
   background: var(--accent-orange-subtle);
   color: var(--orange-dark);
-  border: 1px solid rgba(255, 90, 31, 0.35);
+  border: 1px solid var(--orange-line);
 }
 .stmt-status-badge.badge-partial {
   background: var(--teal-tint);
   color: var(--teal-700);
-  border: 1px solid rgba(15, 118, 110, 0.3);
+  border: 1px solid var(--teal-line);
 }
 .stmt-status-badge.badge-none {
   background: var(--paper-1);
@@ -1585,7 +2170,7 @@ svg.graph-svg {
 .stmt-status-badge.badge-unknown {
   background: var(--status-warn-subtle);
   color: var(--warn);
-  border: 1px solid rgba(138, 90, 0, 0.25);
+  border: 1px solid var(--status-warn-line);
 }
 .stmt-code {
   font-family: var(--font-mono);
@@ -1597,7 +2182,7 @@ svg.graph-svg {
   word-break: break-word;
   padding: 6px 8px;
   background: var(--paper-0);
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   border: 1px solid var(--line-soft);
 }
 .sub-elements-list {
@@ -1621,7 +2206,7 @@ svg.graph-svg {
   justify-content: space-between;
   align-items: center;
   padding: 3px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   background: var(--paper-0);
   font-size: 11px;
 }
@@ -1635,12 +2220,12 @@ svg.graph-svg {
   font-size: 10px;
   font-weight: 700;
   padding: 1px 6px;
-  border-radius: 2px;
+  border-radius: var(--r-xs);
 }
 .sub-item-badge.sub-keep {
   background: var(--accent-orange-subtle);
   color: var(--orange-dark);
-  border: 1px solid rgba(255, 90, 31, 0.25);
+  border: 1px solid var(--orange-line);
 }
 .sub-item-badge.sub-drop {
   background: var(--paper-1);
@@ -1664,6 +2249,59 @@ svg.graph-svg {
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   padding: 14px;
+  transition: border-color var(--motion-hover) var(--ease-out), box-shadow var(--motion-hover) var(--ease-out);
+}
+.schema-card:hover {
+  border-color: var(--line-strong);
+}
+.schema-symbol {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.schema-diff-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.schema-diff-summary:empty {
+  display: none;
+}
+.schema-cols-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.col-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  background: var(--bg-paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  padding: 2px 9px;
+}
+.col-ver {
+  font-size: 10px;
+  color: var(--ink-4);
+}
+.schema-legend-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  row-gap: 4px;
+  max-width: 100%;
+}
+#slice-target-select {
+  max-width: min(280px, 100%);
+  min-width: 0;
 }
 .schema-card-header {
   display: flex;
@@ -1675,7 +2313,7 @@ svg.graph-svg {
   font-family: var(--font-mono);
   font-size: 10px;
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   background: var(--paper-1);
   color: var(--ink-3);
 }
@@ -1683,11 +2321,13 @@ svg.graph-svg {
   font-size: 10px;
   font-family: var(--font-mono);
   padding: 2px 6px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.diff-added { background: var(--status-ok-subtle); color: var(--status-ok); border: 1px solid rgba(47, 125, 79, 0.25); }
-.diff-removed { background: var(--status-err-subtle); color: var(--status-err); border: 1px solid rgba(179, 38, 30, 0.25); }
+.diff-added { background: var(--status-ok-subtle); color: var(--status-ok); border: 1px solid var(--status-ok-line); }
+.diff-removed { background: var(--status-err-subtle); color: var(--status-err); border: 1px solid var(--status-err-line); }
 .diff-mod { background: var(--orange-tint); color: var(--orange-text); border: 1px solid var(--orange-line); }
 .diff-ret { background: var(--paper-1); color: var(--ink-3); border: 1px solid var(--line); }
 
@@ -1699,50 +2339,132 @@ svg.graph-svg {
   flex-direction: column;
 }
 .ast-toolbar {
-  height: 40px;
-  padding: 0 14px;
-  background: var(--surface-white);
+  min-height: 40px;
+  height: auto;
+  padding: 6px 12px;
+  background: var(--bg-paper);
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  gap: 10px;
+  align-content: center;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 6px;
   flex-shrink: 0;
 }
 .ast-rep-selector {
   display: flex;
-  background: var(--paper-1);
+  background: var(--ink-wash-2);
   padding: 2px;
-  border-radius: var(--r-sm);
+  border-radius: var(--r-pill);
+  flex-shrink: 0;
 }
 .ast-rep-btn {
   border: none;
   background: transparent;
-  padding: 3px 8px;
+  height: 24px;
+  padding: 0 10px;
+  font-family: var(--font-sans);
   font-size: 11px;
-  border-radius: 4px;
+  font-weight: 600;
+  border-radius: var(--r-pill);
   cursor: pointer;
   color: var(--ink-3);
+  white-space: nowrap;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out),
+              box-shadow var(--motion-hover) var(--ease-out);
+}
+.ast-rep-btn:hover {
+  color: var(--ink);
+}
+.ast-rep-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
 }
 .ast-rep-btn.active {
   background: var(--surface-white);
   color: var(--ink);
-  font-weight: 600;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-raised);
 }
 .ast-search-box {
   display: flex;
   align-items: center;
-  background: var(--paper-0);
+  gap: 6px;
+  height: var(--btn-h-sm);
+  background: var(--surface-white);
   border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  padding: 0 10px;
+  flex: 1 1 160px;
+  min-width: 140px;
+  max-width: 280px;
+  transition: border-color var(--motion-hover) var(--ease-out), box-shadow var(--motion-hover) var(--ease-out);
+}
+.ast-search-box:hover {
+  border-color: var(--line-strong);
+}
+.ast-search-box:focus-within {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 .ast-search-box input {
   border: none;
   background: transparent;
   outline: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--ink);
+  width: 100%;
+  min-width: 0;
+}
+.ui-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  display: block;
+}
+.ast-search-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-4);
+  flex-shrink: 0;
+}
+.schema-filter-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
-  width: 160px;
+  color: var(--graph-edge-rowsel);
+  margin-top: 6px;
+}
+.ast-search-match {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--orange-text);
+  background: var(--orange-tint);
+  border-radius: var(--r-pill);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+.ast-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+.ast-actions .btn {
+  height: var(--btn-h-sm);
+  padding: 0 10px;
+  font-size: 10.5px;
+}
+.ast-node-stats {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-4);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .ast-tree-scroll {
   flex: 1;
@@ -1750,15 +2472,104 @@ svg.graph-svg {
   padding: 14px 18px 40px;
   background: var(--surface-white);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   line-height: 22px;
+}
+.ast-node-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  padding: 0 8px 0 4px;
+  border-radius: var(--r-xs);
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--motion-hover) var(--ease-out), border-color var(--motion-hover) var(--ease-out);
+}
+.ast-node-row:hover {
+  background: var(--bg-paper);
+}
+.ast-node-row.selected {
+  background: var(--orange-tint);
+  border-left-color: var(--accent-orange);
+}
+.ast-node-row.has-error .ast-node-label {
+  color: var(--status-err);
+}
+.ast-node-children {
+  margin-left: 13px;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.ast-node-children.collapsed {
+  display: none;
+}
+.ast-node-chevron {
+  width: 14px;
+  flex-shrink: 0;
+  display: inline-flex;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--ink-4);
+  transition: transform var(--motion-view) var(--ease-editorial), color var(--motion-hover) var(--ease-out);
+}
+.ast-node-chevron.expanded {
+  transform: rotate(90deg);
+}
+.ast-node-chevron.empty {
+  visibility: hidden;
+}
+.ast-node-row:hover .ast-node-chevron:not(.empty) {
+  color: var(--ink);
+}
+.ast-node-tag {
+  flex-shrink: 0;
+  min-width: 38px;
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 16px;
+  padding: 0 5px;
+  border-radius: var(--r-pill);
+  color: var(--ink-3);
+  background: var(--ink-wash-2);
+}
+.ast-node-tag.ast-tag-stmt { color: var(--ink); background: var(--ink-wash-3); }
+.ast-node-tag.ast-tag-id   { color: var(--syntax-identifier); background: var(--syntax-identifier-tint); }
+.ast-node-tag.ast-tag-lit  { color: var(--syntax-number); background: var(--syntax-number-tint); }
+.ast-node-tag.ast-tag-call { color: var(--syntax-function); background: var(--syntax-function-tint); }
+.ast-node-tag.ast-tag-op   { color: var(--teal-text); background: var(--teal-tint); }
+.ast-node-tag.ast-tag-err  { color: var(--status-err); background: var(--status-err-subtle); }
+.ast-node-label {
+  color: var(--ink);
+  font-weight: 500;
+}
+.ast-node-detail {
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40ch;
+}
+.ast-node-span {
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 10px;
+  color: var(--ink-4);
+}
+.ast-match-highlight {
+  background: var(--orange-tint);
+  color: var(--orange-text);
+  border-radius: 2px;
+  padding: 0 2px;
 }
 
 /* Command Palette Modal (Specification Phase 7.3) */
 .palette-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 17, 17, 0.45);
+  background: var(--scrim);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: flex-start;
@@ -1767,7 +2578,7 @@ svg.graph-svg {
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.12s ease;
+  transition: opacity var(--motion-view) var(--ease-out);
 }
 .palette-modal-overlay.open {
   opacity: 1;
@@ -1777,12 +2588,17 @@ svg.graph-svg {
   width: 520px;
   max-width: 92vw;
   background: var(--surface-white);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: var(--r-md);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-overlay);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transform: translateY(-8px);
+  transition: transform var(--motion-panel) var(--ease-editorial);
+}
+.palette-modal-overlay.open .palette-card {
+  transform: translateY(0);
 }
 .palette-input-row {
   display: flex;
@@ -1814,11 +2630,59 @@ svg.graph-svg {
   cursor: pointer;
   font-size: 13px;
   color: var(--ink-2);
-  transition: all 0.08s ease;
+  border-left: 2px solid transparent;
+  transition: background-color var(--motion-hover) var(--ease-out),
+              color var(--motion-hover) var(--ease-out),
+              border-color var(--motion-hover) var(--ease-out);
 }
 .palette-item:hover, .palette-item.active {
-  background: var(--paper-1);
+  background: var(--bg-paper);
   color: var(--ink);
+}
+.palette-item.active {
+  border-left-color: var(--accent-orange);
+}
+.palette-search-icon,
+.palette-item-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  color: var(--ink-4);
+}
+.palette-item-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.palette-item:hover .palette-item-icon,
+.palette-item.active .palette-item-icon {
+  color: var(--ink);
+}
+.kbd-shortcut {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-4);
+  background: var(--bg-paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  padding: 1px 5px;
+}
+
+/* ========================================================================= */
+/* SHARED MOTION — view switches, panel content reveals                      */
+/* ========================================================================= */
+.view-animate-in {
+  animation: rp-view-in var(--motion-view) var(--ease-editorial);
+}
+@keyframes rp-view-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rp-reveal {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
 }
 
 
@@ -1855,7 +2719,7 @@ svg.graph-svg {
     bottom: 0;
     width: 320px;
     z-index: 60;
-    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-drawer);
   }
   .workspace-inspector.collapsed {
     transform: translateX(100%);
@@ -1868,6 +2732,16 @@ svg.graph-svg {
     animation-duration: 0.001s !important;
     transition-duration: 0.001s !important;
   }
+  .view-animate-in,
+  .inspector-content > *,
+  .status-dot.analyzing,
+  .source-line.line-selected, .code-line.line-selected, .code-line.highlighted-span {
+    animation: none !important;
+  }
+  .btn:active:not(:disabled),
+  .conn-item:hover {
+    transform: none;
+  }
 }
 "###;
 
@@ -1878,22 +2752,13 @@ pub const HTML_BODY_MARKUP: &str = r###"
     <!-- 3.1 Top Bar (56px) -->
     <header class="app-header">
       <div class="header-top-row">
-        <!-- Left: Wordmark, studio, inline filename breadcrumb -->
+        <!-- Left: Monogram and wordmark -->
         <div class="header-identity">
+          <img class="brand-mark" src="/brand/rparse-mark-96.png" width="22" height="22" alt="" aria-hidden="true">
           <span class="brand-logo">R—PARSE</span>
-          <span class="header-sep" aria-hidden="true"></span>
-          <span class="header-sub">Studio</span>
-          <span class="header-sep" aria-hidden="true"></span>
-          <span class="header-filename" id="header-file-name">showcase_pipeline.R</span>
         </div>
 
-        <!-- Middle: Quiet Status & Plain Metrics -->
         <div class="header-center-info">
-          <div class="analysis-status-badge" id="analysis-status-badge" title="Engine status">
-            <span class="status-dot" id="header-status-dot"></span>
-            <span class="status-text" id="header-status-text">Analysis ready</span>
-          </div>
-
           <div class="header-meta-group">
             <span class="header-meta-item" id="header-mode">Static analysis</span>
             <span class="header-meta-sep">•</span>
@@ -1911,14 +2776,20 @@ pub const HTML_BODY_MARKUP: &str = r###"
 
         <!-- Center-Right: Search Command Palette Trigger -->
         <button class="search-pill-btn" id="btn-command-palette-trigger" title="Open Command Palette (⌘K / Ctrl+K)">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></span>
           <span>Search actions &amp; views...</span>
-          <kbd class="kbd-shortcut">⌘K</kbd>
         </button>
 
         <!-- Right: Primary Actions (Guide, Investigation, Run, New Analysis) -->
         <div class="header-actions-row">
-          <a href="/how-to-use" target="_blank" class="header-nav-link" id="link-how-to-use" title="Open Beginner-Friendly How to Use Guide"><span>📖 Guide</span></a>
+          <button class="btn btn-ghost theme-toggle" id="btn-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode" title="Switch to dark mode">
+            <svg class="theme-icon theme-icon-moon" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 10.4A5.2 5.2 0 0 1 5.6 2.8 5.2 5.2 0 1 0 13.2 10.4z"/></svg>
+            <svg class="theme-icon theme-icon-sun" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.6v1.5M8 12.9v1.5M1.6 8h1.5M12.9 8h1.5M3.5 3.5l1.1 1.1M11.4 11.4l1.1 1.1M3.5 12.5l1.1-1.1M11.4 4.6l1.1-1.1"/></svg>
+          </button>
+          <button class="btn btn-ghost theme-toggle" id="btn-forced-black" type="button" aria-pressed="false" aria-label="Forced black" title="Forced black">
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.2" fill="currentColor"/></svg>
+          </button>
+          <a href="/how-to-use" target="_blank" class="header-nav-link" id="link-how-to-use" title="Open Beginner-Friendly How to Use Guide"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3 3.2h4a2 2 0 0 1 2 2V13a1.8 1.8 0 0 0-1.8-1.5H3z"/><path d="M13 3.2H9a2 2 0 0 0-2 2V13a1.8 1.8 0 0 1 1.8-1.5H13z"/></svg><span>Guide</span></a>
           <a href="/" class="header-nav-link" id="link-investigation" title="View The Investigation landing narrative"><span>Investigation ↗</span></a>
           <button class="btn btn-primary" id="btn-run-analysis" title="Re-run static analysis on current code">Run</button>
           <button class="btn btn-secondary" id="btn-new-analysis" title="Return to code entry screen">New Analysis</button>
@@ -1929,30 +2800,30 @@ pub const HTML_BODY_MARKUP: &str = r###"
     <!-- Section 3: Horizontal Feature Navigation Row (Directly below Header) -->
     <nav class="feature-nav-bar" id="feature-nav-bar" role="tablist" aria-label="Analysis Views">
       <div class="feature-tabs-list">
-        <button class="nav-tab active" data-view="provenance" id="tab-provenance" role="tab" title="Fine-grained dataframe column lineage">
-          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="4" cy="12" r="2"/><path d="M6 4h3a3 3 0 0 1 3 3v0M6 12h3a3 3 0 0 0 3-3v0"/></svg>
-          <span class="nav-tab-label">Provenance</span>
-          <span class="nav-count" id="count-prov">0</span>
+        <button class="nav-tab" data-view="ast" id="tab-ast" role="tab" title="Interactive AST & CST Syntax Tree Explorer">
+          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3v10M4 8h5M4 4h7M4 12h6"/></svg>
+          <span class="nav-tab-label">AST Explorer</span>
+          <span class="nav-count" id="count-ast">0</span>
         </button>
         <button class="nav-tab" data-view="pdg" id="tab-pdg" role="tab" title="Program Dependence Graph">
           <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="8" cy="12" r="2"/><path d="M6 5h4M5.5 6.5l2 4M10.5 6.5l-2 4"/></svg>
           <span class="nav-tab-label">PDG Graph</span>
           <span class="nav-count" id="count-pdg">0</span>
         </button>
-        <button class="nav-tab" data-view="slice" id="tab-slice" role="tab" title="Column-aware static backward slicing">
-          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13L13 3M8 3h5v5M3 8v5h5"/></svg>
-          <span class="nav-tab-label">Backward Slice</span>
-          <span class="nav-count" id="count-slice">0</span>
-        </button>
         <button class="nav-tab" data-view="schema" id="tab-schema" role="tab" title="Dataframe schema evolution across transformations">
           <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 7h12M6 7v6"/></svg>
           <span class="nav-tab-label">Schema Evolution</span>
           <span class="nav-count" id="count-schema">0</span>
         </button>
-        <button class="nav-tab" data-view="ast" id="tab-ast" role="tab" title="Interactive AST & CST Syntax Tree Explorer">
-          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3v10M4 8h5M4 4h7M4 12h6"/></svg>
-          <span class="nav-tab-label">AST Explorer</span>
-          <span class="nav-count" id="count-ast">0</span>
+        <button class="nav-tab active" data-view="provenance" id="tab-provenance" role="tab" title="Fine-grained dataframe column lineage">
+          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="4" cy="12" r="2"/><path d="M6 4h3a3 3 0 0 1 3 3v0M6 12h3a3 3 0 0 0 3-3v0"/></svg>
+          <span class="nav-tab-label">Provenance</span>
+          <span class="nav-count" id="count-prov">0</span>
+        </button>
+        <button class="nav-tab" data-view="slice" id="tab-slice" role="tab" title="Column-aware static backward slicing">
+          <svg class="nav-tab-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13L13 3M8 3h5v5M3 8v5h5"/></svg>
+          <span class="nav-tab-label">Backward Slice</span>
+          <span class="nav-count" id="count-slice">0</span>
         </button>
       </div>
     </nav>
@@ -1963,35 +2834,26 @@ pub const HTML_BODY_MARKUP: &str = r###"
       <div class="pane-source word-wrap-enabled" id="source-pane">
         <div class="pane-header">
           <div style="display:flex; align-items:center; gap:8px;">
-            <span class="pane-title">Source Code</span>
+            <button type="button" class="pane-title pane-title-toggle" id="btn-toggle-source" aria-pressed="false" title="Hide source code"><svg class="source-rail-chevron" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg><span class="pane-title-label">Source Code</span></button>
             <span class="pane-badge" id="source-line-count">0 lines</span>
-            <button class="btn btn-ghost" id="btn-toggle-scenario" style="padding:2px 6px; font-size:10px; display:none;" title="Toggle Scenario summary">
-              📋 Scenario
-            </button>
           </div>
           <div style="display:flex; align-items:center; gap:4px;">
-            <button class="btn btn-ghost active" id="btn-toggle-wrap" title="Word wrap is ON (click to disable and permit horizontal scroll)" aria-label="Toggle word wrap" aria-pressed="true">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:middle; margin-right:3px;"><path d="M2 4h12M2 8h8a2.5 2.5 0 0 1 0 5H8M2 12h3M10 11l-2 2 2 2"/></svg>Word wrap
+            <button class="btn btn-ghost pane-icon-btn active" id="btn-toggle-wrap" title="Word wrap is ON (click to disable and permit horizontal scroll)" aria-label="Toggle word wrap" aria-pressed="true">
+              <svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h11M2.5 8h7.2a2.2 2.2 0 0 1 0 4.4H7.2"/><path d="M9.2 10.6 7.2 12.4l2 1.8"/></svg>
             </button>
-            <button class="btn btn-ghost" id="btn-clear-highlight" style="padding:2px 6px; font-size:10px;" title="Clear selection">Clear</button>
-            <button class="btn btn-ghost" id="btn-edit-source" style="padding:2px 6px; font-size:10px;" title="Edit source code">Edit</button>
+            <button class="btn btn-ghost pane-icon-btn" id="btn-clear-highlight" title="Clear selection" aria-label="Clear selection">
+              <svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="5.2"/><path d="M5.3 10.7 10.7 5.3"/></svg>
+            </button>
+            <button class="btn btn-ghost pane-icon-btn" id="btn-edit-source" title="Edit source code" aria-label="Edit source code" aria-pressed="false">
+              <svg class="ui-icon icon-edit" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.2 2.8 13.2 5.8 5.4 13.6H2.4v-3z"/><path d="M8.6 4.4 11.6 7.4"/></svg>
+              <svg class="ui-icon icon-view" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.6 8s2.4-4 6.4-4 6.4 4 6.4 4-2.4 4-6.4 4-6.4-4-6.4-4z"/><circle cx="8" cy="8" r="1.7"/></svg>
+            </button>
           </div>
-        </div>
-
-        <!-- Scenario Summary Card (Phase 4.1) -->
-        <div class="scenario-summary-card collapsed" id="scenario-summary-card" style="display:none;">
-          <div class="scenario-header" id="scenario-header-toggle">
-            <span class="scenario-title">
-              <span>📋 Scenario &amp; Pipeline Context</span>
-            </span>
-            <span id="scenario-chevron" style="font-size:10px; color:var(--ink-4);">▶ Expand</span>
-          </div>
-          <div class="scenario-body" id="scenario-body-content"></div>
         </div>
 
         <!-- Stale source warning banner -->
         <div class="source-stale-banner" id="source-stale-banner" role="status" aria-live="polite">
-          <span>⚠️ Source modified (results from earlier revision).</span>
+          <span class="stale-banner-label"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4 14.2 13.4H1.8z"/><path d="M8 6.4v3.2"/><path d="M8 11.5h.01"/></svg>Source modified (results from earlier revision).</span>
           <div style="display:flex; gap:6px;">
             <button class="btn btn-sm btn-primary" id="btn-reanalyze">Reanalyze</button>
             <button class="btn btn-sm btn-secondary" id="btn-revert-source">Revert</button>
@@ -2001,7 +2863,7 @@ pub const HTML_BODY_MARKUP: &str = r###"
         <!-- Status / Error Notification Banner -->
         <div class="source-status-banner" id="source-status-banner">
           <span id="source-status-msg"></span>
-          <button class="btn" id="btn-dismiss-status" style="padding:1px 5px; font-size:10px; background:#ffffff;">✕</button>
+          <button class="btn btn-ghost btn-sm" id="btn-dismiss-status" aria-label="Dismiss notification">✕</button>
         </div>
 
         <div class="source-viewer" id="source-container"></div>
@@ -2028,10 +2890,11 @@ pub const HTML_BODY_MARKUP: &str = r###"
                 <input type="checkbox" id="check-prov-grouping" checked /> Grouped Multi-Input Derivations
               </label>
             </div>
-            <div class="toolbar-group">
-              <button class="btn" id="btn-prov-zoom-out" style="padding:2px 6px;" title="Zoom out">-</button>
-              <button class="btn" id="btn-prov-zoom-in" style="padding:2px 6px;" title="Zoom in">+</button>
-              <button class="btn" id="btn-prov-reset" style="padding:2px 8px;" title="Fit to View">Fit View</button>
+            <div class="zoom-cluster" role="group" aria-label="Graph zoom">
+              <button class="zoom-btn" id="btn-prov-zoom-out" type="button" title="Zoom out" aria-label="Zoom out"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 8h9"/></svg></button>
+              <button class="zoom-btn" id="btn-prov-zoom-in" type="button" title="Zoom in" aria-label="Zoom in"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9"/></svg></button>
+              <span class="zoom-cluster-rule" aria-hidden="true"></span>
+              <button class="zoom-fit" id="btn-prov-reset" type="button" title="Fit graph to view"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6V3.5h2.5M10.5 3.5H13V6M13 10v2.5h-2.5M5.5 12.5H3V10"/></svg>Fit</button>
             </div>
           </div>
 
@@ -2052,10 +2915,14 @@ pub const HTML_BODY_MARKUP: &str = r###"
                 <input type="checkbox" id="toggle-edge-unk" checked /> Unknown
               </label>
             </div>
-            <div class="toolbar-group">
-              <button class="btn" id="btn-pdg-zoom-out" style="padding:2px 6px;">-</button>
-              <button class="btn" id="btn-pdg-zoom-in" style="padding:2px 6px;">+</button>
-              <button class="btn" id="btn-pdg-reset" style="padding:2px 8px;">Fit View</button>
+            <div class="toolbar-group toolbar-actions">
+              <button class="btn btn-ghost btn-sm pdg-neighborhood-btn" id="btn-pdg-neighborhood" type="button" aria-pressed="false" title="Show only the selected node and its direct dependencies. This is one hop, not every transitive dependency.">Neighborhood</button>
+            <div class="zoom-cluster" role="group" aria-label="Graph zoom">
+              <button class="zoom-btn" id="btn-pdg-zoom-out" type="button" title="Zoom out" aria-label="Zoom out"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 8h9"/></svg></button>
+              <button class="zoom-btn" id="btn-pdg-zoom-in" type="button" title="Zoom in" aria-label="Zoom in"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9"/></svg></button>
+              <span class="zoom-cluster-rule" aria-hidden="true"></span>
+              <button class="zoom-fit" id="btn-pdg-reset" type="button" title="Fit graph to view"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6V3.5h2.5M10.5 3.5H13V6M13 10v2.5h-2.5M5.5 12.5H3V10"/></svg>Fit</button>
+            </div>
             </div>
           </div>
 
@@ -2078,7 +2945,7 @@ pub const HTML_BODY_MARKUP: &str = r###"
               <span class="pane-badge" id="schema-step-count">0 states</span>
             </div>
             <div class="toolbar-group schema-legend-group" role="note" aria-label="Schema diff legend">
-              <span class="toolbar-label" style="font-size:10px; text-transform:uppercase; letter-spacing:0.04em;">Legend:</span>
+              <span class="toolbar-label">Legend:</span>
               <span class="diff-badge diff-added" title="Newly derived column">+added</span>
               <span class="diff-badge diff-removed" title="Removed column">-removed</span>
               <span class="diff-badge diff-mod" title="Modified column">~modified</span>
@@ -2092,14 +2959,14 @@ pub const HTML_BODY_MARKUP: &str = r###"
             <div class="graph-canvas-container" id="view-container-provenance">
               <svg class="graph-svg" id="svg-provenance">
                 <defs>
-                  <marker id="arrow-prov-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#77736B" />
+                  <marker id="arrow-prov-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-prov-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E" />
+                  <marker id="arrow-prov-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-prov-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#B3261E" />
+                  <marker id="arrow-prov-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
                 </defs>
               </svg>
@@ -2109,20 +2976,20 @@ pub const HTML_BODY_MARKUP: &str = r###"
             <div class="graph-canvas-container" id="view-container-pdg" style="display:none;">
               <svg class="graph-svg" id="svg-pdg">
                 <defs>
-                  <marker id="arrow-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#77736B" />
+                  <marker id="arrow-data" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-ctrl" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#F59E0B" />
+                  <marker id="arrow-ctrl" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-rowsel" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#7B61FF" />
+                  <marker id="arrow-rowsel" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#0F766E" />
+                  <marker id="arrow-colver" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
-                  <marker id="arrow-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#B3261E" />
+                  <marker id="arrow-unk" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M 0 1 L 10 5 L 0 9 z" />
                   </marker>
                 </defs>
               </svg>
@@ -2142,13 +3009,13 @@ pub const HTML_BODY_MARKUP: &str = r###"
                   <button class="ast-rep-btn" id="btn-ast-rep-ir" data-rep="ir" title="Canonical Normalized Semantic IR / AST">Semantic IR / AST</button>
                 </div>
                 <div class="ast-search-box">
-                  <span class="ast-search-icon">🔍</span>
+                  <span class="ast-search-icon" aria-hidden="true"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></span>
                   <input type="text" id="ast-search-input" placeholder="Search node type, identifier, text..." />
                   <span class="ast-search-match" id="ast-search-match"></span>
                 </div>
                 <div class="ast-actions">
-                  <button class="btn btn-outline" id="btn-ast-expand-all" title="Expand all nodes">Expand All</button>
-                  <button class="btn btn-outline" id="btn-ast-collapse-all" title="Collapse all nodes">Collapse All</button>
+                  <button class="btn btn-secondary" id="btn-ast-expand-all" title="Expand all nodes">Expand All</button>
+                  <button class="btn btn-secondary" id="btn-ast-collapse-all" title="Collapse all nodes">Collapse All</button>
                 </div>
                 <div class="ast-node-stats" id="ast-node-stats">
                   <span id="ast-stat-total">Total: 0</span> · <span id="ast-stat-visible">Visible: 0</span>
@@ -2161,7 +3028,7 @@ pub const HTML_BODY_MARKUP: &str = r###"
       </div>
 
       <!-- 2.3 Right Panel — Inspector (320px column) -->
-      <div class="workspace-inspector" id="contextual-inspector">
+      <div class="workspace-inspector collapsed" id="contextual-inspector">
         <div class="inspector-header">
           <div class="inspector-title-group">
             <span class="pane-title">Inspector</span>
@@ -2221,10 +3088,11 @@ pub const HTML_BODY_MARKUP: &str = r###"
             <div style="flex:1;">
               <select class="select-dropdown" id="load-program-example-select" style="width:100%;">
                 <option value="">Load Example...</option>
-                <option value="showcase">Showcase Pipeline (showcase_pipeline.R)</option>
-                <option value="simple">Simple Provenance (price * quantity)</option>
-                <option value="filter_provenance">Filter Provenance (RowSelectionDependency)</option>
-                <option value="adversarial">Adversarial Alias Renaming</option>
+                <option value="showcase_pipeline">Showcase Pipeline</option>
+                <option value="canonical">Simple Provenance</option>
+                <option value="filter_provenance">Filter Provenance</option>
+                <option value="partial_retention">Partial Retention</option>
+                <option value="uncertainty">Uncertainty</option>
               </select>
             </div>
 
@@ -2240,22 +3108,22 @@ pub const HTML_BODY_MARKUP: &str = r###"
     <div class="palette-modal-overlay" id="command-palette-modal" role="dialog" aria-modal="true" aria-label="Command Palette">
       <div class="palette-card">
         <div class="palette-input-row">
-          <span style="font-size:14px; color:var(--ink-4);">🔍</span>
+          <svg class="palette-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
           <input type="text" class="palette-input" id="palette-search-input" placeholder="Type a view or action (e.g. Load, Provenance, Slice)..." autocomplete="off" />
           <kbd class="kbd-shortcut" id="btn-palette-close" style="cursor:pointer;" title="Close (Esc)">ESC</kbd>
         </div>
         <div class="palette-list" id="palette-list">
-          <div class="palette-item active" data-action="new-analysis"><span>📝 Load Program / New Analysis</span><kbd class="kbd-shortcut">⌘N</kbd></div>
-          <div class="palette-item" data-action="view-prov"><span>📊 Switch to Column Provenance</span><kbd class="kbd-shortcut">1</kbd></div>
-          <div class="palette-item" data-action="view-pdg"><span>🕸️ Switch to Unified PDG Graph</span><kbd class="kbd-shortcut">2</kbd></div>
-          <div class="palette-item" data-action="view-slice"><span>🎯 Switch to Backward Slice</span><kbd class="kbd-shortcut">3</kbd></div>
-          <div class="palette-item" data-action="view-schema"><span>🧬 Switch to Schema Evolution</span><kbd class="kbd-shortcut">4</kbd></div>
-          <div class="palette-item" data-action="view-ast"><span>🌲 Switch to AST &amp; CST Explorer</span><kbd class="kbd-shortcut">5</kbd></div>
-          <div class="palette-item" data-action="run-analysis"><span>⚡ Reanalyze Program</span><kbd class="kbd-shortcut">⌘R</kbd></div>
-          <div class="palette-item" data-action="toggle-wrap"><span>↩️ Toggle Source Word Wrap</span></div>
-          <div class="palette-item" data-action="copy-cli"><span>📋 Copy Current CLI Command</span></div>
-          <div class="palette-item" data-action="open-guide"><span>📖 Open How to Use Guide</span></div>
-          <div class="palette-item" data-action="open-investigation"><span>↗ Open Investigation Landing Page</span></div>
+          <div class="palette-item active" data-action="new-analysis"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2.5h5.5L13 6v7.5H4z"/><path d="M9.5 2.5V6H13"/></svg>Load Program / New Analysis</span><kbd class="kbd-shortcut">⌘N</kbd></div>
+          <div class="palette-item" data-action="view-ast"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3v10M4 8h5M4 4h7M4 12h6"/></svg>Switch to AST Explorer</span><kbd class="kbd-shortcut">1</kbd></div>
+          <div class="palette-item" data-action="view-pdg"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="8" cy="12" r="2"/><path d="M6 5h4M5.5 6.5l2 4M10.5 6.5l-2 4"/></svg>Switch to PDG Graph</span><kbd class="kbd-shortcut">2</kbd></div>
+          <div class="palette-item" data-action="view-schema"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 7h12M6 7v6"/></svg>Switch to Schema Evolution</span><kbd class="kbd-shortcut">3</kbd></div>
+          <div class="palette-item" data-action="view-prov"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="4" cy="12" r="2"/><path d="M6 4h3a3 3 0 0 1 3 3v0M6 12h3a3 3 0 0 0 3-3v0"/></svg>Switch to Provenance</span><kbd class="kbd-shortcut">4</kbd></div>
+          <div class="palette-item" data-action="view-slice"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13L13 3M8 3h5v5M3 8v5h5"/></svg>Switch to Backward Slice</span><kbd class="kbd-shortcut">5</kbd></div>
+          <div class="palette-item" data-action="run-analysis"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 8A5.2 5.2 0 1 1 12 4.6"/><path d="M12 2.2V5H9.2"/></svg>Reanalyze Program</span><kbd class="kbd-shortcut">⌘R</kbd></div>
+          <div class="palette-item" data-action="toggle-wrap"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h12M2 8h8a2.5 2.5 0 0 1 0 5H8M2 12h3M10 11l-2 2 2 2"/></svg>Toggle Source Word Wrap</span></div>
+          <div class="palette-item" data-action="copy-cli"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3.5" width="8" height="10" rx="1.2"/><path d="M6.2 3.5V2.6h4.2v.9"/></svg>Copy Current CLI Command</span></div>
+          <div class="palette-item" data-action="open-guide"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M3 3.2h4a2 2 0 0 1 2 2V13a1.8 1.8 0 0 0-1.8-1.5H3z"/><path d="M13 3.2H9a2 2 0 0 0-2 2V13a1.8 1.8 0 0 1 1.8-1.5H13z"/></svg>Open How to Use Guide</span></div>
+          <div class="palette-item" data-action="open-investigation"><span class="palette-item-label"><svg class="palette-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11L11 5"/><path d="M6.5 5H11v4.5"/></svg>Open Investigation Landing Page</span></div>
         </div>
       </div>
     </div>
@@ -2265,6 +3133,52 @@ pub const HTML_BODY_MARKUP: &str = r###"
 /// Complete vanilla JavaScript client logic for R-PARSE Scientific Analysis Studio.
 pub const JS_SCRIPTS: &str = r###"
     (function() {
+      const themeStorageKey = 'rparse-studio-theme';
+      const themeBaseKey = 'rparse-studio-theme-base';
+      const themeToggle = document.getElementById('btn-theme-toggle');
+      const forcedBlackToggle = document.getElementById('btn-forced-black');
+      function applyStudioTheme(theme) {
+        const dark = theme === 'dark';
+        const black = theme === 'black';
+        if (dark || black) document.documentElement.setAttribute('data-theme', theme);
+        else document.documentElement.removeAttribute('data-theme');
+        if (themeToggle) {
+          themeToggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+          const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+          themeToggle.setAttribute('aria-label', label);
+          themeToggle.title = label;
+        }
+        if (forcedBlackToggle) {
+          forcedBlackToggle.setAttribute('aria-pressed', black ? 'true' : 'false');
+          forcedBlackToggle.classList.toggle('active', black);
+          const label = black ? 'Turn off forced black' : 'Forced black';
+          forcedBlackToggle.setAttribute('aria-label', label);
+          forcedBlackToggle.title = label;
+        }
+      }
+      const initialTheme = document.documentElement.getAttribute('data-theme');
+      applyStudioTheme(initialTheme === 'dark' || initialTheme === 'black' ? initialTheme : 'light');
+      themeToggle?.addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem(themeStorageKey, next); } catch (e) {}
+        applyStudioTheme(next);
+      });
+      forcedBlackToggle?.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        let next = 'black';
+        if (current === 'black') {
+          next = 'light';
+          try {
+            const saved = localStorage.getItem(themeBaseKey);
+            if (saved === 'dark' || saved === 'light') next = saved;
+          } catch (e) {}
+        } else {
+          try { localStorage.setItem(themeBaseKey, current === 'dark' ? 'dark' : 'light'); } catch (e) {}
+        }
+        try { localStorage.setItem(themeStorageKey, next); } catch (e) {}
+        applyStudioTheme(next);
+      });
+
       const rawDataElement = document.getElementById('rparse-report-data');
       if (!rawDataElement) return;
       let data = {};
@@ -2284,6 +3198,14 @@ pub const JS_SCRIPTS: &str = r###"
       let currentRevisionId = 0;
       let isAnalyzing = false;
       let isSourceEditMode = false;
+
+      const reducedMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+      function prefersReducedMotion() {
+        return !!(reducedMotionQuery && reducedMotionQuery.matches);
+      }
+      function scrollBehavior() {
+        return prefersReducedMotion() ? 'auto' : 'smooth';
+      }
 
       // Elements — Canonical Load Program Modal Dialog
       const loadProgramModal = document.getElementById('load-program-modal');
@@ -2335,9 +3257,6 @@ pub const JS_SCRIPTS: &str = r###"
       document.getElementById('btn-dismiss-status')?.addEventListener('click', hideStatusNotification);
 
       function refreshHeaderAndMetrics() {
-        const fnElem = document.getElementById('header-file-name');
-        if (fnElem) fnElem.textContent = data.file_name || 'script.R';
-
         const modeElem = document.getElementById('header-mode');
         if (modeElem) {
           const m = (data.mode || 'static').toLowerCase();
@@ -2415,15 +3334,18 @@ pub const JS_SCRIPTS: &str = r###"
         loadProgramStats.textContent = `${lines} lines · ${chars} chars`;
       }
 
-      function openLoadProgramModal() {
+      let loadModalHideTimer = null;
+      function openLoadProgramModal(blank) {
         if (!loadProgramModal) return;
         if (loadProgramInput) {
-          loadProgramInput.value = data.source_code || initialSource || '';
+          loadProgramInput.value = blank ? '' : (data.source_code || initialSource || '');
           updateLoadProgramStats();
         }
         if (loadProgramError) loadProgramError.style.display = 'none';
-        loadProgramModal.classList.add('open');
+        clearTimeout(loadModalHideTimer);
         loadProgramModal.style.display = 'flex';
+        void loadProgramModal.offsetWidth;
+        loadProgramModal.classList.add('open');
         setTimeout(() => {
           loadProgramInput?.focus();
         }, 50);
@@ -2432,7 +3354,10 @@ pub const JS_SCRIPTS: &str = r###"
       function closeLoadProgramModal() {
         if (!loadProgramModal) return;
         loadProgramModal.classList.remove('open');
-        loadProgramModal.style.display = 'none';
+        clearTimeout(loadModalHideTimer);
+        loadModalHideTimer = setTimeout(() => {
+          if (!loadProgramModal.classList.contains('open')) loadProgramModal.style.display = 'none';
+        }, prefersReducedMotion() ? 0 : 260);
         if (loadProgramError) loadProgramError.style.display = 'none';
       }
 
@@ -2756,6 +3681,17 @@ pub const JS_SCRIPTS: &str = r###"
         }
       });
 
+      document.getElementById('btn-toggle-source')?.addEventListener('click', () => {
+        if (!sourcePane) return;
+        const collapsed = sourcePane.classList.toggle('source-collapsed');
+        const toggle = document.getElementById('btn-toggle-source');
+        if (toggle) {
+          toggle.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+          toggle.title = collapsed ? 'Show source code' : 'Hide source code';
+        }
+        window.dispatchEvent(new Event('resize'));
+      });
+
       // Source Word Wrap Feature (Defaults to ON)
       let isWordWrapEnabled = true;
       const btnToggleWrap = document.getElementById('btn-toggle-wrap');
@@ -2788,14 +3724,18 @@ pub const JS_SCRIPTS: &str = r###"
       btnEditSource?.addEventListener('click', () => {
         isSourceEditMode = !isSourceEditMode;
         if (isSourceEditMode) {
-          btnEditSource.textContent = 'View';
+          btnEditSource.classList.add('is-editing');
+          btnEditSource.setAttribute('aria-pressed', 'true');
+          btnEditSource.setAttribute('aria-label', 'View source code');
           btnEditSource.title = 'Switch to syntax-highlighted viewer';
           sourceContainer.style.display = 'none';
           sourceEditorTextarea.style.display = 'block';
           sourceEditorTextarea.value = data.source_code || '';
           sourceEditorTextarea.focus();
         } else {
-          btnEditSource.textContent = 'Edit';
+          btnEditSource.classList.remove('is-editing');
+          btnEditSource.setAttribute('aria-pressed', 'false');
+          btnEditSource.setAttribute('aria-label', 'Edit source code');
           btnEditSource.title = 'Edit source code in place';
           sourceEditorTextarea.style.display = 'none';
           sourceContainer.style.display = 'block';
@@ -2872,8 +3812,6 @@ pub const JS_SCRIPTS: &str = r###"
         setTimeout(() => {
           if (activeView === 'provenance') {
             fitGraphView('view-container-provenance', 'prov-root-group', provPositions, provTransform);
-          } else if (activeView === 'pdg') {
-            fitGraphView('view-container-pdg', 'pdg-root-group', pdgPositions, pdgTransform);
           }
         }, 60);
       }
@@ -2931,7 +3869,8 @@ pub const JS_SCRIPTS: &str = r###"
         }, 30);
       }
 
-      // Keyboard Shortcuts
+      // Keyboard shortcuts follow the analysis tab order:
+      // 1 AST Explorer, 2 PDG Graph, 3 Schema Evolution, 4 Provenance, 5 Backward Slice.
       window.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key === 'Escape') {
@@ -2941,13 +3880,15 @@ pub const JS_SCRIPTS: &str = r###"
             clearSelection();
           }
         } else if (e.key === '1') {
-          switchView('provenance');
+          switchView('ast');
         } else if (e.key === '2') {
           switchView('pdg');
         } else if (e.key === '3') {
-          switchView('slice');
-        } else if (e.key === '4') {
           switchView('schema');
+        } else if (e.key === '4') {
+          switchView('provenance');
+        } else if (e.key === '5') {
+          switchView('slice');
         }
       });
 
@@ -3043,7 +3984,7 @@ pub const JS_SCRIPTS: &str = r###"
         const targetRow = document.querySelector(`.code-line[data-line="${startLine}"], .source-line[data-line="${startLine}"]`);
         if (targetRow) {
           targetRow.classList.add('highlighted-span');
-          targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetRow.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
         }
       }
 
@@ -3091,13 +4032,13 @@ pub const JS_SCRIPTS: &str = r###"
           
           <table class="prop-table" style="margin-bottom:12px;">
             <tr><td class="key">Target File</td><td class="val">${escapeHtml(data.file_name || 'script.R')}</td></tr>
-            <tr><td class="key">Analysis Mode</td><td class="val" style="color:var(--accent-green);">${escapeHtml(data.mode || 'STATIC')}</td></tr>
+            <tr><td class="key">Analysis Mode</td><td class="val">${escapeHtml(data.mode || 'STATIC')}</td></tr>
             <tr><td class="key">Statements</td><td class="val">${data.summary?.statement_count || 0}</td></tr>
             <tr><td class="key">Dataframe States</td><td class="val">${data.summary?.dataframe_state_count || 0}</td></tr>
             <tr><td class="key">Column Versions</td><td class="val">${data.summary?.column_version_count || 0}</td></tr>
             <tr><td class="key">PDG Nodes / Edges</td><td class="val">${data.summary?.pdg_node_count || 0} / ${data.summary?.pdg_edge_count || 0}</td></tr>
             <tr><td class="key">Column Derivations</td><td class="val">${data.summary?.derivation_count || 0}</td></tr>
-            <tr><td class="key">Uncertainty State</td><td class="val" style="color:${data.summary?.contains_unknowns ? 'var(--accent-amber)' : 'var(--accent-green)'};">${data.summary?.contains_unknowns ? 'UNCERTAINTY DETECTED' : 'KNOWN STATIC'}</td></tr>
+            <tr><td class="key">Uncertainty State</td><td class="val" style="color:${data.summary?.contains_unknowns ? 'var(--status-warn)' : 'var(--status-ok)'};">${data.summary?.contains_unknowns ? 'UNCERTAINTY DETECTED' : 'KNOWN STATIC'}</td></tr>
           </table>
 
           <div style="padding-top:8px; border-top:1px solid var(--border);">
@@ -3126,10 +4067,10 @@ pub const JS_SCRIPTS: &str = r###"
 
         let actionBtns = '';
         if (item.span && item.span.start_line) {
-          actionBtns += `<button class="btn" style="width:100%; justify-content:center; margin-top:6px;" onclick="window.rparseJumpSpan(${item.span.start_line})">🔍 Jump to Source (Line ${item.span.start_line})</button>`;
+          actionBtns += `<button class="btn" style="width:100%; justify-content:center; margin-top:6px;" onclick="window.rparseJumpSpan(${item.span.start_line})"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4h5.5M2.5 8h3.5M2.5 12h5.5"/><path d="M13.5 8H9.2"/><path d="M11 5.8 8.8 8 11 10.2"/></svg>Jump to Source (Line ${item.span.start_line})</button>`;
         }
         if (item.sliceTarget) {
-          actionBtns += `<button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:6px; font-size:11.5px; padding:0 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="window.rparseSelectSlice('${escapeHtml(item.sliceTarget)}')">🎯 Compute Backward Slice for ${escapeHtml(item.sliceTarget)}</button>`;
+          actionBtns += `<button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:6px; font-size:11.5px; padding:0 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="window.rparseSelectSlice('${escapeHtml(item.sliceTarget)}')"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 13L13 3M8 3h5v5M3 8v5h5"/></svg>Compute Backward Slice for ${escapeHtml(item.sliceTarget)}</button>`;
         }
 
         let upstreamHtml = '';
@@ -3144,7 +4085,7 @@ pub const JS_SCRIPTS: &str = r###"
                 ${item.upstream.map(u => `
                   <div class="conn-item" onclick="window.rparseSelectNode('${escapeHtml(String(u.id))}', '${activeView}')" title="Click to inspect ${escapeHtml(u.label)}">
                     <span class="conn-label">${escapeHtml(u.label)}</span>
-                    <span class="conn-pill" style="background:var(--accent-blue-subtle); color:var(--accent-blue);">${escapeHtml(u.edgeKind || u.type || 'dep')}</span>
+                    <span class="conn-pill" style="background:var(--orange-tint); color:var(--orange-text);">${escapeHtml(u.edgeKind || u.type || 'dep')}</span>
                   </div>
                 `).join('')}
               </div>
@@ -3171,7 +4112,7 @@ pub const JS_SCRIPTS: &str = r###"
                 ${item.downstream.map(d => `
                   <div class="conn-item" onclick="window.rparseSelectNode('${escapeHtml(String(d.id))}', '${activeView}')" title="Click to inspect ${escapeHtml(d.label)}">
                     <span class="conn-label">${escapeHtml(d.label)}</span>
-                    <span class="conn-pill" style="background:var(--accent-green-subtle); color:var(--accent-green);">${escapeHtml(d.edgeKind || d.type || 'dep')}</span>
+                    <span class="conn-pill" style="background:var(--teal-tint); color:var(--teal-text);">${escapeHtml(d.edgeKind || d.type || 'dep')}</span>
                   </div>
                 `).join('')}
               </div>
@@ -3204,8 +4145,8 @@ pub const JS_SCRIPTS: &str = r###"
         card.innerHTML = `
           <div style="font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:4px; word-break:break-all;">${escapeHtml(item.title || item.label || 'Details')}</div>
           <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
-            <span class="pill pill-full">${escapeHtml(item.type || 'Object')}</span>
-            <span class="pill ${String(item.certainty || '').includes('UNKNOWN') ? 'pill-drop' : 'pill-keep'}">${escapeHtml(item.certainty || 'KNOWN_STATIC')}</span>
+            <span class="pill pill-neutral">${escapeHtml(item.type || 'Object')}</span>
+            <span class="pill ${String(item.certainty || '').includes('UNKNOWN') ? 'pill-partial' : 'pill-keep'}">${escapeHtml(item.certainty || 'KNOWN_STATIC')}</span>
           </div>
 
           ${actionBtns}
@@ -3229,7 +4170,9 @@ pub const JS_SCRIPTS: &str = r###"
         `;
 
         inspectorContainer.appendChild(card);
+        contextualInspector.classList.remove('collapsed');
         contextualInspector.classList.add('open');
+        recomputeActiveGraphFit();
 
         if (item.span) {
           highlightSourceSpan(item.span);
@@ -3271,15 +4214,14 @@ pub const JS_SCRIPTS: &str = r###"
           }
           return { width: 240, height: 50 };
         }
-        switch (n.kind) {
-          case 'Statement': return { width: 260, height: 54 };
-          case 'VariableDef': return { width: 200, height: 46 };
-          case 'VariableUse': return { width: 180, height: 44 };
-          case 'ColumnVersion': return { width: 220, height: 46 };
-          case 'Expression': return { width: 240, height: 48 };
-          case 'RowSelection': return { width: 220, height: 46 };
-          default: return { width: 210, height: 46 };
-        }
+        const label = cleanNodeLabel(n, 'pdg');
+        const shown = label.length > 32 ? label.slice(0, 30) + '…' : label;
+        const lineStr = n.span?.start_line ? ` L${n.span.start_line}` : '';
+        const kindLine = `${String(n.kind || 'NODE').toUpperCase()}${lineStr}`;
+        const chars = Math.max(kindLine.length, shown.length);
+        const width = Math.max(168, Math.min(252, Math.round(40 + chars * 7.1)));
+        const height = n.kind === 'Statement' ? 52 : 46;
+        return { width, height };
       }
 
       function computeDagLayout(nodes, edges, options) {
@@ -3421,25 +4363,53 @@ pub const JS_SCRIPTS: &str = r###"
 
         const posInLayer = new Map();
         const sortedRanks = Array.from(layers.keys()).sort((a, b) => a - b);
+        const orderingPasses = Math.max(1, Math.min(6, options.orderingPasses || 1));
 
-        sortedRanks.forEach(r => {
+        function orderLayer(r, direction) {
           const layerNodes = layers.get(r);
-          if (r > 0) {
-            layerNodes.sort((a, b) => {
-              const getBary = (nid) => {
-                const preds = (inAdj.get(nid) || []).filter(p => !backEdges.has(`${p}->${nid}`) && posInLayer.has(p));
-                if (preds.length === 0) return 0;
-                return preds.reduce((sum, p) => sum + posInLayer.get(p), 0) / preds.length;
-              };
-              return getBary(a) - getBary(b);
-            });
+          if (direction === 'down' && r === 0) {
+            layerNodes.forEach((nid, idx) => posInLayer.set(nid, idx));
+            return;
           }
+          layerNodes.sort((a, b) => {
+            const score = (nid) => {
+              const raw = direction === 'down' ? (inAdj.get(nid) || []) : (adj.get(nid) || []);
+              const linked = raw.filter(p => {
+                const key = direction === 'down' ? `${p}->${nid}` : `${nid}->${p}`;
+                return !backEdges.has(key) && posInLayer.has(p);
+              });
+              if (linked.length === 0) return 0;
+              return linked.reduce((sum, p) => sum + posInLayer.get(p), 0) / linked.length;
+            };
+            const da = score(a);
+            const db = score(b);
+            if (da === db && orderingPasses > 1) {
+              return String(a) < String(b) ? -1 : String(a) > String(b) ? 1 : 0;
+            }
+            return da - db;
+          });
           layerNodes.forEach((nid, idx) => posInLayer.set(nid, idx));
-        });
+        }
+
+        sortedRanks.forEach(r => orderLayer(r, 'down'));
+        if (orderingPasses > 1) {
+          for (let pass = 1; pass < orderingPasses; pass++) {
+            const dir = pass % 2 === 1 ? 'up' : 'down';
+            const seq = dir === 'down' ? sortedRanks : sortedRanks.slice().reverse();
+            seq.forEach(r => orderLayer(r, dir));
+          }
+        }
 
         const positions = new Map();
-        const layerSpacing = options.layerSpacing || (isTB ? 96 : 280);
+        const requestedSpacing = options.layerSpacing || (isTB ? 96 : 280);
         const nodeSpacing = options.nodeSpacing || (isTB ? 24 : 20);
+        let maxMainExtent = 0;
+        nodeIds.forEach(id => {
+          const sz = getNodeSize(nodeMap.get(id), graphType);
+          maxMainExtent = Math.max(maxMainExtent, isTB ? sz.height : sz.width);
+        });
+        const rankGutter = isTB ? 64 : 56;
+        const layerSpacing = requestedSpacing > maxMainExtent ? requestedSpacing : (maxMainExtent + rankGutter);
 
         let maxCrossSpan = 0;
         const layerSpans = new Map();
@@ -3554,15 +4524,24 @@ pub const JS_SCRIPTS: &str = r###"
         }
         selectedItem = null;
         renderOverviewCard();
+        const leaveNeighborhood = pdgNeighborhood;
+        pdgSelectedId = null;
+        if (leaveNeighborhood) {
+          pdgNeighborhood = false;
+          syncPdgNeighborhoodButton();
+          if (activeView === 'pdg') renderPdgGraph();
+        }
       }
 
-      function setupZoomPan(containerId, svgId, rootGroupId, transformObj) {
+      function setupZoomPan(containerId, svgId, rootGroupId, transformObj, hooks) {
         const container = document.getElementById(containerId);
         const svg = document.getElementById(svgId);
         if (!container || !svg) return;
 
         let isDragging = false;
+        let dragMoved = false;
         let startX = 0, startY = 0;
+        let downX = 0, downY = 0;
 
         function updateTransform() {
           const g = document.getElementById(rootGroupId);
@@ -3574,6 +4553,9 @@ pub const JS_SCRIPTS: &str = r###"
         container.addEventListener('mousedown', (e) => {
           if (e.target.closest('.svg-node') || e.target.closest('button') || e.target.closest('input')) return;
           isDragging = true;
+          dragMoved = false;
+          downX = e.clientX;
+          downY = e.clientY;
           startX = e.clientX - transformObj.x;
           startY = e.clientY - transformObj.y;
           container.style.cursor = 'grabbing';
@@ -3581,9 +4563,11 @@ pub const JS_SCRIPTS: &str = r###"
 
         window.addEventListener('mousemove', (e) => {
           if (!isDragging) return;
+          if (Math.hypot(e.clientX - downX, e.clientY - downY) > 4) dragMoved = true;
           transformObj.x = e.clientX - startX;
           transformObj.y = e.clientY - startY;
           updateTransform();
+          if (hooks && hooks.onTransform) hooks.onTransform();
         });
 
         window.addEventListener('mouseup', () => {
@@ -3607,9 +4591,14 @@ pub const JS_SCRIPTS: &str = r###"
           transformObj.scale = newScale;
 
           updateTransform();
+          if (hooks && hooks.onTransform) hooks.onTransform();
         }, { passive: false });
 
         svg.addEventListener('click', (e) => {
+          if (dragMoved) {
+            dragMoved = false;
+            return;
+          }
           if (!e.target.closest('.svg-node')) {
             clearSelection();
           }
@@ -3677,7 +4666,7 @@ pub const JS_SCRIPTS: &str = r###"
         const edges = data.provenance?.edges || [];
 
         if (nodes.length === 0) {
-          svg.innerHTML += '<text x="50%" y="50%" fill="var(--text-muted, #77736B)" font-family="var(--font-mono)" font-size="12" text-anchor="middle">No column provenance derivations available.</text>';
+          svg.innerHTML += '<text class="svg-graph-empty" x="50%" y="50%" text-anchor="middle">No column provenance derivations available.</text>';
           return;
         }
 
@@ -3741,8 +4730,7 @@ pub const JS_SCRIPTS: &str = r###"
           textKind.setAttribute('y', 17);
           textKind.setAttribute('font-size', '11');
           textKind.setAttribute('font-weight', '700');
-          textKind.setAttribute('font-family', 'var(--font-mono)');
-          textKind.setAttribute('fill', isCol ? 'var(--orange-text)' : 'var(--teal-text)');
+          textKind.style.fill = isCol ? 'var(--orange-text)' : 'var(--teal-text)';
           textKind.textContent = isCol ? 'COLUMN VERSION' : `DERIVATION (${n.knowledge || 'KNOWN'})`;
           nodeG.appendChild(textKind);
 
@@ -3751,8 +4739,7 @@ pub const JS_SCRIPTS: &str = r###"
           textLabel.setAttribute('y', 34);
           textLabel.setAttribute('font-size', '12');
           textLabel.setAttribute('font-weight', '600');
-          textLabel.setAttribute('fill', 'var(--ink)');
-          textLabel.setAttribute('font-family', 'var(--font-mono)');
+          textLabel.style.fill = 'var(--ink)';
           const lbl = n.label || n.transform_type || id;
           textLabel.textContent = lbl.length > 25 ? lbl.slice(0, 23) + '…' : lbl;
           nodeG.appendChild(textLabel);
@@ -3888,6 +4875,172 @@ pub const JS_SCRIPTS: &str = r###"
       // ======================================================================
       let pdgTransform = { x: 40, y: 40, scale: 1 };
       let pdgPositions = new Map();
+      let pdgNeighborhood = false;
+      let pdgSelectedId = null;
+      let pdgOrientation = 'TB';
+      let pdgViewportMode = 'readable';
+      let pdgContentBounds = null;
+      let pdgApplyingSelection = false;
+
+      function syncPdgNeighborhoodButton() {
+        const btn = document.getElementById('btn-pdg-neighborhood');
+        if (!btn) return;
+        btn.setAttribute('aria-pressed', pdgNeighborhood ? 'true' : 'false');
+        btn.classList.toggle('active', pdgNeighborhood);
+        btn.textContent = pdgNeighborhood ? 'Full graph' : 'Neighborhood';
+        btn.title = pdgNeighborhood
+          ? 'Return to the complete PDG'
+          : 'Show only the selected node and its direct dependencies. This is one hop, not every transitive dependency.';
+      }
+
+      function pdgLayoutOptions(orientation) {
+        const lr = orientation === 'LR';
+        return {
+          orientation: orientation,
+          useLineBands: true,
+          layerSpacing: lr ? 168 : 118,
+          nodeSpacing: lr ? 20 : 34,
+          graphType: 'pdg',
+          orderingPasses: 4
+        };
+      }
+
+      function choosePdgOrientation(layoutNodes, layoutEdges) {
+        const tb = computeDagLayout(layoutNodes, layoutEdges, pdgLayoutOptions('TB'));
+        const lr = computeDagLayout(layoutNodes, layoutEdges, pdgLayoutOptions('LR'));
+        const tbW = Math.max(1, tb.bounds.maxX - tb.bounds.minX);
+        const tbH = Math.max(1, tb.bounds.maxY - tb.bounds.minY);
+        if (tbW > tbH * 1.7 && tbW > 980) {
+          pdgOrientation = 'LR';
+          return lr;
+        }
+        pdgOrientation = 'TB';
+        return tb;
+      }
+
+      function pdgLane(edge, bounds, orientation, forward) {
+        const key = `${edge.from}:${edge.to}:${edge.kind || ''}`;
+        let hash = 0;
+        for (let i = 0; i < key.length; i++) hash = (hash * 33 + key.charCodeAt(i)) >>> 0;
+        const slot = hash % 6;
+        if (orientation === 'LR') {
+          return forward ? (bounds.maxY + 18 + slot * 12) : (bounds.minY - 18 - slot * 12);
+        }
+        return forward ? (bounds.maxX + 18 + slot * 12) : (bounds.minX - 18 - slot * 12);
+      }
+
+      function pdgEdgePath(fromPos, toPos, outIndex, outCount, inIndex, inCount, orientation, lane) {
+        const span = (toPos.rank ?? 0) - (fromPos.rank ?? 0);
+        if (orientation === 'LR') {
+          const x1 = fromPos.x + fromPos.width;
+          const y1 = fromPos.y + fromPos.height * ((outIndex + 1) / (outCount + 1));
+          const x2 = toPos.x;
+          const y2 = toPos.y + toPos.height * ((inIndex + 1) / (inCount + 1));
+          if (span === 1 && x2 >= x1) {
+            const mid = (x1 + x2) / 2;
+            return `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`;
+          }
+          const xOut = x1 + 14;
+          const xIn = x2 - 14;
+          return `M ${x1} ${y1} L ${xOut} ${y1} L ${xOut} ${lane} L ${xIn} ${lane} L ${xIn} ${y2} L ${x2} ${y2}`;
+        }
+        const x1 = fromPos.x + fromPos.width * ((outIndex + 1) / (outCount + 1));
+        const y1 = fromPos.y + fromPos.height;
+        const x2 = toPos.x + toPos.width * ((inIndex + 1) / (inCount + 1));
+        const y2 = toPos.y;
+        if (span === 1 && y2 >= y1) {
+          const mid = (y1 + y2) / 2;
+          return `M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`;
+        }
+        const yOut = y1 + 14;
+        const yIn = y2 - 14;
+        return `M ${x1} ${y1} L ${x1} ${yOut} L ${lane} ${yOut} L ${lane} ${yIn} L ${x2} ${yIn} L ${x2} ${y2}`;
+      }
+
+      function readPdgNodeBounds() {
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        pdgPositions.forEach(p => {
+          minX = Math.min(minX, p.x);
+          minY = Math.min(minY, p.y);
+          maxX = Math.max(maxX, p.x + p.width);
+          maxY = Math.max(maxY, p.y + p.height);
+        });
+        if (!isFinite(minX)) return null;
+        return { minX, minY, maxX, maxY };
+      }
+
+      function readPdgBounds(root) {
+        try {
+          const box = root.getBBox();
+          if (box && box.width > 0 && box.height > 0) {
+            return { minX: box.x, minY: box.y, maxX: box.x + box.width, maxY: box.y + box.height };
+          }
+        } catch (err) { /* fall through to node bounds */ }
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        pdgPositions.forEach(p => {
+          minX = Math.min(minX, p.x);
+          minY = Math.min(minY, p.y);
+          maxX = Math.max(maxX, p.x + p.width);
+          maxY = Math.max(maxY, p.y + p.height);
+        });
+        if (!isFinite(minX)) return { minX: 0, minY: 0, maxX: 80, maxY: 80 };
+        return { minX, minY, maxX, maxY };
+      }
+
+      function placePdgViewport(mode) {
+        const container = document.getElementById('view-container-pdg');
+        const root = document.getElementById('pdg-root-group');
+        if (!container || !root) return;
+        const bounds = readPdgBounds(root);
+        const nodeBounds = readPdgNodeBounds() || bounds;
+        pdgContentBounds = bounds;
+        const cw = container.clientWidth || 800;
+        const ch = container.clientHeight || 600;
+        const gw = Math.max(80, (bounds.maxX - bounds.minX) + 72);
+        const gh = Math.max(80, (bounds.maxY - bounds.minY) + 72);
+        const fit = Math.min(1.12, Math.max(0.2, Math.min((cw - 16) / gw, (ch - 16) / gh)));
+        const alignStart = mode !== 'fit' && fit < 0.78;
+        const scale = alignStart ? 0.85 : fit;
+        const anchor = alignStart ? nodeBounds : bounds;
+        const graphW = (anchor.maxX - anchor.minX) * scale;
+        const graphH = (anchor.maxY - anchor.minY) * scale;
+        pdgTransform.scale = scale;
+        if (!alignStart) {
+          pdgTransform.x = Math.round((cw - graphW) / 2 - anchor.minX * scale);
+          pdgTransform.y = Math.round((ch - graphH) / 2 - anchor.minY * scale);
+        } else if (pdgOrientation === 'LR') {
+          pdgTransform.x = Math.round(32 - anchor.minX * scale);
+          pdgTransform.y = Math.round(Math.max(32, (ch - graphH) / 2) - anchor.minY * scale);
+        } else {
+          pdgTransform.x = Math.round(Math.max(32, (cw - graphW) / 2) - anchor.minX * scale);
+          pdgTransform.y = Math.round(32 - anchor.minY * scale);
+        }
+        root.setAttribute('transform', `translate(${pdgTransform.x}, ${pdgTransform.y}) scale(${pdgTransform.scale})`);
+        pdgViewportMode = mode === 'fit' ? 'fit' : 'readable';
+      }
+
+      function clampPdgPan() {
+        const container = document.getElementById('view-container-pdg');
+        const bounds = pdgContentBounds;
+        if (!container || !bounds) return;
+        const scale = pdgTransform.scale;
+        const cw = container.clientWidth || 800;
+        const ch = container.clientHeight || 600;
+        const contentW = (bounds.maxX - bounds.minX) * scale;
+        const contentH = (bounds.maxY - bounds.minY) * scale;
+        if (contentW > cw - 80) {
+          const minTx = 72 - bounds.maxX * scale;
+          const maxTx = cw - 72 - bounds.minX * scale;
+          pdgTransform.x = Math.min(maxTx, Math.max(minTx, pdgTransform.x));
+        }
+        if (contentH > ch - 80) {
+          const minTy = 72 - bounds.maxY * scale;
+          const maxTy = ch - 72 - bounds.minY * scale;
+          pdgTransform.y = Math.min(maxTy, Math.max(minTy, pdgTransform.y));
+        }
+        const root = document.getElementById('pdg-root-group');
+        if (root) root.setAttribute('transform', `translate(${pdgTransform.x}, ${pdgTransform.y}) scale(${pdgTransform.scale})`);
+      }
 
       function renderPdgGraph() {
         const svg = document.getElementById('svg-pdg');
@@ -3899,7 +5052,9 @@ pub const JS_SCRIPTS: &str = r###"
         const edges = data.pdg?.edges || [];
 
         if (nodes.length === 0) {
-          svg.innerHTML += '<text x="50%" y="50%" fill="var(--text-muted, #77736B)" font-family="var(--font-mono)" font-size="12" text-anchor="middle">Empty Program Dependence Graph.</text>';
+          svg.dataset.viewMode = 'full';
+          svg.dataset.orientation = 'TB';
+          svg.innerHTML += '<text class="svg-graph-empty" x="50%" y="50%" text-anchor="middle">Empty Program Dependence Graph.</text>';
           return;
         }
 
@@ -3922,36 +5077,60 @@ pub const JS_SCRIPTS: &str = r###"
           return true;
         });
 
-        const layout = computeDagLayout(nodes, visibleEdges, {
-          orientation: 'TB',
-          useLineBands: true,
-          layerSpacing: 100,
-          nodeSpacing: 28,
-          graphType: 'pdg'
-        });
+        if (pdgNeighborhood && pdgSelectedId != null && !nodes.some(n => n.id === pdgSelectedId)) {
+          pdgNeighborhood = false;
+          pdgSelectedId = null;
+          syncPdgNeighborhoodButton();
+        }
+
+        let drawNodes = nodes;
+        let drawEdges = visibleEdges;
+        if (pdgNeighborhood && pdgSelectedId != null) {
+          const hop = visibleEdges.filter(e => e.from === pdgSelectedId || e.to === pdgSelectedId);
+          const ids = new Set([pdgSelectedId]);
+          hop.forEach(e => { ids.add(e.from); ids.add(e.to); });
+          drawNodes = nodes.filter(n => ids.has(n.id));
+          drawEdges = hop;
+        }
+        svg.dataset.viewMode = (pdgNeighborhood && pdgSelectedId != null) ? 'neighborhood' : 'full';
+
+        const layout = choosePdgOrientation(drawNodes, drawEdges);
+        svg.dataset.orientation = pdgOrientation;
 
         pdgPositions = layout.positions;
+        const nodeBounds = layout.bounds;
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         g.setAttribute('id', 'pdg-root-group');
         g.setAttribute('transform', `translate(${pdgTransform.x}, ${pdgTransform.y}) scale(${pdgTransform.scale})`);
 
-        visibleEdges.forEach((e, idx) => {
+        const outGroups = new Map();
+        const inGroups = new Map();
+        drawEdges.forEach(e => {
+          if (!outGroups.has(e.from)) outGroups.set(e.from, []);
+          if (!inGroups.has(e.to)) inGroups.set(e.to, []);
+          outGroups.get(e.from).push(e);
+          inGroups.get(e.to).push(e);
+        });
+        outGroups.forEach(list => list.sort((a, b) => String(a.to).localeCompare(String(b.to))));
+        inGroups.forEach(list => list.sort((a, b) => String(a.from).localeCompare(String(b.from))));
+
+        drawEdges.forEach((e, idx) => {
           const fromPos = pdgPositions.get(e.from);
           const toPos = pdgPositions.get(e.to);
           if (!fromPos || !toPos) return;
 
-          const p1 = { x: fromPos.x + fromPos.width / 2, y: fromPos.y + fromPos.height };
-          const p2 = { x: toPos.x + toPos.width / 2, y: toPos.y };
-
-          let d = '';
-          if (p2.y >= p1.y) {
-            const dy = p2.y - p1.y;
-            d = `M ${p1.x} ${p1.y} C ${p1.x} ${p1.y + dy * 0.45}, ${p2.x} ${p2.y - dy * 0.45}, ${p2.x} ${p2.y}`;
-          } else {
-            const offset = (p1.x <= p2.x ? 50 : -50);
-            d = `M ${p1.x} ${p1.y} C ${p1.x + offset} ${p1.y + 40}, ${p2.x + offset} ${p2.y - 40}, ${p2.x} ${p2.y}`;
-          }
+          const outs = outGroups.get(e.from) || [e];
+          const ins = inGroups.get(e.to) || [e];
+          const span = (toPos.rank ?? 0) - (fromPos.rank ?? 0);
+          const forward = span > 0;
+          const lane = pdgLane(e, nodeBounds, pdgOrientation, forward);
+          const d = pdgEdgePath(
+            fromPos, toPos,
+            Math.max(0, outs.indexOf(e)), outs.length,
+            Math.max(0, ins.indexOf(e)), ins.length,
+            pdgOrientation, lane
+          );
 
           const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           path.setAttribute('d', d);
@@ -4019,18 +5198,17 @@ pub const JS_SCRIPTS: &str = r###"
           textKind.setAttribute('y', 17);
           textKind.setAttribute('font-size', '11');
           textKind.setAttribute('font-weight', '700');
-          textKind.setAttribute('font-family', 'var(--font-mono)');
           textKind.setAttribute('letter-spacing', '0.5');
 
           let kindColor = 'var(--text-muted)';
-          if (isVarDef) kindColor = 'var(--accent-lilac-text, #7B61FF)';
-          else if (isVarUse) kindColor = 'var(--teal-text, #0F766E)';
-          else if (isCol) kindColor = 'var(--orange-text, #C2410C)';
-          else if (isExpr) kindColor = 'var(--text-ink-secondary, #3A3936)';
-          else if (isRowSel) kindColor = 'var(--accent-lilac-text, #7B61FF)';
-          else if (n.is_unknown) kindColor = 'var(--status-err, #B3261E)';
+          if (isVarDef) kindColor = 'var(--accent-lilac-text)';
+          else if (isVarUse) kindColor = 'var(--teal-text)';
+          else if (isCol) kindColor = 'var(--orange-text)';
+          else if (isExpr) kindColor = 'var(--text-ink-secondary)';
+          else if (isRowSel) kindColor = 'var(--accent-lilac-text)';
+          else if (n.is_unknown) kindColor = 'var(--graph-unknown)';
 
-          textKind.setAttribute('fill', kindColor);
+          textKind.style.fill = kindColor;
           const lineStr = n.span?.start_line ? ` L${n.span.start_line}` : '';
           textKind.textContent = `${n.kind.toUpperCase()}${lineStr}`;
           nodeG.appendChild(textKind);
@@ -4040,15 +5218,20 @@ pub const JS_SCRIPTS: &str = r###"
           textLabel.setAttribute('y', 34);
           textLabel.setAttribute('font-size', '12');
           textLabel.setAttribute('font-weight', '600');
-          textLabel.setAttribute('fill', 'var(--ink)');
-          textLabel.setAttribute('font-family', 'var(--font-mono)');
+          textLabel.style.fill = 'var(--ink)';
 
           const cleanLbl = cleanNodeLabel(n, 'pdg');
-          textLabel.textContent = cleanLbl.length > 28 ? cleanLbl.slice(0, 26) + '…' : cleanLbl;
+          textLabel.textContent = cleanLbl.length > 32 ? cleanLbl.slice(0, 30) + '…' : cleanLbl;
           nodeG.appendChild(textLabel);
 
           nodeG.addEventListener('click', (evt) => {
             evt.stopPropagation();
+            const previousId = pdgSelectedId;
+            pdgSelectedId = n.id;
+            if (pdgNeighborhood && !pdgApplyingSelection && previousId !== n.id) {
+              renderPdgGraph();
+              return;
+            }
 
             document.querySelectorAll('#pdg-root-group .svg-node').forEach(el => {
               el.classList.remove('selected', 'connected-upstream', 'connected-downstream', 'dimmed');
@@ -4059,8 +5242,8 @@ pub const JS_SCRIPTS: &str = r###"
 
             nodeG.classList.add('selected');
 
-            const inboundEdges = visibleEdges.filter(e => e.to === n.id);
-            const outboundEdges = visibleEdges.filter(e => e.from === n.id);
+            const inboundEdges = drawEdges.filter(e => e.to === n.id);
+            const outboundEdges = drawEdges.filter(e => e.from === n.id);
             const upstreamNodeIds = new Set(inboundEdges.map(e => e.from));
             const downstreamNodeIds = new Set(outboundEdges.map(e => e.to));
 
@@ -4135,25 +5318,55 @@ pub const JS_SCRIPTS: &str = r###"
         });
 
         svg.appendChild(g);
-        fitGraphView('view-container-pdg', 'pdg-root-group', pdgPositions, pdgTransform);
+        placePdgViewport('readable');
+        syncPdgNeighborhoodButton();
+        if (pdgSelectedId != null) {
+          const selectedEl = document.querySelector(`#pdg-root-group .svg-node[data-node-id="${pdgSelectedId}"]`);
+          if (selectedEl) {
+            pdgApplyingSelection = true;
+            selectedEl.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            pdgApplyingSelection = false;
+          }
+        }
       }
 
-      setupZoomPan('view-container-pdg', 'svg-pdg', 'pdg-root-group', pdgTransform);
+      setupZoomPan('view-container-pdg', 'svg-pdg', 'pdg-root-group', pdgTransform, {
+        onTransform() {
+          pdgViewportMode = 'manual';
+          clampPdgPan();
+        }
+      });
 
       ['toggle-edge-data', 'toggle-edge-ctrl', 'toggle-edge-rowsel', 'toggle-edge-unk'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', renderPdgGraph);
       });
 
+      document.getElementById('btn-pdg-neighborhood')?.addEventListener('click', () => {
+        if (pdgNeighborhood) {
+          pdgNeighborhood = false;
+          renderPdgGraph();
+          return;
+        }
+        if (pdgSelectedId == null) {
+          showStatusNotification('Select a node to show its direct neighborhood.', false);
+          return;
+        }
+        pdgNeighborhood = true;
+        renderPdgGraph();
+      });
+
       document.getElementById('btn-pdg-zoom-in')?.addEventListener('click', () => {
+        pdgViewportMode = 'manual';
         pdgTransform.scale = Math.min(3.5, pdgTransform.scale * 1.25);
-        document.getElementById('pdg-root-group')?.setAttribute('transform', `translate(${pdgTransform.x}, ${pdgTransform.y}) scale(${pdgTransform.scale})`);
+        clampPdgPan();
       });
       document.getElementById('btn-pdg-zoom-out')?.addEventListener('click', () => {
+        pdgViewportMode = 'manual';
         pdgTransform.scale = Math.max(0.15, pdgTransform.scale / 1.25);
-        document.getElementById('pdg-root-group')?.setAttribute('transform', `translate(${pdgTransform.x}, ${pdgTransform.y}) scale(${pdgTransform.scale})`);
+        clampPdgPan();
       });
       document.getElementById('btn-pdg-reset')?.addEventListener('click', () => {
-        fitGraphView('view-container-pdg', 'pdg-root-group', pdgPositions, pdgTransform);
+        placePdgViewport('fit');
       });
 
       window.rparseSelectNode = function(nodeId, targetView) {
@@ -4188,7 +5401,7 @@ pub const JS_SCRIPTS: &str = r###"
         const row = document.querySelector(`.code-line[data-line="${lineNum}"]`);
         if (row) {
           row.classList.add('highlighted-span');
-          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          row.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
         }
       };
 
@@ -4427,13 +5640,13 @@ pub const JS_SCRIPTS: &str = r###"
 
           let filterInfo = '';
           if (st.row_selections && st.row_selections.length > 0) {
-            filterInfo = `<div style="font-size:11px; color:var(--accent-purple); margin-top:6px;">⚡ Filter Dependency Applied (${st.row_selections.length} predicate)</div>`;
+            filterInfo = `<div class="schema-filter-note"><svg class="ui-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.2 3.2h11.6L9.4 8.4v3.2l-2.8 1.4V8.4z"/></svg><span>Filter Dependency Applied (${st.row_selections.length} predicate)</span></div>`;
           }
 
           card.innerHTML = `
             <div class="schema-card-header">
               <div class="schema-symbol">${escapeHtml(st.symbol_name)} <span style="font-size:11px; color:var(--text-dim); font-weight:normal;">v${st.version}</span></div>
-              <span class="pill pill-full">Step #${idx + 1}</span>
+              <span class="pill pill-neutral">Step #${idx + 1}</span>
             </div>
             <div class="stmt-code" style="margin-bottom:8px;">${escapeHtml(codeSnippet)}</div>
             <div class="schema-diff-summary">${diffSummaryHtml}</div>
@@ -4816,7 +6029,15 @@ pub const JS_SCRIPTS: &str = r###"
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-          if (activeView === 'pdg') fitGraphView('view-container-pdg', 'pdg-root-group', pdgPositions, pdgTransform);
+          if (activeView === 'pdg') {
+            if (pdgViewportMode === 'manual') clampPdgPan();
+            else {
+              placePdgViewport(pdgViewportMode === 'fit' ? 'fit' : 'readable');
+              if (pdgViewportMode !== 'fit' && pdgSelectedId != null) {
+                ensureNodeVisibleOnCanvas(pdgSelectedId, 'pdg');
+              }
+            }
+          }
           if (activeView === 'provenance') fitGraphView('view-container-provenance', 'prov-root-group', provPositions, provTransform);
         }, 100);
       });
@@ -4846,63 +6067,12 @@ pub const JS_SCRIPTS: &str = r###"
         });
       }
 
-      // Scenario Summary Card Parser & Toggle (Phase 4.1)
-      function initScenarioCard(sourceCode) {
-        const card = document.getElementById('scenario-summary-card');
-        const bodyContent = document.getElementById('scenario-body-content');
-        const btnToggleScenario = document.getElementById('btn-toggle-scenario');
-        if (!card || !bodyContent) return;
-
-        if (!sourceCode) {
-          card.style.display = 'none';
-          if (btnToggleScenario) btnToggleScenario.style.display = 'none';
-          return;
-        }
-
-        const lines = sourceCode.split('\n');
-        const commentLines = [];
-        for (let i = 0; i < lines.length; i++) {
-          const trimmed = lines[i].trim();
-          if (trimmed.startsWith('#')) {
-            const clean = trimmed.replace(/^#\s*/, '');
-            if (clean) commentLines.push(clean);
-          } else if (trimmed.length > 0) {
-            break;
-          }
-        }
-
-        if (commentLines.length >= 3) {
-          card.style.display = 'block';
-          if (btnToggleScenario) btnToggleScenario.style.display = 'inline-flex';
-          bodyContent.innerHTML = commentLines.map(c => `<div style="margin-bottom:3px;">${escapeHtml(c)}</div>`).join('');
-        } else {
-          card.style.display = 'none';
-          if (btnToggleScenario) btnToggleScenario.style.display = 'none';
-        }
-      }
-
-      const scenarioHeader = document.getElementById('scenario-header-toggle');
-      const scenarioChevron = document.getElementById('scenario-chevron');
-      const scenarioCard = document.getElementById('scenario-summary-card');
-      const btnToggleScenario = document.getElementById('btn-toggle-scenario');
-
-      function toggleScenarioCard() {
-        if (!scenarioCard) return;
-        scenarioCard.classList.toggle('collapsed');
-        if (scenarioChevron) {
-          scenarioChevron.textContent = scenarioCard.classList.contains('collapsed') ? '▶ Expand' : '▼ Collapse';
-        }
-      }
-
-      if (scenarioHeader) scenarioHeader.addEventListener('click', toggleScenarioCard);
-      if (btnToggleScenario) btnToggleScenario.addEventListener('click', toggleScenarioCard);
-
       // Reproduce Strip CLI Command Generator (Phase 7.2)
       function updateReproduceCommand() {
         const cmdElem = document.getElementById('reproduce-cmd-text');
         if (!cmdElem) return;
 
-        const fn = data.file_name || 'fixtures/showcase_pipeline.R';
+        const fn = data.file_name || 'program.R';
         let cmd = `cargo run -p rparse-cli -- analyze ${fn}`;
 
         if (activeView === 'provenance') {
@@ -5080,14 +6250,14 @@ pub const JS_SCRIPTS: &str = r###"
         });
       }
 
-      // Initialize scenario context & reproduce strip
-      initScenarioCard(data.source_code || initialSource);
+      // Initialize reproduce strip
       updateReproduceCommand();
 
       // Check query parameter or empty source to auto-open Load Program modal
       const studioParams = new URLSearchParams(window.location.search);
-      if (studioParams.get('new') === '1' || studioParams.get('new') === 'true' || (!initialSource && (!data.summary || data.summary.statement_count === 0))) {
-        openLoadProgramModal();
+      const startBlank = studioParams.get('new') === '1' || studioParams.get('new') === 'true' || !initialSource;
+      if (startBlank || !data.summary || data.summary.statement_count === 0) {
+        openLoadProgramModal(true);
       }
       recomputeActiveGraphFit();
 

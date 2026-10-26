@@ -1,55 +1,49 @@
 # R-PARSE Research Corpus
 
-This directory contains the results of a deep, repository-level investigation of the existing R programming-language ecosystem, conducted to determine what R-PARSE should eventually become.
+This directory contains the written research record for R-PARSE. The canonical description of the external projects is [`reference-landscape.md`](reference-landscape.md). Scope, architecture, the technical specification, gap analysis, and adversarial validation stay in their own files.
+
+The third-party checkouts used during that research are not in this repository. Their official URLs and the local commit pins are in the reference landscape. A later working copy may keep those checkouts in a sibling directory; `research/repos/` is ignored so they are not added back by accident.
 
 ## Research Methodology
 
-Every major project was:
-1. Cloned locally (see `../research/repos/`)
-2. Source code inspected at the file, function, and grammar-rule level
-3. Tests, documentation, and architecture verified against actual implementation
-4. Cross-compared with other projects
+Every major project in the landscape was:
+
+1. Cloned locally and inspected at a recorded commit.
+2. Read at the file, function, and grammar-rule level cited in the landscape.
+3. Compared with the other projects.
+4. Distinguished as a verified observation, a recorded note, or a hypothesis.
 
 ## Directory Structure
 
 ```
 research/
-├── README.md                          ← This file
-├── repositories/                      ← Per-project deep analysis
-│   ├── tree-sitter-r.md
-│   ├── antlr-r.md
-│   ├── xmlparsedata.md
-│   ├── lintr.md
-│   ├── flowr.md
-│   ├── languageserver.md
-│   ├── CodeDepends.md
-│   ├── rpy2.md
-│   ├── targets.md
-│   ├── rdtLite.md
-│   └── additional-projects.md
-├── capability-vocabulary.md           ← Normalized capability taxonomy
-├── feature-matrix.md                  ← Comprehensive capability comparison
-├── feature-matrix.csv                 ← Machine-readable version
-├── ast-comparison.md                  ← AST representation comparison
-├── grammar-comparison.md              ← Grammar coverage comparison
-├── statistical-ecosystem.md           ← Statistical workflow study
-├── visualization-ecosystem.md         ← Visualization understanding study
-├── workflow-analysis.md               ← Workflow/data-flow study
-├── runtime-correlation.md             ← Runtime correlation study
-├── gap-analysis.md                    ← Novelty/gap analysis
-├── candidate-features.md              ← Candidate R-PARSE differentiators
-├── architecture-options.md            ← Architecture possibilities
-├── opportunity-matrix.md              ← Evaluated opportunity matrix
-├── opportunity-matrix.csv             ← Machine-readable opportunity matrix
-├── adversarial-validation-v2.md       ← Deep adversarial technical stress test
-├── adversarial-validation-v2.csv      ← Machine-readable adversarial test results
-├── benchmark-plan.md                  ← Benchmark strategy
-└── FINAL-RESEARCH-REPORT.md           ← Comprehensive final report
+├── README.md
+├── reference-landscape.md             ← Canonical external-project record
+├── scope-freeze.md                    ← Frozen R-PARSE scope
+├── technical-specification.md
+├── ADR-001-architecture.md
+├── gap-analysis.md
+├── candidate-features.md
+├── opportunity-matrix.md
+├── adversarial-validation.md
+├── adversarial-validation-v2.md
+├── flowr-deep-gap-audit.md            ← Later flowR dataframe audit
+├── grammar-comparison.md
+├── ast-comparison.md
+├── feature-matrix.md
+├── capability-vocabulary.md
+├── statistical-ecosystem.md
+├── visualization-ecosystem.md
+├── workflow-analysis.md
+├── runtime-correlation.md
+├── architecture-options.md
+├── benchmark-plan.md
+└── FINAL-RESEARCH-REPORT.md           ← Historical pre-scope-freeze synthesis
 ```
 
 ## Key Findings Summary
 
-See [FINAL-RESEARCH-REPORT.md](FINAL-RESEARCH-REPORT.md) for the complete synthesis.
+Start with [`reference-landscape.md`](reference-landscape.md) for what the external tools were observed to do. [`FINAL-RESEARCH-REPORT.md`](FINAL-RESEARCH-REPORT.md) is the earlier synthesis and still contains a few rows the landscape marks as superseded.
 
 ## Evidence Standard
 

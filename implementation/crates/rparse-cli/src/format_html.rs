@@ -52,19 +52,80 @@ pub fn safe_json_for_script(json: &str) -> String {
         .replace('&', "\\u0026")
 }
 
-/// Generates the default HTML studio page using the showcase pipeline fixture.
+/// Generates the Studio page shown before any program has been analyzed.
+///
+/// The workspace starts empty and the Load Program dialog opens on arrival.
+/// Sample programs stay available from that dialog; they are not preloaded.
 pub fn build_default_studio_html() -> String {
-    let source = include_str!("../../../fixtures/showcase_pipeline.R").to_string();
-    if let Ok(ctx) = AnalysisContext::run_from_source(
-        std::path::PathBuf::from("showcase_pipeline.R"),
-        source,
-        rparse_runtime::config::AnalysisMode::Static,
-        vec![],
-    ) {
-        format_html_report(&ctx, None, None, None)
-    } else {
-        render_html_template("R-PARSE Studio", "{}")
+    let json_str = build_entry_report_data().to_json_string();
+    render_html_template("R-PARSE Studio", &safe_json_for_script(&json_str))
+}
+
+fn build_entry_report_data() -> JsonValue {
+    let mut root = BTreeMap::new();
+    root.insert("tool".to_string(), JsonValue::String("rparse".to_string()));
+    root.insert(
+        "version".to_string(),
+        JsonValue::String(RPARSE_VERSION.to_string()),
+    );
+    root.insert("file_name".to_string(), JsonValue::String(String::new()));
+    root.insert("mode".to_string(), JsonValue::String("STATIC".to_string()));
+    root.insert("source_code".to_string(), JsonValue::String(String::new()));
+    root.insert("source_lines".to_string(), JsonValue::Array(vec![]));
+
+    let mut summary = BTreeMap::new();
+    for key in [
+        "statement_count",
+        "dataframe_state_count",
+        "column_version_count",
+        "pdg_node_count",
+        "pdg_edge_count",
+        "derivation_count",
+    ] {
+        summary.insert(key.to_string(), JsonValue::Number(0.0));
     }
+    summary.insert("contains_unknowns".to_string(), JsonValue::Bool(false));
+    root.insert("summary".to_string(), JsonValue::Object(summary));
+
+    let mut empty_graph = BTreeMap::new();
+    empty_graph.insert("nodes".to_string(), JsonValue::Array(vec![]));
+    empty_graph.insert("edges".to_string(), JsonValue::Array(vec![]));
+    let empty_graph = JsonValue::Object(empty_graph);
+    root.insert("provenance".to_string(), empty_graph.clone());
+    root.insert("pdg".to_string(), empty_graph);
+    root.insert("schema_evolution".to_string(), JsonValue::Array(vec![]));
+    root.insert("slices".to_string(), JsonValue::Object(BTreeMap::new()));
+    root.insert("diagnostics".to_string(), JsonValue::Array(vec![]));
+    root.insert(
+        "examples".to_string(),
+        JsonValue::Object(builtin_examples()),
+    );
+    JsonValue::Object(root)
+}
+
+fn builtin_examples() -> BTreeMap<String, JsonValue> {
+    let mut examples = BTreeMap::new();
+    examples.insert(
+        "showcase_pipeline".to_string(),
+        JsonValue::String(include_str!("../../../fixtures/showcase_pipeline.R").to_string()),
+    );
+    examples.insert(
+        "filter_provenance".to_string(),
+        JsonValue::String(include_str!("../../../fixtures/filter_provenance.R").to_string()),
+    );
+    examples.insert(
+        "partial_retention".to_string(),
+        JsonValue::String(include_str!("../../../fixtures/partial_retention.R").to_string()),
+    );
+    examples.insert(
+        "uncertainty".to_string(),
+        JsonValue::String(include_str!("../../../fixtures/uncertainty.R").to_string()),
+    );
+    examples.insert(
+        "canonical".to_string(),
+        JsonValue::String(include_str!("../../../fixtures/canonical.R").to_string()),
+    );
+    examples
 }
 
 /// Builds the structured JSON dataset containing all analysis models.
@@ -212,28 +273,10 @@ pub fn build_report_data(
     root.insert("diagnostics".to_string(), JsonValue::Array(diags_arr));
 
     // 9. Built-in Sample Fixtures for Entry Screen exploration
-    let mut examples = BTreeMap::new();
-    examples.insert(
-        "showcase_pipeline".to_string(),
-        JsonValue::String(include_str!("../../../fixtures/showcase_pipeline.R").to_string()),
+    root.insert(
+        "examples".to_string(),
+        JsonValue::Object(builtin_examples()),
     );
-    examples.insert(
-        "filter_provenance".to_string(),
-        JsonValue::String(include_str!("../../../fixtures/filter_provenance.R").to_string()),
-    );
-    examples.insert(
-        "partial_retention".to_string(),
-        JsonValue::String(include_str!("../../../fixtures/partial_retention.R").to_string()),
-    );
-    examples.insert(
-        "uncertainty".to_string(),
-        JsonValue::String(include_str!("../../../fixtures/uncertainty.R").to_string()),
-    );
-    examples.insert(
-        "canonical".to_string(),
-        JsonValue::String(include_str!("../../../fixtures/canonical.R").to_string()),
-    );
-    root.insert("examples".to_string(), JsonValue::Object(examples));
 
     JsonValue::Object(root)
 }
@@ -505,8 +548,18 @@ pub fn render_html_template(title_file: &str, safe_json_data: &str) -> String {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {{
+      var studioTheme = localStorage.getItem('rparse-studio-theme');
+      if (studioTheme === 'dark' || studioTheme === 'black') {{
+        document.documentElement.setAttribute('data-theme', studioTheme);
+      }}
+    }} catch (e) {{}}
+  </script>
   <title>R-PARSE Workbench — {title_file}</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <style>
 {CSS_STYLES}
   </style>

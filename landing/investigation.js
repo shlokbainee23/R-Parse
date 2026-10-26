@@ -1,7 +1,7 @@
 /**
  * R-PARSE — THE INVESTIGATION — Main Interaction & Motion Controller
  * 
- * Orchestrates Lenis smooth scrolling, the evidence loader, header chapter ticker,
+ * Orchestrates Lenis smooth scrolling, the evidence loader, header scroll state,
  * scroll-scrubbed pinned sequences, evidence room exhibit tabs, and Studio launch modal.
  */
 
@@ -125,18 +125,17 @@
   // ==========================================================================
   const header = document.getElementById('site-header');
   const progressBar = document.getElementById('header-progress-bar');
-  const tickerText = document.getElementById('ticker-chapter-text');
 
-  // Chapter tracking zones
+  // Chapter tracking zones (dark header over the final assembly)
   const chapters = [
-    { id: 'hero', name: 'CASE 000 · ORIGIN OF RESULT', dark: false },
-    { id: 'section-question', name: 'CASE FILE 001 · df$total', dark: false },
-    { id: 'section-case-opens', name: 'EXHIBIT · SOURCE AS SCENE', dark: false },
-    { id: 'pinned-evidence-stage', name: 'TRAIL · COLUMN DERIVATION', dark: false },
-    { id: 'section-central-reveal', name: 'SLICE · THE EVIDENCE SHORT', dark: false },
-    { id: 'section-evidence-room', name: 'SECTION 05 · FIVE EXHIBITS', dark: false },
-    { id: 'section-limits', name: 'BOUNDARY · UNKNOWN_STATIC', dark: false },
-    { id: 'pinned-assembly-stage', name: 'FINAL ARCHITECTURE ASSEMBLY', dark: true }
+    { id: 'hero', dark: false },
+    { id: 'section-question', dark: false },
+    { id: 'section-case-opens', dark: false },
+    { id: 'pinned-evidence-stage', dark: false },
+    { id: 'section-central-reveal', dark: false },
+    { id: 'section-evidence-room', dark: false },
+    { id: 'section-limits', dark: false },
+    { id: 'pinned-assembly-stage', dark: true }
   ];
 
   function updateHeader() {
@@ -159,10 +158,6 @@
         }
       }
     });
-
-    if (tickerText && tickerText.textContent !== currentChapter.name) {
-      tickerText.textContent = currentChapter.name;
-    }
 
     // Toggle header dark mode when over deep dark sections
     if (header) {

@@ -12,7 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
   <!-- Stylesheets -->
   <link rel="stylesheet" href="landing/styles.css">
@@ -57,22 +59,15 @@
     <div class="header-progress-bar" id="header-progress-bar"></div>
     
     <div class="header-left">
-      <div class="header-mark" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
+      <img class="header-mark" src="/brand/rparse-mark-96.png" width="24" height="24" alt="" aria-hidden="true">
       <div class="header-brand">
         <span class="header-title">R—PARSE</span>
         <span class="header-desc">Program Analysis</span>
       </div>
     </div>
 
-    <div class="header-center" id="header-ticker">
-      <span class="ticker-dot"></span>
-      <span id="ticker-chapter-text">CASE 000 · ORIGIN OF RESULT</span>
-    </div>
-
     <div class="header-right">
-      <a href="/studio" class="btn-studio-cta" id="header-cta-btn" style="text-decoration:none;">
+      <a href="/studio?new=1" class="btn-studio-cta" id="header-cta-btn" style="text-decoration:none;">
         <span>Enter the Studio</span>
         <span aria-hidden="true">↗</span>
       </a>
@@ -101,14 +96,14 @@
         <a href="#section-evidence-room" class="drawer-link"><span>05</span> The Evidence Room</a>
         <a href="#section-limits" class="drawer-link"><span>06</span> Analysis Limits</a>
         <a href="#pinned-assembly-stage" class="drawer-link"><span>07</span> Final Assembly</a>
-        <a href="/studio" class="drawer-link"><span>08</span> Open Studio Workspace ↗</a>
+        <a href="/studio?new=1" class="drawer-link"><span>08</span> Open Studio Workspace ↗</a>
       </nav>
     </div>
     <div>
       <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
         R-PARSE ENGINE v0.1.0 · TIER 1 DETERMINISTIC RUST CORE
       </p>
-      <a href="/studio" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">
+      <a href="/studio?new=1" class="btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">
         Launch Studio Session ↗
       </a>
     </div>
@@ -129,7 +124,7 @@
             A number sits in your output. The code that made it is right there, but the path behind it isn't. R-PARSE reads R programs as evidence, so you can start at a result and work backward to the statements that shaped it.
           </p>
           <div class="hero-actions">
-            <a href="/studio" class="btn-primary" id="hero-primary-cta" style="text-decoration:none;">
+            <a href="/studio?new=1" class="btn-primary" id="hero-primary-cta" style="text-decoration:none;">
               <span>Enter the Studio</span>
               <span aria-hidden="true">↗</span>
             </a>
@@ -703,7 +698,7 @@
             Bring a result you don't fully trust. Start at the number and follow the trail back.
           </p>
           <div class="assembly-actions">
-            <a href="/studio" class="btn-primary" id="assembly-cta-btn" style="text-decoration:none;">
+            <a href="/studio?new=1" class="btn-primary" id="assembly-cta-btn" style="text-decoration:none;">
               <span>Enter the Studio</span>
               <span aria-hidden="true">↗</span>
             </a>
@@ -752,14 +747,14 @@
         </div>
 
         <div class="footer-actions">
-          <a href="/studio" class="btn-footer-cta" id="footer-cta-btn" style="text-decoration:none;">
+          <a href="/studio?new=1" class="btn-footer-cta" id="footer-cta-btn" style="text-decoration:none;">
             <span>Enter R-PARSE Studio</span>
             <span aria-hidden="true">↗</span>
           </a>
           <a href="/how-to-use" class="btn-footer-backtop" id="btn-footer-how-to-use" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
             <span>📖 How to Use</span>
           </a>
-          <a href="/studio" class="btn-footer-backtop" id="btn-footer-studio-direct" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          <a href="/studio?new=1" class="btn-footer-backtop" id="btn-footer-studio-direct" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
             <span>Studio Workspace ↗</span>
           </a>
           <div class="footer-cli-pill" title="CLI Launch Command">
@@ -775,7 +770,7 @@
 
       <div class="footer-nav-row">
         <a href="/how-to-use" class="footer-nav-link" id="footer-nav-how-to-use" style="color: var(--accent-orange); font-weight: 700;">How to Use (Guide)</a>
-        <a href="/studio" class="footer-nav-link" style="color: var(--accent-blue); font-weight: 700;">Studio Workspace ↗</a>
+        <a href="/studio?new=1" class="footer-nav-link" style="color: var(--accent-blue); font-weight: 700;">Studio Workspace ↗</a>
         <a href="implementation/showcase_report.html" target="_blank" class="footer-nav-link">Showcase Report (Offline)</a>
         <a href="docs/ARCHITECTURE.md" target="_blank" class="footer-nav-link">System Architecture (ADR-001)</a>
         <a href="README.md" target="_blank" class="footer-nav-link">CLI Documentation</a>

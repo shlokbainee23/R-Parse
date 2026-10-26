@@ -24,6 +24,7 @@ COPY how-to-use.html ./how-to-use.html
 COPY index.html ./index.html
 COPY landing ./landing
 COPY favicon.svg ./favicon.svg
+COPY brand ./brand
 
 # Compile the authoritative CLI binary in release mode
 WORKDIR /usr/src/rparse/implementation
@@ -48,6 +49,9 @@ COPY --from=builder /usr/src/rparse/implementation/target/release/rparse /usr/lo
 
 # Copy showcase fixtures for analysis exploration
 COPY --chown=rparse:rparse implementation/fixtures ./fixtures
+
+# License and third-party notices travel with the distributed image.
+COPY --chown=rparse:rparse LICENSE THIRD_PARTY_NOTICES.md /app/
 
 # Production networking environment defaults
 ENV PORT=8080

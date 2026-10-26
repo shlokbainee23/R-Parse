@@ -72,7 +72,11 @@ pub fn run_studio_server(
         build_default_studio_html()
     };
 
-    let display_host = if host == "0.0.0.0" { "localhost" } else { &host };
+    let display_host = if host == "0.0.0.0" {
+        "localhost"
+    } else {
+        &host
+    };
     let local_url = format!("http://{}:{}", display_host, port);
     let studio_url = format!("http://{}:{}/studio", display_host, port);
     let health_url = format!("http://{}:{}/api/health", display_host, port);
@@ -308,7 +312,7 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
                 js.as_bytes(),
             )?;
         }
-        ("GET", "/favicon.svg" | "/landing/favicon.svg" | "/favicon.ico") => {
+        ("GET", "/favicon.svg" | "/landing/favicon.svg") => {
             let svg = include_str!("../../../../favicon.svg");
             send_response(
                 &mut stream,
@@ -317,6 +321,22 @@ pub(crate) fn handle_connection(mut stream: TcpStream, initial_html: &str) -> st
                 "image/svg+xml; charset=utf-8",
                 svg.as_bytes(),
             )?;
+        }
+        ("GET", "/favicon.ico" | "/landing/favicon.ico") => {
+            let ico = include_bytes!("../../../../brand/favicon.ico");
+            send_response(&mut stream, 200, "OK", "image/x-icon", ico)?;
+        }
+        ("GET", "/favicon-32x32.png" | "/landing/favicon-32x32.png") => {
+            let png = include_bytes!("../../../../brand/favicon-32x32.png");
+            send_response(&mut stream, 200, "OK", "image/png", png)?;
+        }
+        ("GET", "/brand/rparse-mark-96.png" | "/landing/brand/rparse-mark-96.png") => {
+            let png = include_bytes!("../../../../brand/rparse-mark-96.png");
+            send_response(&mut stream, 200, "OK", "image/png", png)?;
+        }
+        ("GET", "/apple-touch-icon.png" | "/landing/apple-touch-icon.png") => {
+            let png = include_bytes!("../../../../brand/apple-touch-icon.png");
+            send_response(&mut stream, 200, "OK", "image/png", png)?;
         }
         ("GET", "/api/health") => {
             let body = format!(

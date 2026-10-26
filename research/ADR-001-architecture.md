@@ -65,7 +65,7 @@ The architecture must balance four conflicting forces:
 - No interaction with GNU R or any external runtime.
 
 ### Option B: TypeScript / Node.js Engine
-- Extension of the academic `flowR` codebase (`research/repos/flowr`).
+- Extension of the academic `flowR` codebase (upstream https://github.com/flowr-analysis/flowr, inspected at `3ea266c`; not vendored in this repository).
 - Implements missing column provenance passes and connects shape analysis to flowR's existing slicer in TypeScript.
 - Distributed as an npm package and VS Code extension.
 

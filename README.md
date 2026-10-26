@@ -16,7 +16,7 @@ R-PARSE solves this problem through two core technical contributions:
 
 ## Two-Tier Hybrid Architecture
 
-Per [ADR-001](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/research/ADR-001-architecture.md), R-PARSE implements a two-tier hybrid architecture:
+Per [ADR-001](research/ADR-001-architecture.md), R-PARSE implements a two-tier hybrid architecture:
 
 ```text
                              R-PARSE
@@ -111,7 +111,7 @@ The application starts on **`http://localhost:8080`** under a single origin:
 | **`GET /how-to-use`** | Beginner-friendly tutorial and reference guide. |
 | **`GET /api/health`** | Service health status and version verification. |
 | **`POST /api/analyze`** | Authoritative static analysis engine running 100% deterministic Rust analysis. |
-| **`GET /favicon.svg`** | Canonical R-PARSE 4-quad brand SVG asset. |
+| **`GET /favicon.ico`**, **`/favicon-32x32.png`**, **`/apple-touch-icon.png`** | R/P monogram favicon set, generated from `brand/rparse-monogram.png` by `scripts/build_favicons.py`. `/favicon.svg` remains as a legacy alias embedding the same raster. |
 | **Static Assets** | Integrated CSS, JavaScript, and typography assets. |
 
 ### Docker Production Deployment
@@ -294,11 +294,11 @@ The repository includes canonical showcase fixtures in `fixtures/`:
 
 | Fixture | Description | Command |
 | :--- | :--- | :--- |
-| [`fixtures/showcase_pipeline.R`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/implementation/fixtures/showcase_pipeline.R) | Multi-step tidyverse pipeline combining filtering, column derivation, and sub-statement pruning. | `rparse slice fixtures/showcase_pipeline.R --criterion 'df2$total'` |
-| [`fixtures/partial_retention.R`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/implementation/fixtures/partial_retention.R) | Sub-statement mutate pruning: demonstrates `[KEEP]` vs `[DROP]` regions within a single statement. | `rparse slice fixtures/partial_retention.R --criterion 'df2$total'` |
-| [`fixtures/filter_provenance.R`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/implementation/fixtures/filter_provenance.R) | Row-selection dependency preservation across sequential filter stages. | `rparse slice fixtures/filter_provenance.R --criterion 'df3$total'` |
-| [`fixtures/uncertainty.R`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/implementation/fixtures/uncertainty.R) | Explicit uncertainty tracking: dynamic column indexing handled honestly as `UNKNOWN_STATIC`. | `rparse slice fixtures/uncertainty.R --criterion 'df2$dynamic_col'` |
-| [`fixtures/adversarial/adv04_alias_rename.R`](file:///c:/Users/thimm/OneDrive/Desktop/Rparse/implementation/fixtures/adversarial/adv04_alias_rename.R) | Simple dataframe variable aliasing (`df_alias <- df`) propagating column versions and provenance. | `rparse slice fixtures/adversarial/adv04_alias_rename.R --criterion 'df_final$final_score'` |
+| [`fixtures/showcase_pipeline.R`](implementation/fixtures/showcase_pipeline.R) | Multi-step tidyverse pipeline combining filtering, column derivation, and sub-statement pruning. | `rparse slice fixtures/showcase_pipeline.R --criterion 'df2$total'` |
+| [`fixtures/partial_retention.R`](implementation/fixtures/partial_retention.R) | Sub-statement mutate pruning: demonstrates `[KEEP]` vs `[DROP]` regions within a single statement. | `rparse slice fixtures/partial_retention.R --criterion 'df2$total'` |
+| [`fixtures/filter_provenance.R`](implementation/fixtures/filter_provenance.R) | Row-selection dependency preservation across sequential filter stages. | `rparse slice fixtures/filter_provenance.R --criterion 'df3$total'` |
+| [`fixtures/uncertainty.R`](implementation/fixtures/uncertainty.R) | Explicit uncertainty tracking: dynamic column indexing handled honestly as `UNKNOWN_STATIC`. | `rparse slice fixtures/uncertainty.R --criterion 'df2$dynamic_col'` |
+| [`fixtures/adversarial/adv04_alias_rename.R`](implementation/fixtures/adversarial/adv04_alias_rename.R) | Simple dataframe variable aliasing (`df_alias <- df`) propagating column versions and provenance. | `rparse slice fixtures/adversarial/adv04_alias_rename.R --criterion 'df_final$final_score'` |
 
 ---
 
@@ -322,3 +322,11 @@ R-PARSE is engineered strictly within its frozen research scope:
 - **No Standalone Executable Reprex Generation:** Slicing operates at the semantic IR level; R-PARSE does not rewrite or resynthesize executable R source text.
 - **No Interpretation or Replacement of GNU R:** R-PARSE is an analysis tool, not an R execution environment.
 - **Out of Scope:** Web interfaces, GUI dashboards, Language Server Protocol (LSP) servers, and AI/LLM natural language wrappers are intentionally excluded from this engine.
+
+---
+
+## License
+
+Original R-PARSE code is released under the [MIT License](LICENSE).
+
+Third-party components remain subject to their own licenses and notices. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
